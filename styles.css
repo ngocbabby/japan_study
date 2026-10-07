@@ -102,3 +102,9 @@ dialog::backdrop{background:rgba(30,27,18,.4)}
   .hero-grid{grid-template-columns:1fr}
   .hero-stat{display:flex;gap:8px;align-items:baseline;justify-content:flex-start}
 }
+
+.type-busy{background:#f0eee8!important;color:#5f5a52!important}
+.free-hint{margin-top:11px;padding-top:10px;border-top:1px dashed #e6dfcf;color:#6b665c!important;font-size:11px;line-height:1.45}
+.free-hint strong{color:#202020!important}
+.sync-line{margin:0 2px 12px;color:#6b665c!important;font-size:12px}
+.sync-line strong{color:#202020!important}
