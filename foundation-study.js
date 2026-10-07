@@ -192,7 +192,7 @@ function renderFoundationStudy(){
 
 function phaseCopy(){
   const s=foundationUI.session;
-  if(s.cycle==='initial'&&s.mode==='quiz') return ['B1 · Quiz toàn bài','5 giây/câu · không quay lại'];
+  if(s.cycle==='initial'&&s.mode==='quiz') return ['B1 · Quiz toàn bài',`${foundationUI.type==='grammar'?10:5} giây/câu · không quay lại`];
   if(s.cycle==='initial'&&s.mode==='flash') return ['B2 · Flashcard','Câu thuộc trước → câu chưa thuộc'];
   if(s.cycle==='target'&&s.mode==='quiz') return [`Vòng ${s.round} · Quiz câu yếu`,'Chỉ hỏi các câu chưa thuộc'];
   if(s.cycle==='target'&&s.mode==='flash') return [`Vòng ${s.round} · Flashcard câu yếu`,'Ôn đúng phần vừa sai/chưa chắc'];
