@@ -20,3 +20,10 @@ The app is static and can be deployed with GitHub Pages from the repository root
 
 ## Current MVP
 Data is stored locally in the browser. Google Calendar sync and AI document ingestion are planned next.
+
+## UI contrast rules
+- Light background/surface -> dark text.
+- Dark background/surface -> light text.
+- Never inherit text colors from host/theme when contrast is uncertain.
+- Yellow is an accent, not a default text color.
+- Mobile readability takes priority over decorative styling.
