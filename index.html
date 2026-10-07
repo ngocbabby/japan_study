@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#f6c945" />
+  <meta name="description" content="Japan Study - smart study planner for Japanese learning" />
+  <title>Japan Study</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">JAPAN STUDY</p>
+        <h1>Hôm nay học gì?</h1>
+      </div>
+      <button id="openSettings" class="icon-btn" type="button" aria-label="Mở cài đặt">⚙️</button>
+    </header>
+
+    <main>
+      <section class="hero-card">
+        <div>
+          <span class="pill">Kế hoạch thích ứng</span>
+          <h2 id="heroTitle">Tối ưu theo deadline, độ yếu và thời gian rảnh</h2>
+          <p id="heroText">Thêm mục tiêu và lịch rảnh để app tự chia tải học vừa sức.</p>
+        </div>
+        <div class="hero-score">
+          <strong id="coverageScore">0%</strong>
+          <span>độ phủ kiến thức</span>
+        </div>
+      </section>
+
+      <section class="section-head">
+        <div>
+          <p class="section-kicker">ƯU TIÊN</p>
+          <h2>Kế hoạch hôm nay</h2>
+        </div>
+        <button id="rebuildPlan" class="text-btn" type="button">Tính lại</button>
+      </section>
+
+      <section id="todayPlan" class="stack" aria-live="polite"></section>
+
+      <section class="section-head">
+        <div>
+          <p class="section-kicker">MỤC TIÊU</p>
+          <h2>Nội dung đang học</h2>
+        </div>
+        <button id="addGoalBtn" class="primary-small" type="button">+ Thêm</button>
+      </section>
+
+      <section id="goalList" class="goal-grid"></section>
+
+      <section class="section-head">
+        <div>
+          <p class="section-kicker">LỊCH RẢNH</p>
+          <h2>Khung giờ có thể học</h2>
+        </div>
+        <button id="addSlotBtn" class="primary-small" type="button">+ Thêm</button>
+      </section>
+
+      <section id="slotList" class="slot-list"></section>
+
+      <section class="insight-card">
+        <div class="insight-icon">🧠</div>
+        <div>
+          <strong>Nguyên tắc chống nhồi</strong>
+          <p>App dành tối đa 70% thời gian cho kiến thức mới, giữ ít nhất 30% cho ôn lại và kiểm tra nhớ.</p>
+        </div>
+      </section>
+    </main>
+
+    <nav class="bottom-nav" aria-label="Điều hướng chính">
+      <button class="nav-item active" type="button" data-view="home"><span>🏠</span><small>Hôm nay</small></button>
+      <button class="nav-item" type="button" data-view="goals"><span>📚</span><small>Mục tiêu</small></button>
+      <button class="nav-item" type="button" data-view="calendar"><span>🗓️</span><small>Lịch</small></button>
+      <button class="nav-item" type="button" data-view="progress"><span>📈</span><small>Tiến độ</small></button>
+    </nav>
+  </div>
+
+  <dialog id="goalDialog">
+    <form id="goalForm" method="dialog" class="dialog-card">
+      <div class="dialog-head">
+        <div>
+          <p class="section-kicker">MỤC TIÊU MỚI</p>
+          <h2>Thêm nội dung cần học</h2>
+        </div>
+        <button class="icon-btn close-dialog" type="button" aria-label="Đóng">✕</button>
+      </div>
+
+      <label>Tên mục tiêu
+        <input name="title" required maxlength="80" placeholder="VD: Phỏng vấn tiếng Nhật" />
+      </label>
+
+      <div class="two-col">
+        <label>Deadline
+          <input name="deadline" type="date" required />
+        </label>
+        <label>Độ quan trọng
+          <select name="importance">
+            <option value="5">Rất cao</option>
+            <option value="4">Cao</option>
+            <option value="3" selected>Vừa</option>
+            <option value="2">Thấp</option>
+            <option value="1">Rất thấp</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="two-col">
+        <label>Số đơn vị kiến thức
+          <input name="units" type="number" min="1" max="5000" value="30" required />
+        </label>
+        <label>Đã vững
+          <input name="mastered" type="number" min="0" max="5000" value="0" required />
+        </label>
+      </div>
+
+      <label>Độ khó cảm nhận
+        <select name="difficulty">
+          <option value="1">Dễ</option>
+          <option value="2">Khá dễ</option>
+          <option value="3" selected>Vừa</option>
+          <option value="4">Khó</option>
+          <option value="5">Rất khó</option>
+        </select>
+      </label>
+
+      <label>Ghi chú
+        <textarea name="notes" rows="3" placeholder="VD: cần nhớ để trả lời không nhìn tài liệu"></textarea>
+      </label>
+
+      <button class="primary-btn" type="submit">Lưu mục tiêu</button>
+    </form>
+  </dialog>
+
+  <dialog id="slotDialog">
+    <form id="slotForm" method="dialog" class="dialog-card">
+      <div class="dialog-head">
+        <div>
+          <p class="section-kicker">LỊCH RẢNH</p>
+          <h2>Thêm khung học</h2>
+        </div>
+        <button class="icon-btn close-dialog" type="button" aria-label="Đóng">✕</button>
+      </div>
+
+      <label>Ngày trong tuần
+        <select name="day">
+          <option value="1">Thứ 2</option>
+          <option value="2">Thứ 3</option>
+          <option value="3">Thứ 4</option>
+          <option value="4">Thứ 5</option>
+          <option value="5">Thứ 6</option>
+          <option value="6">Thứ 7</option>
+          <option value="0">Chủ nhật</option>
+        </select>
+      </label>
+
+      <div class="two-col">
+        <label>Bắt đầu
+          <input name="start" type="time" value="06:00" required />
+        </label>
+        <label>Kết thúc
+          <input name="end" type="time" value="07:00" required />
+        </label>
+      </div>
+
+      <label>Mức năng lượng
+        <select name="energy">
+          <option value="3">Cao - học mới/khó</option>
+          <option value="2" selected>Vừa - luyện tập</option>
+          <option value="1">Thấp - ôn nhẹ</option>
+        </select>
+      </label>
+
+      <button class="primary-btn" type="submit">Lưu khung giờ</button>
+    </form>
+  </dialog>
+
+  <dialog id="settingsDialog">
+    <form id="settingsForm" method="dialog" class="dialog-card">
+      <div class="dialog-head">
+        <div>
+          <p class="section-kicker">CÀI ĐẶT</p>
+          <h2>Tải học mỗi ngày</h2>
+        </div>
+        <button class="icon-btn close-dialog" type="button" aria-label="Đóng">✕</button>
+      </div>
+
+      <label>Giới hạn học tối đa mỗi ngày (phút)
+        <input name="dailyCap" type="number" min="20" max="600" step="10" />
+      </label>
+
+      <label>Phiên học lý tưởng (phút)
+        <input name="sessionLength" type="number" min="10" max="90" step="5" />
+      </label>
+
+      <label>Tỷ lệ tối thiểu dành cho ôn tập
+        <input name="reviewRatio" type="range" min="20" max="60" step="5" />
+        <span id="reviewRatioLabel"></span>
+      </label>
+
+      <button class="primary-btn" type="submit">Lưu cài đặt</button>
+      <button id="resetData" class="danger-btn" type="button">Xóa toàn bộ dữ liệu trên máy này</button>
+    </form>
+  </dialog>
+
+  <template id="emptyTemplate">
+    <article class="empty-card">
+      <div class="empty-icon">✨</div>
+      <strong>Chưa có dữ liệu</strong>
+      <p>Thêm mục tiêu học và khung giờ rảnh để bắt đầu.</p>
+    </article>
+  </template>
+
+  <script src="app.js"></script>
+</body>
+</html>
