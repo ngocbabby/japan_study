@@ -1,407 +1,313 @@
-const STORAGE_KEY = 'japanStudy.v1';
-
-const defaults = {
-  settings: { dailyCap: 120, sessionLength: 25, reviewRatio: 30 },
-  goals: [],
-  slots: [
-    { id: crypto.randomUUID(), day: 1, start: '06:00', end: '07:00', energy: 3 },
-    { id: crypto.randomUUID(), day: 3, start: '18:30', end: '19:30', energy: 2 },
-    { id: crypto.randomUUID(), day: 0, start: '09:00', end: '11:00', energy: 3 }
-  ],
-  completions: []
+const state = {
+  page:'home',
+  previous:'home',
+  level:'N5',
+  selectedInterview:null,
+  interviewDays:[
+    {
+      id:'2026-10-07',
+      label:'Ngày 07/10',
+      summary:'Phỏng vấn xin việc - anzen daiichi, horenso, câu hỏi công ty',
+      conversation:[
+        '会社で一番大切なことは何ですか。',
+        '安全第一です。心を込めて働き、品質の良い製品を作ることが大切だと思います。'
+      ],
+      vocab:['安全第一','品質','礼儀','報告・連絡・相談'],
+      grammar:['～と思います','～ていただけた場合','～予定されていますか'],
+      kanji:['安','全','品','質','礼','儀'],
+      quick:['入社日はいつ頃を予定されていますか','研修はありますか','会社が評価するポイントは何ですか']
+    },
+    {
+      id:'2026-10-06',
+      label:'Ngày 06/10',
+      summary:'Ôn câu tự giới thiệu và câu trả lời ngắn khi phỏng vấn',
+      conversation:['自己紹介をお願いします。','はい、グエン・ゴック・チャンと申します。'],
+      vocab:['自己紹介','経験','希望','採用'],
+      grammar:['～と申します','～たいと思っています'],
+      kanji:['自','己','紹','介','経','験'],
+      quick:['Nói câu trả lời trong 20-30 giây','Không học thuộc từng chữ','Ưu tiên phản xạ tự nhiên']
+    }
+  ]
 };
 
-let state = loadState();
+const main = document.querySelector('#appMain');
+const title = document.querySelector('#pageTitle');
+const backBtn = document.querySelector('#backBtn');
 
-const dayNames = ['CN','T2','T3','T4','T5','T6','T7'];
-
-function loadState(){
-  try{
-    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    if(!saved) return structuredClone(defaults);
-    return {
-      settings:{...defaults.settings,...saved.settings},
-      goals:Array.isArray(saved.goals)?saved.goals:[],
-      slots:Array.isArray(saved.slots)?saved.slots:defaults.slots,
-      completions:Array.isArray(saved.completions)?saved.completions:[]
-    };
-  }catch{
-    return structuredClone(defaults);
-  }
+function go(page, payload){
+  state.previous = state.page;
+  state.page = page;
+  if(payload?.interview) state.selectedInterview = payload.interview;
+  render();
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 
-function saveState(){
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-}
-
-function clamp(n,min,max){ return Math.max(min,Math.min(max,n)); }
-
-function daysUntil(dateStr){
-  const today = new Date();
-  today.setHours(0,0,0,0);
-  const target = new Date(dateStr+'T00:00:00');
-  return Math.ceil((target-today)/86400000);
-}
-
-function goalProgress(goal){
-  if(!goal.units) return 0;
-  return clamp(Math.round((goal.mastered/goal.units)*100),0,100);
-}
-
-function priorityScore(goal){
-  const days = Math.max(0,daysUntil(goal.deadline));
-  const urgency = days <= 1 ? 10 : days <= 3 ? 8 : days <= 7 ? 6 : days <= 30 ? 4 : 2;
-  const remaining = Math.max(0,goal.units-goal.mastered);
-  const gap = remaining / Math.max(1,goal.units);
-  return urgency*3 + Number(goal.importance)*2 + Number(goal.difficulty) + gap*8;
-}
-
-function availableMinutesToday(){
-  const day = new Date().getDay();
-  const mins = state.slots
-    .filter(s=>Number(s.day)===day)
-    .reduce((sum,s)=>sum+Math.max(0,timeToMin(s.end)-timeToMin(s.start)),0);
-  return Math.min(mins,state.settings.dailyCap);
-}
-
-function timeToMin(t){
-  const [h,m]=t.split(':').map(Number);
-  return h*60+m;
-}
-
-function minToTime(m){
-  const h=Math.floor(m/60)%24;
-  const mm=m%60;
-  return String(h).padStart(2,'0')+':'+String(mm).padStart(2,'0');
-}
-
-function todaySlots(){
-  const day = new Date().getDay();
-  return state.slots
-    .filter(s=>Number(s.day)===day)
-    .sort((a,b)=>timeToMin(a.start)-timeToMin(b.start));
-}
-
-function buildPlan(){
-  const goals = state.goals
-    .filter(g=>g.mastered<g.units)
-    .sort((a,b)=>priorityScore(b)-priorityScore(a));
-
-  const slots = todaySlots();
-  const cap = state.settings.dailyCap;
-  const session = state.settings.sessionLength;
-  const reviewRatio = state.settings.reviewRatio/100;
-  const totalFree = Math.min(cap, slots.reduce((s,x)=>s+Math.max(0,timeToMin(x.end)-timeToMin(x.start)),0));
-
-  if(!goals.length || !slots.length || totalFree<=0) return [];
-
-  const reviewBudget = Math.round(totalFree*reviewRatio);
-  const newBudget = totalFree-reviewBudget;
-  let remainingNew = newBudget;
-  let remainingReview = reviewBudget;
-  const plan=[];
-
-  const queues = slots.map(s=>({ ...s, cursor: timeToMin(s.start), endMin: timeToMin(s.end) }));
-
-  function nextBlock(minutes, type, goal){
-    let need = minutes;
-    for(const q of queues){
-      if(need<=0) break;
-      const room=q.endMin-q.cursor;
-      if(room<10) continue;
-      const chunk=Math.min(need,room,session);
-      if(chunk<10) continue;
-      plan.push({
-        id:crypto.randomUUID(),
-        goalId:goal.id,
-        title:goal.title,
-        type,
-        start:minToTime(q.cursor),
-        end:minToTime(q.cursor+chunk),
-        minutes:chunk,
-        energy:q.energy
-      });
-      q.cursor+=chunk;
-      need-=chunk;
-    }
-    return need;
-  }
-
-  for(const goal of goals){
-    if(remainingNew<10) break;
-    const remainingUnits=Math.max(1,goal.units-goal.mastered);
-    const days=Math.max(1,daysUntil(goal.deadline));
-    const targetMinutes=Math.ceil((remainingUnits*Math.max(3,Number(goal.difficulty)*2))/days);
-    const allocation=clamp(targetMinutes,10,Math.min(remainingNew,session*2));
-    const before=plan.length;
-    const left=nextBlock(allocation,'new',goal);
-    if(plan.length>before) remainingNew-=allocation-left;
-  }
-
-  const reviewGoals=[...goals].sort((a,b)=>{
-    const pa=goalProgress(a), pb=goalProgress(b);
-    return pa-pb || priorityScore(b)-priorityScore(a);
-  });
-
-  for(const goal of reviewGoals){
-    if(remainingReview<10) break;
-    const allocation=Math.min(session,remainingReview);
-    const before=plan.length;
-    const left=nextBlock(allocation,'review',goal);
-    if(plan.length>before) remainingReview-=allocation-left;
-  }
-
-  if(plan.length && totalFree>=30){
-    const topGoal=goals[0];
-    const testMinutes=Math.min(10, queues.reduce((sum,q)=>sum+Math.max(0,q.endMin-q.cursor),0));
-    if(testMinutes>=10) nextBlock(testMinutes,'test',topGoal);
-  }
-
-  return plan.sort((a,b)=>a.start.localeCompare(b.start));
+function setNav(page){
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.nav===page));
 }
 
 function render(){
-  renderCoverage();
-  renderGoals();
-  renderSlots();
-  renderPlan();
-  hydrateSettings();
+  backBtn.classList.toggle('hidden',state.page==='home');
+  if(state.page==='home') return renderHome();
+  if(state.page==='roadmap') return renderRoadmap();
+  if(state.page==='foundation') return renderFoundation();
+  if(state.page==='n2') return renderN2();
+  if(state.page==='interview') return renderInterview();
+  if(state.page==='interview-day') return renderInterviewDay();
+  if(state.page==='kaiwa') return renderKaiwa();
+  if(state.page==='review') return renderReview();
+  if(state.page==='progress') return renderProgress();
 }
 
-function renderCoverage(){
-  const total=state.goals.reduce((s,g)=>s+Number(g.units||0),0);
-  const mastered=state.goals.reduce((s,g)=>s+Number(g.mastered||0),0);
-  const score=total?Math.round(mastered/total*100):0;
-  document.querySelector('#coverageScore').textContent=score+'%';
-  const free=availableMinutesToday();
-  document.querySelector('#heroText').textContent = free
-    ? 'Hôm nay bạn có khoảng '+free+' phút học khả dụng. App sẽ ưu tiên mục gấp và yếu trước.'
-    : 'Chưa có khung giờ rảnh hôm nay. Thêm lịch rảnh để app tự xếp.';
-}
-
-function renderGoals(){
-  const wrap=document.querySelector('#goalList');
-  wrap.innerHTML='';
-  if(!state.goals.length){
-    wrap.append(document.querySelector('#emptyTemplate').content.cloneNode(true));
-    return;
-  }
-  [...state.goals]
-    .sort((a,b)=>priorityScore(b)-priorityScore(a))
-    .forEach(goal=>{
-      const progress=goalProgress(goal);
-      const days=daysUntil(goal.deadline);
-      const priority=priorityScore(goal);
-      const cls=priority>=28?'priority-high':priority>=20?'priority-mid':'priority-low';
-      const card=document.createElement('article');
-      card.className='goal-card';
-      card.innerHTML=`
-        <div class="goal-top">
-          <div>
-            <h3>${escapeHtml(goal.title)}</h3>
-            <p>${days<0?'Đã quá hạn':days===0?'Hạn hôm nay':days===1?'Còn 1 ngày':'Còn '+days+' ngày'}</p>
-          </div>
-          <span class="priority-dot ${cls}" aria-label="Mức ưu tiên"></span>
+function renderHome(){
+  title.textContent='Học gì hôm nay?';
+  setNav('home');
+  main.innerHTML=`
+    <section class="hero">
+      <div class="hero-grid">
+        <div>
+          <strong>Học đúng thứ cần học, đúng lúc.</strong>
+          <p>Lộ trình sẽ dùng lịch rảnh để ưu tiên bài cho buổi học kế tiếp mà không nhồi quá mức.</p>
         </div>
-        <div class="progress"><span style="width:${progress}%"></span></div>
-        <div class="goal-meta"><span>${goal.mastered}/${goal.units} đã vững</span><strong>${progress}%</strong></div>
-        <div class="goal-actions">
-          <button class="soft-btn" data-action="plus" data-id="${goal.id}" type="button">+1 đã vững</button>
-          <button class="delete-btn" data-action="delete" data-id="${goal.id}" type="button">Xóa</button>
-        </div>
-      `;
-      wrap.append(card);
-    });
-}
-
-function renderSlots(){
-  const wrap=document.querySelector('#slotList');
-  wrap.innerHTML='';
-  if(!state.slots.length){
-    wrap.append(document.querySelector('#emptyTemplate').content.cloneNode(true));
-    return;
-  }
-  [...state.slots]
-    .sort((a,b)=>Number(a.day)-Number(b.day)||a.start.localeCompare(b.start))
-    .forEach(slot=>{
-      const row=document.createElement('div');
-      row.className='slot-row';
-      const e=Number(slot.energy)===3?'Năng lượng cao':Number(slot.energy)===2?'Năng lượng vừa':'Ôn nhẹ';
-      row.innerHTML=`
-        <div class="slot-day">${dayNames[Number(slot.day)]}</div>
-        <div class="slot-time"><strong>${slot.start}–${slot.end}</strong><div class="energy">${e}</div></div>
-        <button class="delete-btn" data-slot-delete="${slot.id}" type="button">Xóa</button>
-      `;
-      wrap.append(row);
-    });
-}
-
-function renderPlan(){
-  const wrap=document.querySelector('#todayPlan');
-  wrap.innerHTML='';
-  const plan=buildPlan();
-  if(!plan.length){
-    wrap.append(document.querySelector('#emptyTemplate').content.cloneNode(true));
-    return;
-  }
-  plan.forEach(item=>{
-    const card=document.createElement('article');
-    card.className='plan-card';
-    const label=item.type==='new'?'Học mới':item.type==='review'?'Ôn lại':'Kiểm tra nhớ';
-    const tagClass=item.type==='new'?'new':item.type==='review'?'review':'test';
-    const explanation=item.type==='new'
-      ? 'Ưu tiên do deadline + lượng kiến thức chưa vững.'
-      : item.type==='review'
-      ? 'Giữ nhịp nhớ dài hạn, tránh học mới liên tục.'
-      : 'Tự kiểm tra không nhìn tài liệu để phát hiện lỗ hổng.';
-    card.innerHTML=`
-      <div class="plan-time"><strong>${item.start}</strong><small>${item.minutes} phút</small></div>
-      <div class="plan-main">
-        <span class="tag ${tagClass}">${label}</span>
-        <strong>${escapeHtml(item.title)}</strong>
-        <p>${explanation}</p>
+        <div class="hero-stat"><b>5</b><span>khu vực học</span></div>
       </div>
-      <button class="done-btn" type="button" title="Đánh dấu hoàn thành" data-plan-goal="${item.goalId}" data-plan-type="${item.type}">✓</button>
-    `;
-    wrap.append(card);
-  });
+    </section>
+
+    <div class="section-head">
+      <div><p class="section-kicker">HOME</p><h2>Khu vực học</h2></div>
+    </div>
+
+    <section class="module-grid">
+      <button class="module-card wide" data-open="roadmap" type="button">
+        <div>
+          <div class="module-icon">▦</div>
+          <h3>Lộ trình</h3>
+          <p>Lịch tuần, giờ rảnh, buổi học trên lớp và việc cần chuẩn bị cho ngày hôm sau.</p>
+        </div>
+        <div class="module-meta"><span>Google Calendar + AI planner</span><span class="chev">›</span></div>
+      </button>
+
+      <button class="module-card" data-open="foundation" type="button">
+        <div>
+          <div class="module-icon">基</div>
+          <h3>Mất gốc</h3>
+          <p>N5 → N4: từ vựng, kanji, ngữ pháp, luyện đề.</p>
+        </div>
+        <div class="module-meta"><span>N5 / N4</span><span class="chev">›</span></div>
+      </button>
+
+      <button class="module-card" data-open="n2" type="button">
+        <div>
+          <div class="module-icon">N2</div>
+          <h3>N2</h3>
+          <p>Từ vựng, kanji, ngữ pháp, đọc hiểu và luyện đề.</p>
+        </div>
+        <div class="module-meta"><span>Dài hạn</span><span class="chev">›</span></div>
+      </button>
+
+      <button class="module-card" data-open="interview" type="button">
+        <div>
+          <div class="module-icon">面</div>
+          <h3>Luyện phỏng vấn</h3>
+          <p>Lưu theo từng ngày học: hội thoại, từ vựng, ngữ pháp, kanji và phần cần lướt lại.</p>
+        </div>
+        <div class="module-meta"><span>2 buổi đã lưu</span><span class="chev">›</span></div>
+      </button>
+
+      <button class="module-card" data-open="kaiwa" type="button">
+        <div>
+          <div class="module-icon">話</div>
+          <h3>Kaiwa tự nguyện</h3>
+          <p>Bài cần chuẩn bị trước buổi học kế tiếp theo giáo trình bạn chọn.</p>
+        </div>
+        <div class="module-meta"><span>Chuẩn bị trước lớp</span><span class="chev">›</span></div>
+      </button>
+    </section>
+
+    <div class="notice">
+      <div>⚠️</div>
+      <div><strong>Google Calendar chưa nối vào app thật.</strong><p>Giao diện đã chuẩn bị sẵn. Bước backend tiếp theo mới làm OAuth và đọc free/busy để tự xếp lịch.</p></div>
+    </div>
+  `;
+  bindOpeners();
 }
 
-function escapeHtml(value){
-  return String(value).replace(/[&<>"']/g,ch=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;' }[ch]));
+function renderRoadmap(){
+  title.textContent='Lộ trình tuần';
+  setNav('roadmap');
+  main.innerHTML=`
+    <section class="hero">
+      <div class="hero-grid">
+        <div>
+          <strong>Tuần này: học theo lịch thật</strong>
+          <p>Buổi học trên lớp được khóa cứng. Khoảng trống còn lại dùng cho chuẩn bị trước và ôn sau buổi học.</p>
+        </div>
+        <div class="hero-stat"><b>7</b><span>ngày</span></div>
+      </div>
+    </section>
+
+    <div class="section-head">
+      <div><p class="section-kicker">TUẦN NÀY</p><h2>Lịch học + chuẩn bị</h2></div>
+      <button class="text-btn" type="button" id="calendarConnect">Kết nối Calendar</button>
+    </div>
+
+    <section class="timeline">
+      ${dayCard('Thứ 2','12/10',[
+        ['21:00','Lớp N2','Buổi học trên lớp','class'],
+        ['05:40','Chuẩn bị N2','Ôn từ vựng + ngữ pháp cần cho buổi tối','study']
+      ])}
+      ${dayCard('Thứ 3','13/10',[
+        ['20:45','Lớp Mất gốc','Buổi học trên lớp','class'],
+        ['05:50','Ôn bài hôm qua','10-15 phút active recall, không học mới','review']
+      ])}
+      ${dayCard('Thứ 4','14/10',[
+        ['18:10','N2 - đọc hiểu','Phiên học dài vì tan làm sớm','study'],
+        ['19:00','Ôn Mất gốc','Lấp các mục sai của buổi T3','review']
+      ])}
+      ${dayCard('Thứ 7','17/10',[
+        ['19:00','Kaiwa tự nguyện','Buổi học trên lớp','class'],
+        ['17:45','Chuẩn bị Kaiwa','Đọc bài + 10 từ + 3 mẫu câu','study'],
+        ['21:15','Review nhanh','Ghi lại câu giáo viên sửa','review']
+      ])}
+    </section>
+
+    <div class="notice"><div>🧠</div><div><strong>Logic sau khi nối Calendar</strong><p>App sẽ loại giờ làm, tăng ca, di chuyển, lớp học và giấc ngủ; chỉ xếp học vào free slots còn lại.</p></div></div>
+  `;
+  document.querySelector('#calendarConnect')?.addEventListener('click',()=>alert('Phần OAuth Google Calendar sẽ được làm ở bước backend tiếp theo.'));
 }
 
-function hydrateSettings(){
-  const f=document.querySelector('#settingsForm');
-  f.dailyCap.value=state.settings.dailyCap;
-  f.sessionLength.value=state.settings.sessionLength;
-  f.reviewRatio.value=state.settings.reviewRatio;
-  document.querySelector('#reviewRatioLabel').textContent=state.settings.reviewRatio+'%';
+function dayCard(day,date,items){
+  return `<article class="day-card">
+    <div class="day-head"><span class="day-title">${day}</span><span class="date-pill">${date}</span></div>
+    ${items.map(x=>`<div class="schedule-item">
+      <div class="schedule-time">${x[0]}</div>
+      <div class="schedule-body"><strong>${x[1]}</strong><p>${x[2]}</p><span class="type-chip type-${x[3]}">${x[3]==='class'?'TRÊN LỚP':x[3]==='review'?'ÔN SAU':'CHUẨN BỊ'}</span></div>
+    </div>`).join('')}
+  </article>`;
 }
 
-function openDialog(id){
-  const d=document.querySelector(id);
-  if(typeof d.showModal==='function') d.showModal();
+function renderFoundation(){
+  title.textContent='Mất gốc';
+  setNav('');
+  main.innerHTML=`
+    <div class="level-tabs">
+      <button class="level-tab ${state.level==='N5'?'active':''}" data-level="N5" type="button">N5</button>
+      <button class="level-tab ${state.level==='N4'?'active':''}" data-level="N4" type="button">N4</button>
+    </div>
+    <section class="hero">
+      <div class="hero-grid"><div><strong>${state.level} · xây lại nền</strong><p>Không học dàn hàng ngang. App theo dõi từng nhóm kiến thức để biết mục nào yếu và cần ôn lại.</p></div><div class="hero-stat"><b>${state.level==='N5'?'34%':'8%'}</b><span>tiến độ</span></div></div>
+    </section>
+    <div class="section-head"><div><p class="section-kicker">${state.level}</p><h2>Nội dung</h2></div></div>
+    <section class="category-list">
+      ${category('語','Từ vựng','Học + ôn bằng active recall',state.level==='N5'?42:9)}
+      ${category('漢','Kanji','Nhận mặt, âm đọc, từ ghép',state.level==='N5'?28:5)}
+      ${category('文','Ngữ pháp','Mẫu câu + ví dụ + lỗi thường gặp',state.level==='N5'?36:7)}
+      ${category('試','Luyện đề','Bài ngắn theo phần yếu',state.level==='N5'?18:0)}
+    </section>
+  `;
+  document.querySelectorAll('[data-level]').forEach(b=>b.addEventListener('click',()=>{state.level=b.dataset.level;renderFoundation()}));
 }
 
-document.querySelector('#addGoalBtn').addEventListener('click',()=>openDialog('#goalDialog'));
-document.querySelector('#addSlotBtn').addEventListener('click',()=>openDialog('#slotDialog'));
-document.querySelector('#openSettings').addEventListener('click',()=>openDialog('#settingsDialog'));
-document.querySelector('#rebuildPlan').addEventListener('click',renderPlan);
+function renderN2(){
+  title.textContent='N2';
+  setNav('');
+  main.innerHTML=`
+    <section class="hero"><div class="hero-grid"><div><strong>N2 · kế hoạch dài hạn</strong><p>Ưu tiên học đều, có ôn cách quãng; không để N2 lấn hết thời gian của bài gấp.</p></div><div class="hero-stat"><b>12%</b><span>tiến độ</span></div></div></section>
+    <div class="section-head"><div><p class="section-kicker">N2</p><h2>Nội dung</h2></div></div>
+    <section class="category-list">
+      ${category('語','Từ vựng','Từ theo chủ đề + từ hay nhầm',15)}
+      ${category('漢','Kanji','Kanji N2 + từ ghép thực tế',11)}
+      ${category('文','Ngữ pháp','Mẫu N2 + phân biệt sắc thái',13)}
+      ${category('読','Đọc','Đoạn ngắn → trung → dài',8)}
+      ${category('試','Luyện đề','Theo dõi lỗi và thời gian làm bài',4)}
+    </section>
+  `;
+}
 
-document.querySelectorAll('.close-dialog').forEach(btn=>btn.addEventListener('click',()=>btn.closest('dialog').close()));
+function category(icon,name,desc,pct){
+  return `<button class="category-card" type="button">
+    <span class="category-icon">${icon}</span>
+    <span><strong>${name}</strong><p>${desc}</p><span class="progress-bar"><span style="width:${pct}%"></span></span></span>
+    <span class="chev">›</span>
+  </button>`;
+}
 
-document.querySelector('#goalForm').addEventListener('submit',e=>{
-  e.preventDefault();
-  const data=new FormData(e.currentTarget);
-  const units=clamp(Number(data.get('units')),1,5000);
-  const mastered=clamp(Number(data.get('mastered')),0,units);
-  state.goals.push({
-    id:crypto.randomUUID(),
-    title:String(data.get('title')).trim(),
-    deadline:String(data.get('deadline')),
-    importance:Number(data.get('importance')),
-    units,
-    mastered,
-    difficulty:Number(data.get('difficulty')),
-    notes:String(data.get('notes')||'').trim()
-  });
-  saveState();
-  e.currentTarget.reset();
-  e.currentTarget.querySelector('[name="units"]').value=30;
-  e.currentTarget.querySelector('[name="mastered"]').value=0;
-  e.currentTarget.closest('dialog').close();
-  render();
-});
+function renderInterview(){
+  title.textContent='Luyện phỏng vấn';
+  setNav('');
+  main.innerHTML=`
+    <section class="hero"><div class="hero-grid"><div><strong>Lưu bài theo từng ngày học</strong><p>Sau mỗi buổi, nội dung ChatGPT tổng hợp sẽ được fill vào đúng ngày để bạn chỉ cần mở lại và ôn.</p></div><div class="hero-stat"><b>${state.interviewDays.length}</b><span>buổi</span></div></div></section>
+    <div class="section-head"><div><p class="section-kicker">NHẬT KÝ HỌC</p><h2>Các buổi đã học</h2></div></div>
+    <section class="lesson-list">
+      ${state.interviewDays.map(x=>`<button class="lesson-card" data-interview="${x.id}" type="button" style="text-align:left">
+        <h3>${x.label}</h3><p>${x.summary}</p>
+        <div class="lesson-tags"><span class="lesson-tag">Hội thoại</span><span class="lesson-tag">Từ vựng</span><span class="lesson-tag">Ngữ pháp</span><span class="lesson-tag">Kanji</span></div>
+      </button>`).join('')}
+    </section>
+  `;
+  document.querySelectorAll('[data-interview]').forEach(b=>b.addEventListener('click',()=>go('interview-day',{interview:b.dataset.interview})));
+}
 
-document.querySelector('#slotForm').addEventListener('submit',e=>{
-  e.preventDefault();
-  const data=new FormData(e.currentTarget);
-  const start=String(data.get('start'));
-  const end=String(data.get('end'));
-  if(timeToMin(end)<=timeToMin(start)){
-    alert('Giờ kết thúc phải sau giờ bắt đầu.');
-    return;
-  }
-  state.slots.push({
-    id:crypto.randomUUID(),
-    day:Number(data.get('day')),
-    start,
-    end,
-    energy:Number(data.get('energy'))
-  });
-  saveState();
-  e.currentTarget.closest('dialog').close();
-  render();
-});
+function renderInterviewDay(){
+  const item = state.interviewDays.find(x=>x.id===state.selectedInterview) || state.interviewDays[0];
+  title.textContent=item.label;
+  setNav('');
+  main.innerHTML=`
+    <section class="detail-block"><h3>Đoạn hội thoại</h3>${item.conversation.map(x=>`<p>• ${x}</p>`).join('')}</section>
+    <section class="detail-block"><h3>Từ vựng</h3><div class="lesson-tags">${item.vocab.map(x=>`<span class="lesson-tag">${x}</span>`).join('')}</div></section>
+    <section class="detail-block"><h3>Ngữ pháp</h3><ul class="quick-list">${item.grammar.map(x=>`<li>${x}</li>`).join('')}</ul></section>
+    <section class="detail-block"><h3>Kanji</h3><div class="lesson-tags">${item.kanji.map(x=>`<span class="lesson-tag">${x}</span>`).join('')}</div></section>
+    <section class="detail-block"><h3>Cần học lướt nhanh</h3><ul class="quick-list">${item.quick.map(x=>`<li>${x}</li>`).join('')}</ul></section>
+  `;
+}
 
-document.querySelector('#settingsForm').addEventListener('submit',e=>{
-  e.preventDefault();
-  const data=new FormData(e.currentTarget);
-  state.settings={
-    dailyCap:clamp(Number(data.get('dailyCap')),20,600),
-    sessionLength:clamp(Number(data.get('sessionLength')),10,90),
-    reviewRatio:clamp(Number(data.get('reviewRatio')),20,60)
-  };
-  saveState();
-  e.currentTarget.closest('dialog').close();
-  render();
-});
+function renderKaiwa(){
+  title.textContent='Kaiwa tự nguyện';
+  setNav('');
+  main.innerHTML=`
+    <section class="hero"><div class="hero-grid"><div><strong>Chuẩn bị trước buổi học</strong><p>Mỗi bài bám theo giáo trình bạn chọn. App chỉ kéo ra phần cần chuẩn bị cho buổi kế tiếp.</p></div><div class="hero-stat"><b>1</b><span>bài sắp tới</span></div></div></section>
+    <div class="section-head"><div><p class="section-kicker">BUỔI KẾ TIẾP</p><h2>Thứ 7 · 19:00</h2></div></div>
+    <section class="detail-block"><h3>Bài chuẩn bị</h3><p><strong>Giáo trình:</strong> Chưa gắn</p><p><strong>Chủ đề:</strong> Tự giới thiệu + nói về công việc</p></section>
+    <section class="detail-block"><h3>Trước khi đi học</h3><ul class="quick-list"><li>Đọc trước 1 đoạn hội thoại mẫu</li><li>Học 10 từ khóa</li><li>Chuẩn bị 3 câu hỏi muốn hỏi giáo viên</li><li>Nói thử 2 phút không nhìn giấy</li></ul></section>
+    <div class="notice"><div>＋</div><div><strong>Bạn sẽ cung cấp giáo trình sau.</strong><p>Khi có file, app sẽ map chương/bài → lịch Kaiwa → tự tạo phần chuẩn bị cho buổi kế tiếp.</p></div></div>
+  `;
+}
 
-document.querySelector('#settingsForm [name="reviewRatio"]').addEventListener('input',e=>{
-  document.querySelector('#reviewRatioLabel').textContent=e.target.value+'%';
-});
+function renderReview(){
+  title.textContent='Ôn hôm nay';
+  setNav('review');
+  main.innerHTML=`
+    <section class="hero"><div class="hero-grid"><div><strong>Ôn ít nhưng đúng điểm rơi</strong><p>Chỉ hiện phần sắp quên hoặc vừa sai gần đây.</p></div><div class="hero-stat"><b>18</b><span>mục cần ôn</span></div></div></section>
+    <div class="section-head"><div><p class="section-kicker">HÔM NAY</p><h2>Ưu tiên ôn</h2></div></div>
+    <section class="category-list">
+      ${category('面','Phỏng vấn','6 câu trả lời cần nói lại',62)}
+      ${category('文','N5 ngữ pháp','7 mẫu câu sắp quên',48)}
+      ${category('語','N2 từ vựng','5 từ sai gần nhất',31)}
+    </section>
+  `;
+}
 
-document.querySelector('#goalList').addEventListener('click',e=>{
-  const btn=e.target.closest('button');
-  if(!btn) return;
-  const id=btn.dataset.id;
-  const goal=state.goals.find(g=>g.id===id);
-  if(!goal) return;
-  if(btn.dataset.action==='plus') goal.mastered=Math.min(goal.units,goal.mastered+1);
-  if(btn.dataset.action==='delete') state.goals=state.goals.filter(g=>g.id!==id);
-  saveState();
-  render();
-});
+function renderProgress(){
+  title.textContent='Tiến độ';
+  setNav('progress');
+  main.innerHTML=`
+    <section class="hero"><div class="hero-grid"><div><strong>Không đo bằng số giờ ngồi học</strong><p>Đo bằng độ phủ kiến thức, mức nhớ lại và số mục thực sự đã vững.</p></div><div class="hero-stat"><b>27%</b><span>tổng thể</span></div></div></section>
+    <div class="section-head"><div><p class="section-kicker">TỔNG QUAN</p><h2>Độ phủ</h2></div></div>
+    <section class="category-list">
+      ${category('基','Mất gốc N5/N4','Nền tảng',34)}
+      ${category('N2','N2','Dài hạn',12)}
+      ${category('面','Phỏng vấn','Thực hành phản xạ',58)}
+      ${category('話','Kaiwa','Chuẩn bị trước lớp',22)}
+    </section>
+  `;
+}
 
-document.querySelector('#slotList').addEventListener('click',e=>{
-  const btn=e.target.closest('[data-slot-delete]');
-  if(!btn) return;
-  state.slots=state.slots.filter(s=>s.id!==btn.dataset.slotDelete);
-  saveState();
-  render();
-});
+function bindOpeners(){
+  document.querySelectorAll('[data-open]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.open)));
+}
 
-document.querySelector('#todayPlan').addEventListener('click',e=>{
-  const btn=e.target.closest('[data-plan-goal]');
-  if(!btn) return;
-  const goal=state.goals.find(g=>g.id===btn.dataset.planGoal);
-  if(!goal) return;
-  if(btn.dataset.planType==='new') goal.mastered=Math.min(goal.units,goal.mastered+1);
-  state.completions.push({goalId:goal.id,type:btn.dataset.planType,at:new Date().toISOString()});
-  saveState();
-  render();
-});
-
-document.querySelector('#resetData').addEventListener('click',()=>{
-  if(confirm('Xóa toàn bộ mục tiêu, lịch rảnh và tiến độ trên thiết bị này?')){
-    localStorage.removeItem(STORAGE_KEY);
-    state=structuredClone(defaults);
-    saveState();
-    document.querySelector('#settingsDialog').close();
-    render();
-  }
-});
-
-document.querySelectorAll('.nav-item').forEach(btn=>btn.addEventListener('click',()=>{
-  document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active'));
-  btn.classList.add('active');
-  const view=btn.dataset.view;
-  const target=view==='home'?document.querySelector('#todayPlan')
-    :view==='goals'?document.querySelector('#goalList')
-    :view==='calendar'?document.querySelector('#slotList')
-    :document.querySelector('.hero-card');
-  target?.scrollIntoView({behavior:'smooth',block:'start'});
-}));
+backBtn.addEventListener('click',()=>go(state.page==='interview-day'?'interview':'home'));
+document.querySelector('#settingsBtn').addEventListener('click',()=>document.querySelector('#settingsDialog').showModal());
+document.querySelectorAll('.nav-btn').forEach(b=>b.addEventListener('click',()=>go(b.dataset.nav)));
 
 render();
