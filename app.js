@@ -1,22 +1,10 @@
-const GOOGLE_CLIENT_ID = '1073381001843-1jsn6tu2rnrl6umh9lml20q6c91jccf7.apps.googleusercontent.com';
-const GOOGLE_CALENDAR_SCOPE = 'https://www.googleapis.com/auth/calendar.readonly';
-const CALENDAR_CACHE_KEY = 'japanStudy.calendarCache.v1';
+const ROADMAP = window.JAPAN_STUDY_ROADMAP_DATA || {days:[],principles:[],generatedAt:null,generatedBy:'ChatGPT'};
 
 const state = {
   page:'home',
   previous:'home',
   level:'N5',
   selectedInterview:null,
-  calendar:{
-    tokenClient:null,
-    accessToken:null,
-    connected:false,
-    loading:false,
-    error:'',
-    calendars:[],
-    events:[],
-    lastSync:null
-  },
   interviewDays:[
     {
       id:'2026-10-07',
@@ -98,7 +86,7 @@ function renderHome(){
           <h3>Lộ trình</h3>
           <p>Lịch tuần, giờ rảnh, buổi học trên lớp và việc cần chuẩn bị cho ngày hôm sau.</p>
         </div>
-        <div class="module-meta"><span>Google Calendar + AI planner</span><span class="chev">›</span></div>
+        <div class="module-meta"><span>ChatGPT bot + Calendar</span><span class="chev">›</span></div>
       </button>
 
       <button class="module-card" data-open="foundation" type="button">
@@ -139,398 +127,87 @@ function renderHome(){
     </section>
 
     <div class="notice">
-      <div>⚠️</div>
-      <div><strong>Google Calendar chưa nối vào app thật.</strong><p>Giao diện đã chuẩn bị sẵn. Bước backend tiếp theo mới làm OAuth và đọc free/busy để tự xếp lịch.</p></div>
+      <div>🤖</div>
+      <div><strong>Lộ trình do ChatGPT cập nhật.</strong><p>App không cần giữ đăng nhập Google. ChatGPT đọc lịch, tối ưu kế hoạch rồi cập nhật dữ liệu chung để mọi thiết bị thấy cùng một lộ trình.</p></div>
     </div>
   `;
   bindOpeners();
 }
 
 
-function loadCalendarCache(){
-  try{
-    const cached=JSON.parse(sessionStorage.getItem(CALENDAR_CACHE_KEY));
-    if(!cached) return;
-    state.calendar.calendars=Array.isArray(cached.calendars)?cached.calendars:[];
-    state.calendar.events=Array.isArray(cached.events)?cached.events:[];
-    state.calendar.lastSync=cached.lastSync||null;
-    state.calendar.connected=state.calendar.events.length>0 || state.calendar.calendars.length>0;
-  }catch{}
-}
-
-function saveCalendarCache(){
-  sessionStorage.setItem(CALENDAR_CACHE_KEY,JSON.stringify({
-    calendars:state.calendar.calendars,
-    events:state.calendar.events,
-    lastSync:state.calendar.lastSync
-  }));
-}
-
-function ensureGoogleIdentity(){
-  return new Promise((resolve,reject)=>{
-    if(window.google?.accounts?.oauth2) return resolve();
-    const existing=document.querySelector('script[data-google-identity]');
-    if(existing){
-      existing.addEventListener('load',()=>resolve(),{once:true});
-      existing.addEventListener('error',()=>reject(new Error('Không tải được Google Identity Services.')),{once:true});
-      return;
-    }
-    const script=document.createElement('script');
-    script.src='https://accounts.google.com/gsi/client';
-    script.async=true;
-    script.defer=true;
-    script.dataset.googleIdentity='true';
-    script.onload=()=>resolve();
-    script.onerror=()=>reject(new Error('Không tải được Google Identity Services.'));
-    document.head.appendChild(script);
-  });
-}
-
-async function connectGoogleCalendar(){
-  state.calendar.loading=true;
-  state.calendar.error='';
-  renderRoadmap();
-  try{
-    await ensureGoogleIdentity();
-    if(!state.calendar.tokenClient){
-      state.calendar.tokenClient=google.accounts.oauth2.initTokenClient({
-        client_id:GOOGLE_CLIENT_ID,
-        scope:GOOGLE_CALENDAR_SCOPE,
-        callback:async response=>{
-          if(response.error){
-            state.calendar.loading=false;
-            state.calendar.error=response.error;
-            renderRoadmap();
-            return;
-          }
-          state.calendar.accessToken=response.access_token;
-          await syncGoogleCalendar();
-        }
-      });
-    }
-    state.calendar.tokenClient.requestAccessToken({
-      prompt:state.calendar.accessToken?'':'consent'
-    });
-  }catch(error){
-    state.calendar.loading=false;
-    state.calendar.error=error.message||'Không thể kết nối Google Calendar.';
-    renderRoadmap();
-  }
-}
-
-async function googleApi(path){
-  if(!state.calendar.accessToken) throw new Error('Chưa có quyền truy cập Google Calendar.');
-  const response=await fetch('https://www.googleapis.com/calendar/v3'+path,{
-    headers:{Authorization:'Bearer '+state.calendar.accessToken}
-  });
-  if(response.status===401){
-    state.calendar.accessToken=null;
-    throw new Error('Phiên Google đã hết hạn. Hãy kết nối lại Calendar.');
-  }
-  if(!response.ok){
-    let detail='';
-    try{detail=(await response.json())?.error?.message||'';}catch{}
-    throw new Error(detail||('Google Calendar API lỗi '+response.status));
-  }
-  return response.json();
-}
-
-async function listAllCalendars(){
-  const all=[];
-  let pageToken='';
-  do{
-    const qs=new URLSearchParams({maxResults:'250'});
-    if(pageToken) qs.set('pageToken',pageToken);
-    const data=await googleApi('/users/me/calendarList?'+qs.toString());
-    all.push(...(data.items||[]));
-    pageToken=data.nextPageToken||'';
-  }while(pageToken);
-  return all.filter(c=>c.primary || c.selected!==false);
-}
-
-async function listCalendarEvents(calendarId,timeMin,timeMax){
-  const all=[];
-  let pageToken='';
-  do{
-    const qs=new URLSearchParams({
-      singleEvents:'true',
-      orderBy:'startTime',
-      timeMin,
-      timeMax,
-      maxResults:'2500'
-    });
-    if(pageToken) qs.set('pageToken',pageToken);
-    const data=await googleApi('/calendars/'+encodeURIComponent(calendarId)+'/events?'+qs.toString());
-    all.push(...(data.items||[]));
-    pageToken=data.nextPageToken||'';
-  }while(pageToken);
-  return all;
-}
-
-async function syncGoogleCalendar(){
-  state.calendar.loading=true;
-  state.calendar.error='';
-  renderRoadmap();
-  try{
-    const calendars=await listAllCalendars();
-    const now=new Date();
-    const from=new Date(now.getFullYear(),0,1,0,0,0);
-    const to=new Date(now.getFullYear()+1,11,31,23,59,59);
-    const batches=await Promise.all(calendars.map(async cal=>{
-      try{
-        const events=await listCalendarEvents(cal.id,from.toISOString(),to.toISOString());
-        return events.map(event=>normalizeCalendarEvent(event,cal));
-      }catch(error){
-        return [];
-      }
-    }));
-    state.calendar.calendars=calendars.map(c=>({id:c.id,summary:c.summary,primary:!!c.primary}));
-    state.calendar.events=batches.flat().filter(e=>e.status!=='cancelled').sort((a,b)=>a.start.localeCompare(b.start));
-    state.calendar.lastSync=new Date().toISOString();
-    state.calendar.connected=true;
-    state.calendar.loading=false;
-    saveCalendarCache();
-    renderRoadmap();
-  }catch(error){
-    state.calendar.loading=false;
-    state.calendar.error=error.message||'Không thể đọc Calendar.';
-    renderRoadmap();
-  }
-}
-
-function normalizeCalendarEvent(event,calendar){
-  const allDay=!!event.start?.date;
-  const start=allDay?event.start.date:event.start?.dateTime;
-  const end=allDay?event.end?.date:event.end?.dateTime;
-  return {
-    id:event.id,
-    calendarId:calendar.id,
-    calendarName:calendar.summary||'Calendar',
-    summary:event.summary||'(Không có tiêu đề)',
-    description:event.description||'',
-    location:event.location||'',
-    start:start||'',
-    end:end||start||'',
-    allDay,
-    status:event.status||'confirmed',
-    transparency:event.transparency||'opaque'
-  };
-}
-
-function eventDate(value,allDay){
-  if(!value) return new Date(NaN);
-  if(allDay && /^\d{4}-\d{2}-\d{2}$/.test(value)){
-    const [y,m,d]=value.split('-').map(Number);
-    return new Date(y,m-1,d);
-  }
-  return new Date(value);
-}
-
-function startOfLocalDay(date){
-  const d=new Date(date);
-  d.setHours(0,0,0,0);
-  return d;
-}
-
-function addDays(date,n){
-  const d=new Date(date);
-  d.setDate(d.getDate()+n);
-  return d;
-}
-
-function overlapsDay(event,day){
-  const start=eventDate(event.start,event.allDay);
-  const end=eventDate(event.end,event.allDay);
-  const dayStart=startOfLocalDay(day);
-  const dayEnd=addDays(dayStart,1);
-  return start<dayEnd && end>dayStart;
-}
-
-function formatClock(date){
-  return date.toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit',hour12:false});
-}
-
-function formatDayLabel(date){
-  const weekdays=['Chủ nhật','Thứ 2','Thứ 3','Thứ 4','Thứ 5','Thứ 6','Thứ 7'];
-  return weekdays[date.getDay()];
-}
-
-function formatDateShort(date){
-  return String(date.getDate()).padStart(2,'0')+'/'+String(date.getMonth()+1).padStart(2,'0');
-}
-
-function isStudyClass(event){
-  return /(n2|n5|n4|mất gốc|kaiwa|会話|日本語|phỏng vấn|面接|lớp|class)/i.test(event.summary||'');
-}
-
-function getBusyRangesForDay(day){
-  const dayStart=startOfLocalDay(day);
-  const dayEnd=addDays(dayStart,1);
-  return state.calendar.events
-    .filter(e=>e.transparency!=='transparent' && overlapsDay(e,day))
-    .map(e=>{
-      if(e.allDay) return {start:new Date(dayStart),end:new Date(dayEnd)};
-      const s=eventDate(e.start,false), en=eventDate(e.end,false);
-      return {
-        start:new Date(Math.max(s.getTime(),dayStart.getTime())),
-        end:new Date(Math.min(en.getTime(),dayEnd.getTime()))
-      };
-    })
-    .sort((a,b)=>a.start-b.start);
-}
-
-function getFreeSlotsForDay(day,minMinutes=20){
-  const windows=[
-    [5,0,8,0],
-    [17,0,23,30]
-  ];
-  const busy=getBusyRangesForDay(day);
-  const free=[];
-  for(const [sh,sm,eh,em] of windows){
-    const start=startOfLocalDay(day); start.setHours(sh,sm,0,0);
-    const end=startOfLocalDay(day); end.setHours(eh,em,0,0);
-    let cursor=new Date(start);
-    for(const range of busy){
-      if(range.end<=start || range.start>=end) continue;
-      const rs=new Date(Math.max(range.start.getTime(),start.getTime()));
-      const re=new Date(Math.min(range.end.getTime(),end.getTime()));
-      const bufferedStart=new Date(rs.getTime()-15*60000);
-      const bufferedEnd=new Date(re.getTime()+15*60000);
-      if(bufferedStart>cursor){
-        const mins=(bufferedStart-cursor)/60000;
-        if(mins>=minMinutes) free.push({start:new Date(cursor),end:new Date(bufferedStart),minutes:Math.floor(mins)});
-      }
-      if(bufferedEnd>cursor) cursor=new Date(bufferedEnd);
-    }
-    if(cursor<end){
-      const mins=(end-cursor)/60000;
-      if(mins>=minMinutes) free.push({start:new Date(cursor),end:new Date(end),minutes:Math.floor(mins)});
-    }
-  }
-  return free;
-}
-
-function suggestedBlocksForDay(day){
-  const events=state.calendar.events.filter(e=>!e.allDay && overlapsDay(e,day));
-  const classes=events.filter(isStudyClass);
-  const free=getFreeSlotsForDay(day,15);
-  const suggestions=[];
-  for(const cls of classes){
-    const classStart=eventDate(cls.start,false);
-    const classEnd=eventDate(cls.end,false);
-    const before=free.filter(s=>s.end<=classStart && s.minutes>=20).sort((a,b)=>b.end-a.end)[0];
-    if(before){
-      const mins=Math.min(30,before.minutes);
-      suggestions.push({
-        start:new Date(before.end.getTime()-mins*60000),
-        end:new Date(before.end),
-        title:'Chuẩn bị: '+cls.summary,
-        detail:'Xem trước bài, từ khóa và phần cần hỏi trong buổi học.',
-        type:'study'
-      });
-    }
-    const after=free.filter(s=>s.start>=classEnd && s.start-classEnd<=3*3600000 && s.minutes>=15).sort((a,b)=>a.start-b.start)[0];
-    if(after){
-      const mins=Math.min(20,after.minutes);
-      suggestions.push({
-        start:new Date(after.start),
-        end:new Date(after.start.getTime()+mins*60000),
-        title:'Ôn sau: '+cls.summary,
-        detail:'Active recall: ghi lại phần giáo viên sửa và mục chưa chắc.',
-        type:'review'
-      });
-    }
-  }
-  return suggestions.sort((a,b)=>a.start-b.start);
-}
-
-function renderCalendarWeek(){
-  const today=startOfLocalDay(new Date());
-  const days=Array.from({length:7},(_,i)=>addDays(today,i));
-  return days.map(day=>{
-    const events=state.calendar.events
-      .filter(e=>overlapsDay(e,day))
-      .sort((a,b)=>eventDate(a.start,a.allDay)-eventDate(b.start,b.allDay));
-    const suggestions=suggestedBlocksForDay(day);
-    const combined=[
-      ...events.map(e=>({
-        start:e.allDay?null:eventDate(e.start,false),
-        title:e.summary,
-        detail:e.allDay?'Cả ngày':(e.calendarName||'Google Calendar'),
-        type:isStudyClass(e)?'class':'busy',
-        allDay:e.allDay
-      })),
-      ...suggestions
-    ].sort((a,b)=>{
-      if(a.allDay && !b.allDay) return -1;
-      if(!a.allDay && b.allDay) return 1;
-      return (a.start?.getTime()||0)-(b.start?.getTime()||0);
-    });
-    const free=getFreeSlotsForDay(day,30);
-    const freeHint=free.length?free.slice(0,2).map(s=>formatClock(s.start)+'–'+formatClock(s.end)).join(' · '):'Không có slot ≥30 phút';
-    return `<article class="day-card">
-      <div class="day-head">
-        <span class="day-title">${formatDayLabel(day)}</span>
-        <span class="date-pill">${formatDateShort(day)}</span>
-      </div>
-      ${combined.length?combined.map(item=>`<div class="schedule-item">
-        <div class="schedule-time">${item.allDay?'Cả ngày':formatClock(item.start)}</div>
-        <div class="schedule-body">
-          <strong>${escapeText(item.title)}</strong>
-          <p>${escapeText(item.detail||'')}</p>
-          <span class="type-chip ${item.type==='class'?'type-class':item.type==='review'?'type-review':item.type==='study'?'type-study':'type-busy'}">${item.type==='class'?'TRÊN LỚP':item.type==='review'?'ÔN SAU':item.type==='study'?'CHUẨN BỊ':'LỊCH BẬN'}</span>
-        </div>
-      </div>`).join(''):`<div class="empty"><strong>Không có lịch bận</strong><p>Ngày này Calendar chưa có event.</p></div>`}
-      <div class="free-hint"><strong>Khoảng rảnh gợi ý:</strong> ${freeHint}</div>
-    </article>`;
-  }).join('');
-}
 
 function escapeText(value){
   return String(value??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[ch]));
+}
+
+function typeLabel(type){
+  return type==='class'?'TRÊN LỚP':type==='review'?'ÔN LẠI':type==='study'?'AI XẾP':'LỊCH BẬN';
+}
+
+function typeClass(type){
+  return type==='class'?'type-class':type==='review'?'type-review':type==='study'?'type-study':'type-busy';
+}
+
+function renderBotRoadmapDays(){
+  if(!ROADMAP.days?.length){
+    return '<div class="empty"><strong>Chưa có lộ trình</strong><p>Yêu cầu ChatGPT cập nhật app để tạo lịch mới.</p></div>';
+  }
+  return ROADMAP.days.map(day=>`<article class="day-card ${day.conflict?'day-conflict':''}">
+    <div class="day-head">
+      <span class="day-title">${escapeText(day.label)}</span>
+      <span class="date-pill">${escapeText(day.date.slice(8,10)+'/'+day.date.slice(5,7))}</span>
+    </div>
+    ${day.conflict?'<div class="conflict-banner">⚠ Có lịch học bị chồng giờ — cần bạn chọn ưu tiên.</div>':''}
+    ${day.items.map(item=>`<div class="schedule-item">
+      <div class="schedule-time">${escapeText(item.start)}</div>
+      <div class="schedule-body">
+        <strong>${escapeText(item.title)}</strong>
+        <p>${escapeText(item.detail||'')}</p>
+        <span class="type-chip ${typeClass(item.type)}">${typeLabel(item.type)}</span>
+      </div>
+    </div>`).join('')}
+    ${day.note?`<div class="day-note"><strong>AI ghi chú:</strong> ${escapeText(day.note)}</div>`:''}
+  </article>`).join('');
 }
 
 function renderRoadmap(){
   title.textContent='Lộ trình tuần';
   setNav('roadmap');
 
-  const syncText=state.calendar.lastSync
-    ? new Date(state.calendar.lastSync).toLocaleString('vi-VN',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})
-    : '';
+  const updated=ROADMAP.generatedAt
+    ? new Date(ROADMAP.generatedAt).toLocaleString('vi-VN',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})
+    : 'chưa có';
 
   main.innerHTML=`
     <section class="hero">
       <div class="hero-grid">
         <div>
-          <strong>${state.calendar.connected?'Lịch thật từ Google Calendar':'Kết nối lịch để app tự xếp giờ học'}</strong>
-          <p>${state.calendar.connected?'App đọc lịch bận, tìm free slots và chèn chuẩn bị/ôn quanh các buổi học nhận diện được.':'Sau khi cấp quyền chỉ đọc, app sẽ lấy lịch của bạn và tự dựng lộ trình theo tuần.'}</p>
+          <strong>Lộ trình do ChatGPT quản lý</strong>
+          <p>ChatGPT đọc Google Calendar bằng connector, phát hiện lịch bận/xung đột rồi cập nhật kế hoạch chung lên GitHub Pages.</p>
         </div>
-        <div class="hero-stat"><b>${state.calendar.connected?state.calendar.events.length:'0'}</b><span>${state.calendar.connected?'event đã tải':'event'}</span></div>
+        <div class="hero-stat"><b>${ROADMAP.days?.length||0}</b><span>ngày đã xếp</span></div>
       </div>
     </section>
 
     <div class="section-head">
       <div>
-        <p class="section-kicker">GOOGLE CALENDAR</p>
-        <h2>${state.calendar.connected?'7 ngày tới':'Chưa kết nối'}</h2>
+        <p class="section-kicker">BOT SYNC</p>
+        <h2>${escapeText(ROADMAP.period?.from||'')} → ${escapeText(ROADMAP.period?.to||'')}</h2>
       </div>
-      <button class="text-btn" type="button" id="calendarConnect">${state.calendar.loading?'Đang tải…':state.calendar.connected?'Đồng bộ lại':'Kết nối Calendar'}</button>
+      <span class="status-chip synced">CHATGPT</span>
     </div>
 
-    ${state.calendar.error?`<div class="notice"><div>⚠️</div><div><strong>Không đọc được Calendar</strong><p>${escapeText(state.calendar.error)}</p></div></div>`:''}
-    ${state.calendar.connected&&syncText?`<div class="sync-line">Đồng bộ gần nhất: <strong>${syncText}</strong> · ${state.calendar.calendars.length} calendar</div>`:''}
+    <div class="sync-line">Cập nhật gần nhất: <strong>${updated}</strong> · nguồn: ${escapeText(ROADMAP.source||'Google Calendar')}</div>
 
     <section class="timeline">
-      ${state.calendar.connected?renderCalendarWeek():`<div class="empty"><strong>Chưa có dữ liệu lịch thật</strong><p>Bấm “Kết nối Calendar” → chọn tài khoản Google → Allow quyền chỉ đọc Calendar.</p></div>`}
+      ${renderBotRoadmapDays()}
     </section>
 
     <div class="notice">
       <div>🧠</div>
-      <div><strong>Planner hiện dùng rule an toàn</strong><p>Không xếp trùng event, chừa buffer 15 phút quanh lịch bận, ưu tiên chuẩn bị trước và review sau lớp. Nội dung cụ thể của từng buổi học bạn sẽ cung cấp sau.</p></div>
+      <div><strong>Nguyên tắc planner</strong><p>${escapeText((ROADMAP.principles||[]).join(' · '))}</p></div>
     </div>
   `;
-
-  document.querySelector('#calendarConnect')?.addEventListener('click',connectGoogleCalendar);
 }
 
 function dayCard(day,date,items){
@@ -667,5 +344,4 @@ backBtn.addEventListener('click',()=>go(state.page==='interview-day'?'interview'
 document.querySelector('#settingsBtn').addEventListener('click',()=>document.querySelector('#settingsDialog').showModal());
 document.querySelectorAll('.nav-btn').forEach(b=>b.addEventListener('click',()=>go(b.dataset.nav)));
 
-loadCalendarCache();
 render();
