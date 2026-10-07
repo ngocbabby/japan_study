@@ -102,3 +102,48 @@ dialog::backdrop{background:rgba(25,22,14,.45);backdrop-filter:blur(3px)}
 .hero-card,.plan-card,.goal-card,.slot-row,.insight-card,.dialog-card,.empty-card{color:var(--ink)}
 .primary-small{background:#202020;color:#fff}
 .icon-btn{color:#202020}
+
+/* Force stable light rendering even when the browser/extension prefers dark mode. */
+html, body, .app-shell {
+  color-scheme: only light !important;
+  forced-color-adjust: none;
+  background-color: #fffdf7 !important;
+  color: #202020 !important;
+}
+.topbar, main, .section-head {
+  color: #202020 !important;
+}
+.hero-card {
+  background: #ffe788 !important;
+  color: #202020 !important;
+}
+.hero-card h1, .hero-card h2, .hero-card strong, .hero-card p,
+.section-head h1, .section-head h2,
+.plan-card h1, .plan-card h2, .plan-card h3, .plan-card strong,
+.goal-card h1, .goal-card h2, .goal-card h3, .goal-card strong,
+.slot-row strong, .insight-card strong {
+  color: #202020 !important;
+}
+.plan-card, .goal-card, .slot-row, .dialog-card, .empty-card {
+  background-color: #ffffff !important;
+  color: #202020 !important;
+}
+.plan-main p, .goal-card p, .goal-meta, .energy {
+  color: #686158 !important;
+}
+.plan-time {
+  background-color: #fff4c8 !important;
+  color: #202020 !important;
+}
+.insight-card {
+  background-color: #fff7d7 !important;
+  color: #202020 !important;
+}
+.primary-small {
+  background-color: #202020 !important;
+  color: #ffffff !important;
+}
+.bottom-nav {
+  background: rgba(255,253,247,.98) !important;
+  color: #202020 !important;
+}
