@@ -340,7 +340,23 @@ function bindOpeners(){
   document.querySelectorAll('[data-open]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.open)));
 }
 
-backBtn.addEventListener('click',()=>go(state.page==='interview-day'?'interview':'home'));
+backBtn.addEventListener('click',()=>{
+  if(state.page==='foundation' && typeof foundationUI!=='undefined' && foundationUI.view!=='root'){
+    if(foundationUI.view==='study'){ exitFoundationStudy(); return; }
+    if(foundationUI.view==='lesson-detail'){
+      foundationUI.view='category';
+      foundationUI.tab='lessons';
+      renderFoundation();
+      return;
+    }
+    if(foundationUI.view==='category'){
+      foundationUI.view='root';
+      renderFoundation();
+      return;
+    }
+  }
+  go(state.page==='interview-day'?'interview':'home');
+});
 document.querySelector('#settingsBtn').addEventListener('click',()=>document.querySelector('#settingsDialog').showModal());
 document.querySelectorAll('.nav-btn').forEach(b=>b.addEventListener('click',()=>go(b.dataset.nav)));
 
