@@ -562,7 +562,7 @@ function n2MonthStats(rows){
 
 function renderN2ReadingList(){
   title.textContent='N2 · Đọc';
-  const lessons=n2Data().readingLessons||[];
+  const lessons=n2Data().readingPractice||[];
   const month=n2MonthStats(n2ReadingScores());
   main.innerHTML=`
     <button class="foundation-inline-back" data-n2-root type="button">← N2</button>
@@ -572,14 +572,14 @@ function renderN2ReadingList(){
     <section class="lesson-list">${lessons.map(x=>`
       <button class="lesson-card n2-reading-card" data-n2-reading-id="${x.id}" type="button">
         <div class="lesson-card-top"><div><p class="section-kicker">${escapeText(x.exercise)}</p><h3>${escapeText(x.label)}</h3></div><span class="lesson-count">${x.text?'Sẵn sàng':'Chưa nhập đoạn'}</span></div>
-        <p>${escapeText(x.source||'')}</p>
+        <p>${escapeText(x.source||'')} · ${x.verified?'Đã đối chiếu trang sách':'Chưa đối chiếu toàn bộ trang sách'}</p>
       </button>`).join('')}</section>
   `;
   document.querySelector('[data-n2-root]').addEventListener('click',()=>{n2UI.view='root';renderN2()});
   document.querySelectorAll('[data-n2-reading-id]').forEach(b=>b.addEventListener('click',()=>{n2UI.readingId=b.dataset.n2ReadingId;n2UI.view='reading-detail';renderN2()}));
 }
 
-function n2CurrentReading(){return (n2Data().readingLessons||[]).find(x=>x.id===n2UI.readingId)}
+function n2CurrentReading(){return (n2Data().readingPractice||[]).find(x=>x.id===n2UI.readingId)}
 
 function renderN2ReadingDetail(){
   const lesson=n2CurrentReading();if(!lesson){n2UI.view='reading';return renderN2ReadingList()}
