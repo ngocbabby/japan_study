@@ -875,3 +875,6 @@ backBtn.addEventListener('click',e=>{
   if(n2UI.view==='reading'){n2UI.view='root';renderN2();return}
 },true);
 window.addEventListener('pagehide',()=>n2StopReadingSpeech());
+document.querySelectorAll('.bottom-nav [data-nav]').forEach(button=>button.addEventListener('click',()=>{
+  if(n2ReadingVoice.status!=='stopped')n2StopReadingSpeech();
+}));
