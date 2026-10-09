@@ -204,7 +204,7 @@ function renderN2LessonDetail(){
 
 function n2KnowledgeRow(item,i){
   if(n2UI.type==='vocab'){
-    return `<article class="knowledge-row"><div class="knowledge-index">${item.n||i+1}</div><div class="knowledge-main"><strong class="jp-term">${escapeText(item.term)}</strong><span class="reading">${escapeText(item.reading||'')}</span><p>${escapeText(item.meaning||'')}</p></div><button class="audio-btn" data-speak="${escapeText(item.term)}" type="button">🔊</button></article>`;
+    return `<article class="knowledge-row"><div class="knowledge-index">${item.n||i+1}</div><div class="knowledge-main"><strong class="jp-term">${escapeText(item.term)}</strong><span class="reading">${escapeText(item.reading||'')}</span><p>${escapeText(item.meaning||'')}</p></div><button class="audio-btn" data-speak="${escapeText(item.reading||item.term)}" type="button">🔊</button></article>`;
   }
   if(n2UI.type==='kanji'){
     return `<article class="knowledge-row"><div class="kanji-char">${escapeText(item.char)}</div><div class="knowledge-main"><strong>${escapeText(item.meaning||'')}</strong><span class="reading">${escapeText(item.reading||'')}</span><p>${escapeText(item.words||'')}</p></div><button class="audio-btn" data-speak="${escapeText((item.words||item.char).split('・')[0])}" type="button">🔊</button></article>`;
@@ -292,7 +292,7 @@ function n2FlashFront(item){
 }
 
 function n2FlashBack(item){
-  if(n2UI.type==='vocab') return `<p class="section-kicker">ĐÁP ÁN</p><div class="flash-answer">${escapeText(item.meaning)}</div><div class="flash-reading">${escapeText(item.term)} · ${escapeText(item.reading||'')}</div><button class="audio-inline" data-speak="${escapeText(item.term)}" type="button">🔊 Nghe lại</button>`;
+  if(n2UI.type==='vocab') return `<p class="section-kicker">ĐÁP ÁN</p><div class="flash-answer">${escapeText(item.meaning)}</div><div class="flash-reading">${escapeText(item.term)} · ${escapeText(item.reading||'')}</div><button class="audio-inline" data-speak="${escapeText(item.reading||item.term)}" type="button">🔊 Nghe lại</button>`;
   if(n2UI.type==='kanji') return `<p class="section-kicker">ĐÁP ÁN</p><div class="flash-answer">${escapeText(item.meaning)}</div><div class="flash-reading">${escapeText(item.reading||'')}</div><p>${escapeText(item.words||'')}</p><button class="audio-inline" data-speak="${escapeText((item.words||item.char).split('・')[0])}" type="button">🔊 Nghe lại</button>`;
   return `<p class="section-kicker">Ý NGHĨA + NGỮ CẢNH</p><div class="flash-answer">${escapeText(item.meaning)}</div><p>${escapeText(item.structure||'')}</p><p class="jp-example">${escapeText(item.example||'')}</p><button class="audio-inline" data-speak="${escapeText(item.example||item.pattern)}" type="button">🔊 Nghe ví dụ</button>`;
 }
@@ -360,7 +360,7 @@ function n2FlipNow(item){
   document.querySelector('.flash-back')?.classList.remove('hidden-card');
   const pauseButton=document.querySelector('[data-n2-pause]');
   if(pauseButton)pauseButton.textContent='Tạm dừng';
-  if(n2UI.type==='vocab') speakJapanese(item.term);
+  if(n2UI.type==='vocab') speakJapanese(item.reading||item.term);
   else if(n2UI.type==='kanji') speakJapanese((item.words||item.char).split('・')[0]);
   else speakJapanese(item.example||item.pattern);
   n2ScheduleFlashStep(item,n2FlashDurations().back,'back');
@@ -418,7 +418,7 @@ function n2BuildQuestion(item,index){
     const correct=reverse?item.term:item.meaning;
     const pool=all.filter(x=>x.id!==item.id).map(x=>reverse?x.term:x.meaning).filter(Boolean);
     const options=n2MakeOptions(correct,pool);
-    return {kicker:reverse?'NGHĨA → TỪ':'TỪ → NGHĨA',prompt:reverse?item.meaning:item.term,sub:reverse?'Chọn từ đúng':item.reading,speak:item.term,options,correctIndex:options.indexOf(correct)};
+    return {kicker:reverse?'NGHĨA → TỪ':'TỪ → NGHĨA',prompt:reverse?item.meaning:item.term,sub:reverse?'Chọn từ đúng':item.reading,speak:item.reading||item.term,options,correctIndex:options.indexOf(correct)};
   }
   if(n2UI.type==='kanji'){
     const reverse=n2UI.session.phase==='quiz-weak' && n2UI.session.round%2===0;
