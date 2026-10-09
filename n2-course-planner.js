@@ -116,90 +116,85 @@ function n2PlanEventsHtml(e){
  return '<article class="n2-plan-event"><span class="n2-plan-date">'+e.date.slice(8)+'/'+e.date.slice(5,7)+'</span><div><strong>'+n2PlanEscape(e.label)+' · '+e.start+'–'+e.end+'</strong><p>'+n2PlanEscape(e.detail||'')+'</p></div></article>';
 }
 function renderN2Planner(){
- title.textContent='N2 · Lịch & ưu tiên';
- const p=n2PlanLoad(),today=n2PlanToday(),next=n2PlanPrioritize(p,today);
- const cancellations=n2PlanChanges(p);
- const source=window.N2_CLASS_SOURCE, actual=source.shubAssignments||[], teacher=source.teacherMessages?.[0], estimate=source.estimatedLesson;
- const target=next.next,lessons=window.N2_CLASS_SOURCE.lessons;
- const upcoming=n2PlanSessions(p,today,32).slice(0,11);
- const tomorrowEvents=n2PlanClasses(n2PlanShift(today,1),1);
- const conflicts=[];
- for(let i=0;i<tomorrowEvents.length;i++)for(let j=i+1;j<tomorrowEvents.length;j++){
-  const a=tomorrowEvents[i],b=tomorrowEvents[j];
-  if(a.start<b.end&&b.start<a.end)conflicts.push(a.label+' ↔ '+b.label);
- }
- const all=lessons.filter(x=>x.number>=1&&x.number<=55);
- const lessonEstimate=estimate && lessons[estimate.anchorSession-1];
- const moveDefault=cancellations.some(c=>c.from===today)?n2PlanNextClassDate(today):today;
-
- const realPending=[...(teacher?.items||[]),...actual].filter(t=>!p.done[t.id]);
- const options=all.map(x=>'<option value="'+x.number+'" '+(p.anchorSession===x.number?'selected':'')+'>Buổi '+x.number+' · '+n2PlanEscape(x.contents.slice(0,2).join(', ').slice(0,72))+'</option>').join('');
- let html='<button class="foundation-inline-back" data-n2-root>← N2</button>'+
- '<section class="hero n2-hero"><strong>🗓️ Học gì trước buổi tới?</strong><p>Ưu tiên chuẩn bị cho lớp gần nhất. Chỉ khi xong việc ưu tiên mới chuyển sang bài tồn đọng.</p></section>'+
- '<div class="n2-plan-panel"><h3>📍 Lịch học thực tế + giáo trình tham khảo</h3><p>SHub và lời Sensei là dữ liệu bài giao thực tế. KOSEI 55 buổi chỉ là kế hoạch dự kiến, không tự coi là bài đã giao.</p>'+
- '<div class="n2-plan-inputs"><label>Ngày của buổi đã xác nhận<input id="planAnchorDate" type="date" value="'+n2PlanEscape(p.anchorDate)+'"></label>'+
- '<label>Buổi trong giáo trình<select id="planAnchorSession">'+options+'</select></label></div>'+
- '<button class="secondary-btn" id="planSaveAnchor">💾 Lưu mốc lớp N2</button>'+
- '<p class="n2-plan-hint">'+(p.anchorDate?(p.confirmed?'✅ Đã xác nhận: ':'⚠️ Mốc dự kiến, chưa xác nhận: ')+'buổi '+p.anchorSession+' ngày '+p.anchorDate+'. Lịch sau đây được suy ra theo T2–T4–T6; nghỉ/đổi buổi phải cập nhật.':'⚠️ Chưa chọn buổi thực tế. App chưa tự đoán bạn đang học đến đâu.')+'</p></div>';
- html+='<div class="n2-plan-priority"><span class="n2-plan-pill">📌 ƯU TIÊN TỪ NGUỒN THỰC TẾ</span><h3>🧑‍🏫 Sensei thông báo (Zalo 06/10)</h3><p class="n2-plan-hint">Ảnh ghi “kiểm tra buổi sau” nhưng KHÔNG xác định ngày kiểm tra. Có thể đã kiểm tra trong buổi trước hôm nay. Đánh dấu “Đã kiểm tra” khi bạn xác nhận, không coi đây là bài tối nay.</p>'+
- (teacher?teacher.items.map(t=>'<div class="n2-plan-task"><label class="n2-plan-check"><input data-n2-plan-item="'+n2PlanEscape(t.id)+'" type="checkbox"><span>'+n2PlanEscape(t.text)+'</span></label><button class="secondary-btn" data-plan-open="'+n2PlanEscape(t.link)+'">Ôn nhanh →</button></div>').join(''):'')+'</div>';
- html+='<section class="n2-plan-panel"><h3>📝 Danh sách bài tập SHub (từ ảnh)</h3><p class="n2-plan-hint">Ảnh chưa hiện hạn nộp, trạng thái 0/19 không khẳng định bài đã làm hoặc buổi học tương ứng. Bạn có thể tự tích khi hoàn tất.</p>'+
- actual.map(t=>'<div class="n2-plan-task"><label class="n2-plan-check"><input data-n2-plan-item="'+n2PlanEscape(t.id)+'" type="checkbox"><span>'+n2PlanEscape(t.text)+'</span></label></div>').join('')+'</section>';
- if(!p.confirmed && lessonEstimate) html+='<section class="n2-plan-panel"><h3>🗓️ Tối 09/10: dự kiến buổi 6</h3><p>Bạn cho biết “chắc học buổi 6”. Chưa xác minh được với SHub, nên <strong>đang dùng mốc dự kiến</strong>.</p><p>Trong kế hoạch KOSEI, buổi 6: '+n2PlanEscape(lessonEstimate.contents.join(' · '))+'</p><button class="secondary-btn" id="planUseEstimate">Dùng buổi 6 làm mốc dự kiến</button></section>';
- html+='<section class="n2-plan-panel"><h3>📆 Dời ngày học N2</h3><p>Nếu Sensei báo nghỉ, đánh dấu ngày nghỉ. Buổi học giữ nguyên số thứ tự, tự chuyển sang ngày N2 kế tiếp; toàn bộ buổi phía sau lùi theo, không nhân đôi bài.</p>'+
- '<div class="n2-plan-inputs"><label>Ngày được nghỉ<input type="date" id="n2MoveFrom" value="'+n2PlanEscape(today)+'"></label><label>Ngày học tiếp<input type="date" id="n2MoveTo" value="'+n2PlanEscape(n2PlanShift(today,3))+'"></label></div>'+
- '<label>Lý do<input id="n2MoveReason" class="n2-plan-input" value="Sensei báo nghỉ"></label>'+
- '<button class="secondary-btn" id="n2MoveSubmit">↪ Dời buổi học</button><p id="n2MoveStatus" role="status"></p>'+
- '<h4>Những ngày đã thay đổi</h4>'+
- (cancellations.length?cancellations.map(c=>'<div class="n2-plan-task"><span><strong>⏸ '+n2PlanEscape(c.from)+'</strong> → '+n2PlanEscape(c.to)+'<br><small>'+n2PlanEscape(c.reason)+'</small></span><button data-move-undo="'+n2PlanEscape(c.id)+'" class="secondary-btn">Hoàn tác</button></div>').join(''):'<p>Chưa có buổi nghỉ.</p>')+'</section>';
- if(target){
-  html+='<div class="n2-plan-priority"><span class="n2-plan-pill">🔴 ƯU TIÊN 1 · '+(target.date===next.tomorrow?'HỌC TRƯỚC CHO NGÀY MAI':'CHUẨN BỊ BUỔI KẾ TIẾP')+'</span>'+
-  '<h2>'+n2PlanLabel(target)+'</h2><p>⚠️ '+(p.confirmed?'Mốc học do bạn xác nhận; ':'Mốc buổi học vẫn chỉ là dự đoán; ')+'nội dung KOSEI chỉ mang tính tham khảo: '+n2PlanEscape(target.lesson.contents.join(' · '))+'</p>'+
-  '<h3>① Học trước bài sẽ lên lớp</h3>'+n2PlanLinked(next.urgent)+
-  '<h3>② Bài tập cần hoàn thành trước buổi tới</h3>'+(next.due.length?n2PlanLinked(next.due):'<p>Chưa ghi nhận bài tập còn thiếu từ buổi trước.</p>')+
-  '<div class="n2-plan-lock">'+(next.needPrep?'🔒 Hoàn tất mục ưu tiên trước khi chuyển sang bài còn tồn.':'✅ Đã hoàn thành phần ưu tiên. Có thể quay lại học các bài bỏ lỡ.')+'</div></div>';
- }else html+='<div class="n2-plan-panel"><p>📍 Chọn mốc buổi học ở trên để mở đúng bài cần chuẩn bị, bài tập và ưu tiên.</p></div>';
- if(!next.needPrep && !realPending.length && next.backlog.length)html+='<section class="n2-plan-panel"><h3>🟡 Ưu tiên 2 · Bài chưa học</h3>'+n2PlanLinked(next.backlog.slice(0,16))+'</section>';
- else if((next.needPrep || realPending.length) && next.backlog.length)html+='<div class="n2-plan-muted">📦 Có '+next.backlog.length+' đầu mục từ các buổi cũ chưa đánh dấu xong; sẽ hiện sau khi hoàn tất việc ưu tiên.</div>';
- html+='<section class="n2-plan-panel"><h3>📆 Lịch sắp tới</h3><p class="n2-plan-hint">Lớp N2 T2/T4/T6 · 21:00–23:00. Lớp Mất gốc T3/T5/T7 · 20:45–22:45. Theo Google Calendar đã đối chiếu.</p>'+
- n2PlanClasses(today,13).map(e=>n2PlanEventsHtml({...e,label:e.label||'Lớp học'})).join('')+
- (conflicts.length?'<p class="n2-plan-conflict">⚠️ Ngày mai trùng lịch: '+n2PlanEscape(conflicts.join(', '))+'</p>':'')+'</section>';
- html+='<section class="n2-plan-panel"><h3>📘 55 buổi theo nguồn KOSEI</h3><p>Chọn từng buổi để xem bài học và bài tập nguồn. Không xem bài tập của buổi cũ là đã hoàn thành nếu chưa đánh dấu.</p>'+
- '<div class="n2-plan-sessions">'+all.map(l=>'<details><summary>Buổi '+l.number+' · '+n2PlanEscape(l.contents.slice(0,2).join(' · '))+'</summary>'+
- '<strong>Nội dung học:</strong><ul>'+l.contents.map(x=>'<li>'+n2PlanEscape(x)+'</li>').join('')+'</ul><strong>Bài tập về nhà:</strong><ul>'+l.homework.map(x=>'<li>'+n2PlanEscape(x)+'</li>').join('')+'</ul></details>').join('')+'</div></section>';
- html+='<section class="n2-plan-panel"><h3>🔔 Nhắc nhở</h3><p>Trang tự đổi việc ưu tiên theo ngày khi bạn mở app. Có thể bật thông báo lúc 20:00 khi trang vẫn đang mở. Đây chưa phải push nền, nên đóng ứng dụng sẽ không có lời nhắc đáng tin cậy.</p><button class="secondary-btn" id="planNotify">🔔 Bật thông báo thiết bị</button><p id="planNotifyStatus" role="status"></p></section>';
+ title.textContent='N2 · Lịch học';
+ const p=n2PlanLoad(),today=n2PlanToday(),focus=n2PlanPrioritize(p,today);
+ const source=window.N2_CLASS_SOURCE,teacher=source.teacherMessages?.[0],actual=source.shubAssignments||[];
+ const next=focus.next,changes=n2PlanChanges(p);
+ const teacherTasks=(teacher?.items||[]).filter(x=>!p.done[x.id]);
+ const shubTasks=actual.filter(x=>!p.done[x.id]);
+ const urgent=focus.urgent,due=focus.due;
+ const count=teacherTasks.length+shubTasks.length+urgent.length+due.length;
+ const esc=n2PlanEscape;
+ const task=(x,tag)=>{
+   const label=x.link||x.text;
+   const linked=n2PlanMatch(label);
+   return '<div class="plan2-checkline"><label><input type="checkbox" data-n2-plan-item="'+esc(x.id)+'" '+(p.done[x.id]?'checked':'')+'/><span>'+esc(x.text)+'</span></label>'+
+   (linked?'<button type="button" data-plan-open="'+esc(label)+'" class="plan2-link">Học →</button>':'')+'</div>';
+ };
+ const lastCancellation=changes.slice().sort((x,y)=>y.from.localeCompare(x.from))[0];
+ let html='<button class="foundation-inline-back" data-n2-root type="button">← N2</button>'+
+ '<div class="plan2-screen"><div class="plan2-intro"><div><p class="plan2-eyebrow">LỚP N2</p><h2>Lịch & bài cần học</h2></div><button type="button" id="planChangeShow" class="plan2-small-action">⚙ Chỉnh</button></div>'+
+ '<section class="plan2-focus"><span class="plan2-focus-tag">BUỔI TIẾP THEO '+(p.confirmed?'':'· DỰ KIẾN')+'</span>'+
+ '<strong>'+(next?'Buổi '+next.session+' · '+next.date.slice(8)+'/'+next.date.slice(5,7)+' · '+next.start:'Chưa xác định')+'</strong>'+
+ '<p>'+(next?'Giáo trình dự kiến: '+esc(next.lesson.contents.slice(0,2).join(' · ')):'Chọn buổi học để gắn lịch với giáo trình')+'</p>'+
+ (lastCancellation?'<small>↪ '+esc(lastCancellation.from.slice(8)+'/'+lastCancellation.from.slice(5,7))+' nghỉ → '+esc(lastCancellation.to.slice(8)+'/'+lastCancellation.to.slice(5,7))+' học tiếp</small>':'')+
+ '</section>'+
+ '<div class="plan2-section-head"><h3>Cần hoàn thành</h3><span class="plan2-count">'+count+' mục chưa tích</span></div>';
+ if(teacherTasks.length)html+='<section class="plan2-card"><h4>🧑‍🏫 Thầy đã nhắn</h4><p class="plan2-note">Thông báo Zalo 06/10; chưa xác nhận ngày kiểm tra.</p>'+teacherTasks.map(x=>task(x,'teacher')).join('')+'</section>';
+ if(shubTasks.length)html+='<section class="plan2-card"><h4>📝 Bài trên SHub</h4><p class="plan2-note">Chưa có hạn nộp trong ảnh.</p>'+shubTasks.map(x=>task(x,'shub')).join('')+'</section>';
+ if(next && (urgent.length||due.length))html+='<section class="plan2-card"><h4>📘 Chuẩn bị buổi '+next.session+'</h4><p class="plan2-note">Gợi ý từ KOSEI, chưa phải bài thầy xác nhận.</p>'+urgent.map(x=>task(x,'prep')).join('')+
+ (due.length?'<details class="plan2-details"><summary>Bài tập theo giáo trình ('+due.length+')</summary>'+due.map(x=>task(x,'hw')).join('')+'</details>':'')+'</section>';
+ if(!count)html+='<section class="plan2-card"><strong>✅ Không còn mục ưu tiên chưa hoàn thành.</strong><p>Có thể ôn bài tồn hoặc đọc trước bài tiếp theo.</p></section>';
+ if(!focus.needPrep&&!teacherTasks.length&&!shubTasks.length&&focus.backlog.length)
+ html+='<details class="plan2-card"><summary>📦 Học bù ('+focus.backlog.length+')</summary>'+focus.backlog.slice(0,12).map(x=>task(x,'backlog')).join('')+'</details>';
+ html+='<details class="plan2-card"><summary>📅 Lịch 7 ngày tới</summary>'+
+ n2PlanClasses(today,7).map(e=>'<div class="plan2-classline"><span>'+esc(e.date.slice(8)+'/'+e.date.slice(5,7))+'</span><span>'+esc(e.cancelled?'⏸ '+e.label:e.label)+'</span><small>'+esc(e.start)+'</small></div>').join('')+
+ '</details>';
+ html+='<details id="planSettings" class="plan2-card"><summary>⚙️ Chỉnh buổi học / dời ngày</summary>'+
+ '<p class="plan2-note">Bạn có thể đổi mốc buổi hoặc ghi nhận ngày giáo viên báo nghỉ. Số buổi đã học không tự tăng khi nghỉ.</p>'+
+ '<div class="n2-plan-inputs"><label>Ngày mốc<input id="planAnchorDate" type="date" value="'+esc(p.anchorDate)+'"></label>'+
+ '<label>Buổi số <select id="planAnchorSession">'+source.lessons.map(x=>'<option value="'+x.number+'" '+(x.number===p.anchorSession?'selected':'')+'>'+x.number+'</option>').join('')+'</select></label></div>'+
+ '<button type="button" class="secondary-btn" id="planSaveAnchor">Lưu mốc</button>'+
+ '<div class="plan2-section-head"><h4>↪ Dời buổi N2</h4></div>'+
+ '<div class="n2-plan-inputs"><label>Ngày nghỉ<input type="date" id="n2MoveFrom" value="'+esc(today)+'"></label><label>Học tiếp<input type="date" id="n2MoveTo" value="'+esc(n2PlanNextClassDate(today))+'"></label></div>'+
+ '<label>Lý do<input id="n2MoveReason" class="n2-plan-input" value="Giáo viên báo nghỉ"></label>'+
+ '<button type="button" class="secondary-btn" id="n2MoveSubmit">Lưu ngày nghỉ</button><p id="n2MoveStatus" class="plan2-note" role="status"></p>'+
+ changes.map(c=>'<div class="plan2-classline"><span>⏸ '+esc(c.from)+'</span><span>→ '+esc(c.to)+'</span><button class="plan2-link" data-move-undo="'+esc(c.id)+'">Hoàn tác</button></div>').join('')+
+ '</details>';
+ html+='<details class="plan2-card"><summary>📚 Toàn bộ 55 buổi & nguồn dữ liệu</summary><p class="plan2-note">KOSEI là lịch dự kiến; Zalo và SHub là nguồn nhiệm vụ thật đã nhập từ ảnh. Thời gian lớp theo Calendar, chưa đồng bộ hai chiều.</p>'+
+ '<div class="n2-plan-sessions">'+source.lessons.map(l=>'<details><summary>Buổi '+l.number+' · '+esc(l.contents[0]||'Ôn tập')+'</summary>'+
+ '<p>'+l.contents.map(esc).join(' · ')+'</p><strong>BTVN</strong><p>'+l.homework.map(esc).join(' · ')+'</p></details>').join('')+'</div></details>';
+ html+='<details class="plan2-card"><summary>🔔 Cài đặt nhắc học</summary><p class="plan2-note">Chỉ thông báo khi trang vẫn mở; chưa có push nền.</p><button type="button" class="secondary-btn" id="planNotify">Bật thông báo 20:00</button><p id="planNotifyStatus" role="status"></p></details></div>';
  main.innerHTML=html;
  document.querySelector('[data-n2-root]').onclick=()=>{n2UI.view='root';renderN2()};
+ document.querySelector('#planChangeShow').onclick=()=>{const d=document.querySelector('#planSettings');d.open=true;d.scrollIntoView({behavior:'smooth',block:'start'})};
+ document.querySelectorAll('[data-n2-plan-item]').forEach(el=>{el.onchange=()=>n2PlanMark(el.dataset.n2PlanItem,el.checked)});
+ document.querySelectorAll('[data-plan-open]').forEach(el=>{el.onclick=()=>n2PlanOpen(el.dataset.planOpen)});
  document.querySelector('#planSaveAnchor').onclick=()=>{
-  const date=document.querySelector('#planAnchorDate').value,session=Number(document.querySelector('#planAnchorSession').value);
-  if(!date||!window.N2_CLASS_SOURCE.timetable[0].days.includes(n2PlanDay(date))){alert('Vui lòng chọn ngày T2, T4 hoặc T6 của lớp N2.');return}
-  p.anchorDate=date;p.anchorSession=session;p.confirmed=true;n2PlanSave(p);renderN2Planner();
+   const date=document.querySelector('#planAnchorDate').value,session=Number(document.querySelector('#planAnchorSession').value);
+   if(!date||!source.timetable[0].days.includes(n2PlanDay(date))){alert('Mốc N2 phải là T2, T4 hoặc T6.');return}
+   p.anchorDate=date;p.anchorSession=session;p.confirmed=true;n2PlanSave(p);renderN2Planner();
  };
- document.querySelectorAll('[data-n2-plan-item]').forEach(el=>{
-  const id=el.dataset.n2PlanItem;el.checked=!!p.done[id];el.onchange=()=>n2PlanMark(id,el.checked);
- });
- document.querySelectorAll('[data-plan-open]').forEach(el=>el.onclick=()=>n2PlanOpen(el.dataset.planOpen));
- document.querySelector('#planUseEstimate')?.addEventListener('click',()=>{const state=n2PlanLoad();state.anchorDate=estimate.anchorDate;state.anchorSession=estimate.anchorSession;state.confirmed=false;n2PlanSave(state);renderN2Planner()});
  document.querySelector('#n2MoveSubmit').onclick=()=>{
-   const date=document.querySelector('#n2MoveFrom').value,to=document.querySelector('#n2MoveTo').value,reason=document.querySelector('#n2MoveReason').value;
-   try{n2PlanAddMove(p,date,to,reason);n2PlanSave(p);renderN2Planner()}
-   catch(e){document.querySelector('#n2MoveStatus').textContent='⚠️ '+e.message}
+   try{
+     n2PlanAddMove(p,document.querySelector('#n2MoveFrom').value,document.querySelector('#n2MoveTo').value,document.querySelector('#n2MoveReason').value);
+     n2PlanSave(p);renderN2Planner();
+   }catch(e){document.querySelector('#n2MoveStatus').textContent='⚠️ '+e.message}
  };
- document.querySelectorAll('[data-move-undo]').forEach(b=>b.onclick=()=>{
-   const id=b.dataset.moveUndo;
+ document.querySelectorAll('[data-move-undo]').forEach(el=>el.onclick=()=>{
+   const id=el.dataset.moveUndo;
    if((source.classChanges||[]).some(c=>c.id===id)){p.changes={...(p.changes||{}),[id]:false}}
    else if(p.changes)delete p.changes[id];
    n2PlanSave(p);renderN2Planner();
  });
  document.querySelector('#planNotify').onclick=async()=>{
-  const status=document.querySelector('#planNotifyStatus');
-  if(!('Notification' in window)){status.textContent='Trình duyệt này không hỗ trợ Notification.';return}
-  const permission=await Notification.requestPermission();
-  if(permission==='granted'){const p=n2PlanLoad();p.notifications=true;n2PlanSave(p);n2PlanNotifyCheck();}
-  status.textContent=permission==='granted'?'Đã bật nhắc lúc 20:00 khi ứng dụng đang mở. Khi đóng ứng dụng, trình duyệt không đảm bảo thông báo.':'Chưa cấp quyền nhận thông báo.';
+   const status=document.querySelector('#planNotifyStatus');
+   if(!('Notification' in window)){status.textContent='Không hỗ trợ thông báo trên trình duyệt này.';return}
+   const permission=await Notification.requestPermission();
+   if(permission==='granted'){const cfg=n2PlanLoad();cfg.notifications=true;n2PlanSave(cfg);n2PlanNotifyCheck()}
+   status.textContent=permission==='granted'?'Đã bật nhắc khi app đang mở.':'Chưa cấp quyền.';
  };
 }
-
 
 /* Notification API on a static GitHub Pages site is foreground-only here.
  * No claim of guaranteed push after browser/app is closed. */
