@@ -153,7 +153,7 @@ function n2LessonBrowser(lessons){
         <span class="lesson-count">${count}${expected?'/'+expected:''} mục</span>
       </div>
       <p class="n2-source">${escapeText(lesson.source||'')}</p>
-      <div class="lesson-progress-row"><span>${p.mastered?'✓ Đã sạch lỗi':complete?'Sẵn sàng học':'Chưa nhập đủ dữ liệu'}</span><span>${p.mastered?'100%':complete?'0%':'—'}</span></div>
+      <div class="lesson-progress-row"><span>${p.mastered?'✓ Đã sạch lỗi':complete?'Sẵn sàng học':count?'Có thể học '+count+' mục đã nhập':'Chưa có dữ liệu'}</span><span>${p.mastered?'100%':complete?'0%':'—'}</span></div>
       <span class="progress-bar"><span style="width:${p.mastered?100:0}%"></span></span>
     </button>`;
   }).join('')}</section>`;
@@ -165,10 +165,10 @@ function n2LessonPicker(lessons){
     <section class="lesson-list">${lessons.map(lesson=>{
       const count=lesson.items?.length||0;
       const expected=n2UI.type==='vocab'?(lesson.to-lesson.from+1):null;
-      const ready=count>0 && (!expected || count===expected);
+      const ready=count>0;
       const p=n2LoadProgress(n2UI.type,lesson.id);
       return `<article class="study-pick-card">
-        <div><strong>${escapeText(lesson.label)}</strong><p>${count}${expected?'/'+expected:''} mục · ${p.mastered?'đã hoàn thành':ready?'sẵn sàng':'chưa nhập đủ dữ liệu'}</p></div>
+        <div><strong>${escapeText(lesson.label)}</strong><p>${count}${expected?'/'+expected:''} mục · ${p.mastered?'đã hoàn thành':ready?(expected&&count<expected?'học thử dữ liệu đã nhập':'sẵn sàng'):'chưa có dữ liệu'}</p></div>
         <button class="primary-btn" data-n2-start="${lesson.id}" type="button" ${ready?'':'disabled'}>${p.mastered?'Học lại':'Bắt đầu'}</button>
       </article>`;
     }).join('')}</section>`;
@@ -450,8 +450,8 @@ function finishN2Quiz(){
   if(s.phase==='quiz-all'){
     const known=s.all.filter(x=>s.correct.has(x.id));
     const weak=s.all.filter(x=>s.weak.has(x.id));
-    s.phase='review-all';s.index=0;s.queue=[...known,...weak];
-    return renderN2Study();
+    s.pendingPhase='review-all';s.reviewQueue=[...known,...weak];
+    s.phase='result';return renderN2Study();
   }
   if(s.phase==='quiz-weak'){
     s.pendingPhase=s.weak.size?'flash-weak':'verify-flash';
@@ -478,6 +478,7 @@ function renderN2RoundResult(){
   document.querySelector('[data-n2-next]').addEventListener('click',()=>{
     const next=s.pendingPhase;s.pendingPhase=null;s.phase=next;s.index=0;
     if(next==='flash-weak')s.queue=s.all.filter(x=>s.weak.has(x.id));
+    else if(next==='review-all')s.queue=s.reviewQueue||s.all.slice();
     else if(next==='verify-flash')s.queue=s.all.slice();
     if(next==='quiz-weak'){s.queue=s.all.filter(x=>s.weak.has(x.id));resetN2QuizCounter();}
     renderN2Study();
@@ -488,14 +489,15 @@ function renderN2Complete(){
   const s=n2UI.session,lesson=n2CurrentLesson();
   const accuracy=s.sessionTotal?Math.round(s.sessionCorrect/s.sessionTotal*100):100;
   const old=n2LoadProgress(n2UI.type,lesson.id);
-  if(!old.mastered){
-    n2SaveProgress(n2UI.type,lesson.id,{mastered:true,completedAt:new Date().toISOString(),attempts:(old.attempts||0)+1,accuracy});
+  const partial=n2UI.type==='vocab' && lesson.items.length < lesson.to-lesson.from+1;
+  if(!old.mastered || partial){
+    n2SaveProgress(n2UI.type,lesson.id,{mastered:!partial,partial,completedAt:new Date().toISOString(),attempts:(old.attempts||0)+1,accuracy});
   }
   main.innerHTML=`
     <section class="complete-card">
       <div class="complete-mark">✓</div><p class="section-kicker">HOÀN THÀNH</p>
       <h2>${escapeText(lesson.label)}</h2>
-      <p>Vòng cuối đã đạt <strong>0 câu sai</strong>. Bài chỉ được tính hoàn thành ở điều kiện này.</p>
+      <p>Vòng cuối đã đạt <strong>0 câu sai</strong>. ${n2UI.type==='vocab' && lesson.items.length < lesson.to-lesson.from+1?'Bạn đã hoàn thành phần từ được nhập; bài chưa được đánh dấu hoàn thành toàn bộ vì còn thiếu dữ liệu.':'Bài được tính hoàn thành sau khi kiểm tra toàn bộ không còn lỗi.'}</p>
       <div class="complete-stats"><div><b>${lesson.items.length}</b><span>mục</span></div><div><b>${s.round}</b><span>vòng yếu</span></div><div><b>${accuracy}%</b><span>đúng toàn phiên</span></div></div>
     </section>
     <div class="complete-actions"><button class="secondary-btn" data-n2-list type="button">Về danh sách</button><button class="primary-btn" data-n2-again type="button">Học lại</button></div>
