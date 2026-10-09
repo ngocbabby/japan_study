@@ -567,7 +567,7 @@ function renderN2ReadingList(){
   main.innerHTML=`
     <button class="foundation-inline-back" data-n2-root type="button">← N2</button>
     <section class="hero compact-hero">
-      <div class="hero-grid"><div><strong>Đọc thành tiếng + chấm điểm</strong><p>Nghe đoạn mẫu, ghi âm chính mình, chấm độ đúng và tốc độ. Dưới 60 điểm phải đọc lại.</p></div><div class="hero-stat"><b>${month.count?month.avg:'—'}</b><span>điểm tháng</span></div></div>
+      <div class="hero-grid"><div><strong>Đọc thành tiếng + chấm điểm</strong><p>Nghe bài đọc, ghi âm, nhận xét mức độ khớp văn bản và tốc độ. Dưới 60 điểm cần luyện lại.</p></div><div class="hero-stat"><b>${month.count?month.avg:'—'}</b><span>điểm tháng</span></div></div>
     </section>
     <section class="lesson-list">${lessons.map(x=>`
       <button class="lesson-card n2-reading-card" data-n2-reading-id="${x.id}" type="button">
@@ -587,12 +587,12 @@ function renderN2ReadingDetail(){
   const ready=!!lesson.text;
   main.innerHTML=`
     <button class="foundation-inline-back" data-n2-reading-back type="button">← Đọc N2</button>
-    <div class="lesson-detail-head"><div><p class="section-kicker">${escapeText(lesson.exercise)}</p><h2>${escapeText(lesson.label)}</h2><p>${escapeText(lesson.source||'')}</p></div></div>
+    <div class="lesson-detail-head"><div><p class="section-kicker">${escapeText(lesson.exercise)}</p><h2>${escapeText(lesson.label)}</h2><p>${escapeText(lesson.source||'')} · ${lesson.verified?'Đã đối chiếu PDF':'Bản phiên chép, cần đối chiếu PDF'}</p></div></div>
     ${ready?`
       <section class="reading-passage"><div class="reading-toolbar"><button class="primary-btn" data-reading-listen type="button">🔊 Nghe đoạn văn</button></div><p lang="ja">${escapeText(lesson.text)}</p></section>
       <section class="reading-recorder">
         <h3>Ghi âm bài đọc của bạn</h3>
-        <p>Điểm = 85% độ khớp từ + 15% tốc độ đọc. Mốc 60 điểm là điều kiện qua.</p>
+        <p>Điểm ước tính = 85% độ khớp văn bản máy nhận dạng + 15% nhịp độ. Đây chưa phải phép đo chuẩn phát âm từng âm tiết. Dưới 60 điểm cần luyện lại.</p>
         <div class="record-actions"><button class="record-btn" data-reading-record type="button">● Bắt đầu ghi âm</button><button class="secondary-btn" data-reading-stop type="button" disabled>■ Dừng & chấm</button></div>
         <div id="readingLiveStatus" class="reading-live-status">Chưa ghi âm.</div>
         <div id="readingScoreBox"></div>
