@@ -197,6 +197,8 @@ function renderRoadmap(){
       <span class="status-chip synced">CHATGPT</span>
     </div>
 
+    <section class="n2-plan-panel"><h3>↪ Giáo viên báo nghỉ / dời lịch</h3><p>09/10 lớp N2 nghỉ, chuyển buổi dự kiến sang thứ Hai 12/10. Số buổi và bài cần chuẩn bị không bị bỏ qua.</p><button class="primary-btn" id="openN2Reschedule" type="button">📅 Dời ngày học, xem lịch mới →</button></section>
+
     <div class="sync-line">Cập nhật gần nhất: <strong>${updated}</strong> · nguồn: ${escapeText(ROADMAP.source||'Google Calendar')}</div>
 
     <section class="timeline">
@@ -208,6 +210,7 @@ function renderRoadmap(){
       <div><strong>Nguyên tắc planner</strong><p>${escapeText((ROADMAP.principles||[]).join(' · '))}</p></div>
     </div>
   `;
+  document.querySelector('#openN2Reschedule')?.addEventListener('click',()=>{state.page='n2';n2UI.view='planner';render()});
 }
 
 function dayCard(day,date,items){
