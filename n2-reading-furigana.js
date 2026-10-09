@@ -18,7 +18,7 @@
    for(let i=0;i<source.length;){
      let node=trie,length=0,reading='';
      for(let j=i;j<source.length;j++){node=node[source[j]];if(!node)break;if(node['$']){length=j-i+1;reading=node['$']}}
-     if(length){const word=source.slice(i,i+length);html+='<ruby>'+esc(word)+'<rt>'+esc(reading)+'</rt></ruby>';annotated+=[...word].filter(ch=>kanji.test(ch)).length;i+=length}
+     if(length){const word=source.slice(i,i+length);if(word==='人'&&/[0-9０-９]$/.test(source.slice(0,i)))reading='にん';html+='<ruby>'+esc(word)+'<rt>'+esc(reading)+'</rt></ruby>';annotated+=[...word].filter(ch=>kanji.test(ch)).length;i+=length}
      else{html+=esc(source[i]);i++}
    }
    return {html,annotated,total,coverage:total?Math.round(100*annotated/total):100};
