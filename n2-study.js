@@ -50,6 +50,7 @@ function renderN2(){
   if(n2UI.view==='study') return renderN2Study();
   if(n2UI.view==='reading') return renderN2ReadingList();
   if(n2UI.view==='docs') return renderN2Documents();
+  if(n2UI.view==='planner') return renderN2Planner();
   if(n2UI.view==='reading-detail') return renderN2ReadingDetail();
   n2UI.view='root';
   return renderN2Root();
@@ -83,6 +84,7 @@ function renderN2Root(){
       ${n2Category('語','Từ vựng','Mimikara Oboeru N2 · 25 bài theo đúng dải số của lộ trình','vocab',d.vocabLessons)}
       ${n2Category('漢','Kanji','Soumatome N2 · tuần 1 → tuần 8','kanji',d.kanjiLessons)}
       ${n2Category('文','Ngữ pháp','Shin Kanzen Master N2 · học ý nghĩa, cấu trúc, ngữ cảnh và câu điền','grammar',d.grammarLessons)}
+      <button class="category-card" data-n2-planner type="button"><span class="category-icon">📅</span><span><strong>Lịch học & ưu tiên</strong><p>Học bài ngày mai trước → hoàn thành bài tập → quay lại bài chưa học.</p><span class="n2-mini-meta">Nguồn KOSEI 55 buổi + lịch Google Calendar</span></span><span class="chev">›</span></button>
       ${n2ReadingCategory('読','Đọc','Nghe mẫu → tự đọc → ghi âm → chấm độ đúng + tốc độ',d.readingPractice||[])}
       <button class="category-card" data-n2-docs type="button"><span class="category-icon">📑</span><span><strong>Học nhanh từ tài liệu</strong><p>Nhập PDF / DOCX → học từ quan trọng → xem đáp án → làm lại. Không cần trả phí AI.</p><span class="n2-mini-meta">Tài liệu cá nhân · lưu trên thiết bị</span></span><span class="chev">›</span></button>
     </section>
@@ -98,6 +100,7 @@ function renderN2Root(){
   const read=document.querySelector('[data-n2-reading]');
   if(read)read.addEventListener('click',()=>{n2UI.view='reading';renderN2()});
   document.querySelector('[data-n2-docs]')?.addEventListener('click',()=>{n2UI.view='docs';n2DocUI.view='list';renderN2()});
+  document.querySelector('[data-n2-planner]')?.addEventListener('click',()=>{n2UI.view='planner';renderN2()});
 }
 
 function n2Category(icon,name,desc,type,lessons){
@@ -876,6 +879,7 @@ backBtn.addEventListener('click',e=>{
   if(n2UI.view==='category'){n2UI.view='root';renderN2();return}
   if(n2UI.view==='reading-detail'){n2StopReadingSpeech();stopN2Reading();n2UI.view='reading';renderN2();return}
   if(n2UI.view==='reading'){n2UI.view='root';renderN2();return}
+  if(n2UI.view==='planner'){n2UI.view='root';renderN2();return}
   if(n2UI.view==='docs'){if(n2DocUI.view!=='list'){n2DocUI.view='list';renderN2()}else{n2UI.view='root';renderN2()}return}
 },true);
 window.addEventListener('pagehide',()=>n2StopReadingSpeech());
