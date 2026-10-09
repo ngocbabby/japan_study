@@ -15,7 +15,7 @@ window.N2DocCore = (() => {
     const v=number(String(s||'').replace(/[①②③④]/g,c=>String('①②③④'.indexOf(c)+1)).toUpperCase());
     return /^[1-4]$/.test(v)?Number(v)-1:/^[A-D]$/.test(v)?v.charCodeAt(0)-65:null;
   };
-  const stemRegex=/^(?:(?:【\s*)?(?:問(?:題)?|Ｑ|Q)\s*([0-9０-９]{1,3})(?:\s*[】\]）).:：、．]*)?)(.*)$/u;
+  const stemRegex=/^(?:(?:【\s*)?(?:(?:第\s*\d{1,3}\s*問)|(?:問(?:題)?|Ｑ|Q)\s*\d{1,3})(?:\s*[】\]）).:：、．]*)?)(.*)$/u;
   const choiceRegex=/^\s*([1-4１-４①②③④Ａ-ＤA-D])\s*[.．、:：)）]?\s+(.+)$/u;
   function dictionary(){
     const all=new Map();
@@ -78,8 +78,8 @@ window.N2DocCore = (() => {
     const answers=parseAnswerKey(original),questions=[];
     for(let i=0;i<lines.length && questions.length<MAX_QUESTIONS;i++){
       const h=lines[i].match(stemRegex);
-      if(!h || !h[1])continue;
-      const num=Number(number(h[1]));
+      if(!h || !/^(?:【\s*)?(?:第\s*\d{1,3}\s*問|(?:問(?:題)?|Ｑ|Q)\s*\d{1,3})/u.test(h[0]))continue;
+      const num=Number((h[0].match(/(?:第\s*|問(?:題)?\s*|[QＱ]\s*)(\d{1,3})/u)||[])[1]);
       if(num<1 || num>300)continue;
       let question=(h[2]||'').trim();
       if(/^(?:[:：=＝\-→])\s*[1-4]$/.test(question))continue;
@@ -88,7 +88,7 @@ window.N2DocCore = (() => {
       while(j<lines.length && j<i+21){
         const line=lines[j];
         const nextHeader=line.match(stemRegex);
-        if(nextHeader && nextHeader[1] && j>i+1)break;
+        if(nextHeader && /^(?:【\s*)?(?:第\s*\d{1,3}\s*問|(?:問(?:題)?|Ｑ|Q)\s*\d{1,3})/u.test(nextHeader[0]) && j>i+1)break;
         const m=line.match(choiceRegex);
         const expected=opts.length;
         if(m&&optionNo(m[1])===expected){
@@ -126,7 +126,9 @@ window.N2DocCore = (() => {
     if(unique.length<3)return null;
     const picks=[];
     const start=Math.abs(seed*43 + correct.length*3) % unique.length;
-    for(let i=0;i<unique.length && picks.length<3;i++)picks.push(unique[(start+i*7)%unique.length]);
+    for(let i=0;i<unique.length && picks.length<3;i++){
+      const value=unique[(start+i*7)%unique.length];if(!picks.includes(value))picks.push(value);
+    }
     // In rare cases the striding cycle repeats.
     for(const x of unique)if(picks.length<3&&!picks.includes(x))picks.push(x);
     const position=seed%4;
