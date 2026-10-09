@@ -133,6 +133,10 @@
     translation:''
   }));
 
+  // Separate manually matched reading passages from the 22-step KOSEI roadmap.
+  // The book has more exercises than our currently verified transcript set.
+  const readingPractice = (window.N2_READING_PASSAGES || []).map(p=>({...p}));
+
   window.N2_STUDY_DATA = {
     version:'2026-10-09-grammar-kanji',
     vocabTotal:1160,
@@ -141,6 +145,7 @@
     kanjiLessons,
     grammarLessons,
     readingLessons,
+    readingPractice,
     sourceNote:'Mimikara Oboeru N2: 1160 từ / 25 bài. Nihongo Soumatome N2 Kanji: 8 tuần / 48 bài. Shin Kanzen N2: 26 bài ngữ pháp.'
   };
 })();
