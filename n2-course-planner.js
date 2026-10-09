@@ -60,7 +60,7 @@ function n2PlanMatch(t){
  const d=n2Data();
  const voc=t.match(/Từ vựng\s*(\d+)\s*[~–\-]\s*(\d+)/i);
  if(voc){const a=+voc[1],b=+voc[2];return d.vocabLessons?.find(l=>l.from<=a&&l.to>=b)?{type:'vocab',id:d.vocabLessons.find(l=>l.from<=a&&l.to>=b).id}:null}
- const kan=t.match(/週\s*(\d+)\s*[-–]\s*(\d+)|tuần\s*(\d+)\s*[-–]\s*(?:bài|ngày)\s*(\d+)/i);
+ const kan=t.match(/週\s*(\d+)\s*[-–]\s*(\d+)|tuần\s*(\d+)\s*(?:[-–]\s*)?(?:bài|ngày)\s*(\d+)/i);
  if(kan)return {type:'kanji',id:'kanji-w'+(kan[1]||kan[3])+'-'+(kan[2]||kan[4])};
  const gram=t.match(/Ngữ\s*pháp\s*B\s*(\d+)/i);
  if(gram)return {type:'grammar',id:'grammar-'+String(gram[1]).padStart(2,'0')};
