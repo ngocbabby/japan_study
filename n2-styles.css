@@ -110,3 +110,17 @@
 .plan2-classline{display:grid;grid-template-columns:73px 1fr auto;gap:9px;align-items:center;padding:10px 0;border-top:1px solid #eee8dc;font-size:.85rem}
 .plan2-classline small{color:#71685c}.plan2-classline button{font-size:.75rem}
 @media(max-width:420px){.plan2-task{grid-template-columns:40px minmax(0,1fr)}.plan2-status{grid-column:2;justify-self:start}.plan2-classline{grid-template-columns:75px 1fr}.plan2-classline small,.plan2-classline button{grid-column:2;justify-self:start}}
+
+
+/* Flashcards: separate manual two-way flip from the automatic timer. */
+.n2-flash-actions{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}
+.n2-flash-actions button{min-height:42px;padding:9px 11px}
+.n2-auto-card{cursor:pointer}
+.n2-auto-card:focus-visible{outline:3px solid #b18e23;outline-offset:3px}
+/* Pronunciation: avoid competing Android microphone sessions. */
+.n2-recorder-extras{border:1px solid #e5dfd1;border-radius:13px;padding:12px 14px;margin-top:16px;background:#faf8f3}
+.n2-recorder-extras summary{font-weight:750;cursor:pointer;line-height:1.5}
+.n2-recorder-extras p{font-size:.87rem;line-height:1.55}
+.n2-recorder-extras .record-actions{display:flex;flex-wrap:wrap;gap:8px}
+.n2-recorder-extras .record-actions button{min-height:42px}
+@media(max-width:450px){.n2-auto-line{flex-direction:column;align-items:stretch}.n2-flash-actions{justify-content:space-between}.n2-flash-actions button{flex:1;white-space:normal}.record-actions{flex-wrap:wrap}}
