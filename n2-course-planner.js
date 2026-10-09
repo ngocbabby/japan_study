@@ -2,7 +2,7 @@
 const N2PLAN_KEY='japanStudy:n2:classPlanner:v2';
 const n2PlanState={page:'dashboard',selected:0};
 function n2PlanLoad(){
- try{return {...{anchorDate:'',anchorSession:1,done:{},extra:{},tasks:{}},...JSON.parse(localStorage.getItem(N2PLAN_KEY)||'{}')}}catch{return {anchorDate:'',anchorSession:1,done:{},extra:{},tasks:{}}}
+ try{return {...{anchorDate:'',anchorSession:1,confirmed:false,done:{},extra:{},tasks:{}},...JSON.parse(localStorage.getItem(N2PLAN_KEY)||'{}')}}catch{return {anchorDate:'',anchorSession:1,confirmed:false,done:{},extra:{},tasks:{}}}
 }
 function n2PlanSave(s){localStorage.setItem(N2PLAN_KEY,JSON.stringify(s))}
 function n2PlanDate(d){const t=new Date(d);return [t.getFullYear(),String(t.getMonth()+1).padStart(2,'0'),String(t.getDate()).padStart(2,'0')].join('-')}
@@ -60,7 +60,7 @@ function n2PlanMatch(t){
  const d=n2Data();
  const voc=t.match(/Từ vựng\s*(\d+)\s*[~–\-]\s*(\d+)/i);
  if(voc){const a=+voc[1],b=+voc[2];return d.vocabLessons?.find(l=>l.from<=a&&l.to>=b)?{type:'vocab',id:d.vocabLessons.find(l=>l.from<=a&&l.to>=b).id}:null}
- const kan=t.match(/週\s*(\d+)\s*[-–]\s*(\d+)|tuần\s*(\d+)\s*[-–]\s*bài\s*(\d+)/i);
+ const kan=t.match(/週\s*(\d+)\s*[-–]\s*(\d+)|tuần\s*(\d+)\s*[-–]\s*(?:bài|ngày)\s*(\d+)/i);
  if(kan)return {type:'kanji',id:'kanji-w'+(kan[1]||kan[3])+'-'+(kan[2]||kan[4])};
  const gram=t.match(/Ngữ\s*pháp\s*B\s*(\d+)/i);
  if(gram)return {type:'grammar',id:'grammar-'+String(gram[1]).padStart(2,'0')};
@@ -84,6 +84,7 @@ function n2PlanEventsHtml(e){
 function renderN2Planner(){
  title.textContent='N2 · Lịch & ưu tiên';
  const p=n2PlanLoad(),today=n2PlanToday(),next=n2PlanPrioritize(p,today);
+ const source=window.N2_CLASS_SOURCE, actual=source.shubAssignments||[], teacher=source.teacherMessages?.[0], estimate=source.estimatedLesson;
  const target=next.next,lessons=window.N2_CLASS_SOURCE.lessons;
  const upcoming=n2PlanSessions(p,today,32).slice(0,11);
  const tomorrowEvents=n2PlanClasses(n2PlanShift(today,1),1);
@@ -93,14 +94,20 @@ function renderN2Planner(){
   if(a.start<b.end&&b.start<a.end)conflicts.push(a.label+' ↔ '+b.label);
  }
  const all=lessons.filter(x=>x.number>=1&&x.number<=55);
+ const lessonEstimate=estimate && lessons[estimate.anchorSession-1];
  const options=all.map(x=>'<option value="'+x.number+'" '+(p.anchorSession===x.number?'selected':'')+'>Buổi '+x.number+' · '+n2PlanEscape(x.contents.slice(0,2).join(', ').slice(0,72))+'</option>').join('');
  let html='<button class="foundation-inline-back" data-n2-root>← N2</button>'+
  '<section class="hero n2-hero"><strong>🗓️ Học gì trước buổi tới?</strong><p>Ưu tiên chuẩn bị cho lớp gần nhất. Chỉ khi xong việc ưu tiên mới chuyển sang bài tồn đọng.</p></section>'+
- '<div class="n2-plan-panel"><h3>🔗 Ghép lịch KOSEI 55 buổi</h3><p>Google Calendar cho biết ngày/giờ; giáo trình KOSEI cho biết nội dung và bài tập. Chọn một ngày đã biết chính xác số buổi học để ghép hai nguồn.</p>'+
+ '<div class="n2-plan-panel"><h3>📍 Lịch học thực tế + giáo trình tham khảo</h3><p>SHub và lời Sensei là dữ liệu bài giao thực tế. KOSEI 55 buổi chỉ là kế hoạch dự kiến, không tự coi là bài đã giao.</p>'+
  '<div class="n2-plan-inputs"><label>Ngày của buổi đã xác nhận<input id="planAnchorDate" type="date" value="'+n2PlanEscape(p.anchorDate)+'"></label>'+
  '<label>Buổi trong giáo trình<select id="planAnchorSession">'+options+'</select></label></div>'+
  '<button class="secondary-btn" id="planSaveAnchor">💾 Lưu mốc lớp N2</button>'+
- '<p class="n2-plan-hint">'+(p.anchorDate?'Đang ghép từ buổi '+p.anchorSession+' ngày '+p.anchorDate+'. Các buổi sau được suy ra theo lịch T2–T4–T6; nếu lớp nghỉ/đổi buổi phải cập nhật mốc.':'⚠️ Chưa chọn buổi thực tế. App chưa tự đoán bạn đang học đến đâu.')+'</p></div>';
+ '<p class="n2-plan-hint">'+(p.anchorDate?(p.confirmed?'✅ Đã xác nhận: ':'⚠️ Mốc dự kiến, chưa xác nhận: ')+'buổi '+p.anchorSession+' ngày '+p.anchorDate+'. Lịch sau đây được suy ra theo T2–T4–T6; nghỉ/đổi buổi phải cập nhật.':'⚠️ Chưa chọn buổi thực tế. App chưa tự đoán bạn đang học đến đâu.')+'</p></div>';
+ html+='<section class="n2-plan-panel"><h3>🧑‍🏫 Sensei thông báo (Zalo 06/10)</h3><p class="n2-plan-hint">Ảnh ghi “kiểm tra buổi sau” nhưng KHÔNG xác định ngày kiểm tra. Có thể đã kiểm tra trong buổi trước hôm nay. Đánh dấu “Đã kiểm tra” khi bạn xác nhận, không coi đây là bài tối nay.</p>'+
+ (teacher?teacher.items.map(t=>'<div class="n2-plan-task"><label class="n2-plan-check"><input data-n2-plan-item="'+n2PlanEscape(t.id)+'" type="checkbox"><span>'+n2PlanEscape(t.text)+'</span></label><button class="secondary-btn" data-plan-open="'+n2PlanEscape(t.link)+'">Ôn nhanh →</button></div>').join(''):'')+'</section>';
+ html+='<section class="n2-plan-panel"><h3>📝 Danh sách bài tập SHub (từ ảnh)</h3><p class="n2-plan-hint">Ảnh chưa hiện hạn nộp, trạng thái 0/19 không khẳng định bài đã làm hoặc buổi học tương ứng. Bạn có thể tự tích khi hoàn tất.</p>'+
+ actual.map(t=>'<div class="n2-plan-task"><label class="n2-plan-check"><input data-n2-plan-item="'+n2PlanEscape(t.id)+'" type="checkbox"><span>'+n2PlanEscape(t.text)+'</span></label></div>').join('')+'</section>';
+ if(!p.anchorDate && lessonEstimate) html+='<section class="n2-plan-panel"><h3>🗓️ Tối 09/10: dự kiến buổi 6</h3><p>Bạn cho biết “chắc học buổi 6”. Chưa xác minh được với SHub, nên <strong>chưa tự ghép lịch</strong>.</p><p>Trong kế hoạch KOSEI, buổi 6: '+n2PlanEscape(lessonEstimate.contents.join(' · '))+'</p><button class="secondary-btn" id="planUseEstimate">Dùng buổi 6 làm mốc dự kiến</button></section>';
  if(target){
   html+='<div class="n2-plan-priority"><span class="n2-plan-pill">🔴 ƯU TIÊN 1 · '+(target.date===next.tomorrow?'HỌC TRƯỚC CHO NGÀY MAI':'CHUẨN BỊ BUỔI KẾ TIẾP')+'</span>'+
   '<h2>'+n2PlanLabel(target)+'</h2><p>Giáo trình KOSEI: '+n2PlanEscape(target.lesson.contents.join(' · '))+'</p>'+
@@ -122,12 +129,13 @@ function renderN2Planner(){
  document.querySelector('#planSaveAnchor').onclick=()=>{
   const date=document.querySelector('#planAnchorDate').value,session=Number(document.querySelector('#planAnchorSession').value);
   if(!date||!window.N2_CLASS_SOURCE.timetable[0].days.includes(n2PlanDay(date))){alert('Vui lòng chọn ngày T2, T4 hoặc T6 của lớp N2.');return}
-  p.anchorDate=date;p.anchorSession=session;n2PlanSave(p);renderN2Planner();
+  p.anchorDate=date;p.anchorSession=session;p.confirmed=true;n2PlanSave(p);renderN2Planner();
  };
  document.querySelectorAll('[data-n2-plan-item]').forEach(el=>{
   const id=el.dataset.n2PlanItem;el.checked=!!p.done[id];el.onchange=()=>n2PlanMark(id,el.checked);
  });
  document.querySelectorAll('[data-plan-open]').forEach(el=>el.onclick=()=>n2PlanOpen(el.dataset.planOpen));
+ document.querySelector('#planUseEstimate')?.addEventListener('click',()=>{const state=n2PlanLoad();state.anchorDate=estimate.anchorDate;state.anchorSession=estimate.anchorSession;state.confirmed=false;n2PlanSave(state);renderN2Planner()});
  document.querySelector('#planNotify').onclick=async()=>{
   const status=document.querySelector('#planNotifyStatus');
   if(!('Notification' in window)){status.textContent='Trình duyệt này không hỗ trợ Notification.';return}
