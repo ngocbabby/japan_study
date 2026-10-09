@@ -867,12 +867,17 @@ function renderN2ReadingDetail(){
         <p>${escapeText(lesson.translation||'Chưa có bản dịch tiếng Việt cho đoạn văn này.')}</p>
       </section>
       <section class="reading-recorder">
-        <h3>Ghi âm bài đọc của bạn</h3>
-        <p>Điểm ước tính = 85% độ khớp văn bản máy nhận dạng + 15% nhịp độ. Đây chưa phải phép đo chuẩn phát âm từng âm tiết. Dưới 60 điểm cần luyện lại.</p>
-        <div class="record-actions"><button class="record-btn" data-reading-record type="button">● Bắt đầu ghi âm</button><button class="secondary-btn" data-reading-stop type="button" disabled>■ Dừng & chấm</button></div>
-        <div id="readingLiveStatus" class="reading-live-status">Chưa ghi âm.</div>
+        <h3>🎙️ Đọc to để chấm điểm</h3>
+        <p>Ứng dụng dùng nhận dạng tiếng Nhật trực tiếp khi bạn đọc. Điểm chỉ là ước tính dựa trên chữ máy nghe được (85%) và tốc độ (15%), chưa đo chính xác từng âm.</p>
+        <div class="record-actions"><button class="record-btn" data-reading-record type="button">🎤 Bắt đầu đọc & chấm</button><button class="secondary-btn" data-reading-stop type="button" disabled>■ Dừng & chấm</button></div>
+        <div id="readingLiveStatus" class="reading-live-status" role="status" aria-live="polite">Nhấn bắt đầu, cấp quyền micro và đọc rõ tiếng Nhật.</div>
         <div id="readingScoreBox"></div>
-        <div id="readingAudioBox"></div>
+        <details class="n2-recorder-extras"><summary>🎧 Ghi âm riêng để nghe lại</summary>
+          <p>Ghi âm và chấm tự động là hai chế độ riêng. File ghi âm vẫn dùng được nếu dịch vụ nhận dạng tiếng Nhật trên Chrome gặp lỗi.</p>
+          <div class="record-actions"><button class="secondary-btn" data-record-only type="button">● Ghi âm nghe lại</button><button class="secondary-btn" data-record-only-stop type="button" disabled>■ Dừng ghi âm</button></div>
+          <p id="readingCaptureStatus" class="reading-live-status">Chưa ghi âm.</p>
+          <div id="readingAudioBox"></div>
+        </details>
       </section>`
     :`<div class="n2-import-warning"><strong>Chưa có nguyên đoạn văn trong dữ liệu app.</strong><p>Khung bài đã gắn đúng vị trí trong lộ trình. Cần nhập nguyên văn từ PDF nguồn trước khi bật ghi âm/chấm điểm.</p></div>`}
   `;
@@ -895,62 +900,214 @@ function renderN2ReadingDetail(){
   });
   document.querySelector('[data-reading-record]').addEventListener('click',()=>startN2Reading(lesson));
   document.querySelector('[data-reading-stop]').addEventListener('click',()=>stopAndScoreN2Reading(lesson));
+  document.querySelector('[data-record-only]').addEventListener('click',n2CaptureAudioOnly);
+  document.querySelector('[data-record-only-stop]').addEventListener('click',n2StopCaptureOnly);
 }
 
-async function startN2Reading(lesson){
-  n2StopReadingSpeech('⏹ Đã dừng đọc mẫu để ghi âm giọng của bạn.');
-  stopN2Reading();
-  const status=document.querySelector('#readingLiveStatus');
-  try{
-    const stream=await navigator.mediaDevices.getUserMedia({audio:true});
-    n2UI.mediaStream=stream;
-    const rec=new MediaRecorder(stream);n2UI.mediaRecorder=rec;
-    const chunks=[];
-    rec.ondataavailable=e=>{if(e.data?.size)chunks.push(e.data)};
-    rec.onstop=()=>{
-      const blob=new Blob(chunks,{type:rec.mimeType||'audio/webm'});
-      if(n2UI.audioUrl)URL.revokeObjectURL(n2UI.audioUrl);
-      n2UI.audioUrl=URL.createObjectURL(blob);
-      const box=document.querySelector('#readingAudioBox');if(box)box.innerHTML=`<audio controls src="${n2UI.audioUrl}"></audio>`;
-    };
-    rec.start();
-    n2UI.readingTranscript='';
-    n2UI.readingStartedAt=performance.now();
-    const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-    if(SR){
-      const recog=new SR();n2UI.recognition=recog;recog.lang='ja-JP';recog.continuous=true;recog.interimResults=true;
-      recog.onresult=e=>{
-        let full='';
-        for(let i=0;i<e.results.length;i++)full+=e.results[i][0].transcript;
-        n2UI.readingTranscript=full;
-        if(status)status.textContent=`Đang nghe: ${full.slice(-80)}`;
-      };
-      recog.onerror=e=>{if(status)status.textContent=`Nhận dạng giọng nói: ${e.error}`};
-      recog.start();
-    }else if(status){status.textContent='Đang ghi âm. Trình duyệt này không hỗ trợ Speech Recognition nên chưa thể chấm độ đúng.'}
-    document.querySelector('[data-reading-record]').disabled=true;
-    document.querySelector('[data-reading-stop]').disabled=false;
-  }catch(err){
-    if(status)status.textContent='Không mở được micro. Hãy cấp quyền micro cho trang rồi thử lại.';
-  }
+/* Speech recognition and playback recording are deliberately separated.
+ * Running MediaRecorder and SpeechRecognition concurrently on Android may
+ * record a WebM file but return no speech transcript to score. */
+const n2SpeechCheck={
+  session:0,active:false,stopping:false,scored:false,startedAt:0,
+  recognized:[],currentFinal:[],interim:'',blankRestarts:0,errors:[],
+  restartTimer:null,finishTimer:null,lesson:null
+};
+function n2SpeechStatus(message){
+ const el=document.querySelector('#readingLiveStatus');
+ if(el)el.textContent=message;
 }
-
+function n2SpeechErrorHelp(code){
+ const descriptions={
+  'not-allowed':'Quyền micro đã bị chặn. Mở quyền trang web trong Chrome → Micro → Cho phép.',
+  'service-not-allowed':'Chrome chặn dịch vụ nhận dạng giọng nói. Kiểm tra quyền micro và cài đặt nhận dạng của Android.',
+  'network':'Dịch vụ nhận dạng giọng nói của Chrome không kết nối được. Cần Internet ổn định; ghi âm riêng vẫn dùng được.',
+  'no-speech':'Không nhận ra lời nói. Hãy đọc gần micro, tăng âm lượng và thử lại.',
+  'audio-capture':'Không lấy được âm thanh từ micro. Có thể micro đang được ứng dụng khác sử dụng.',
+  'language-not-supported':'Trình duyệt không hỗ trợ nhận dạng tiếng Nhật.',
+  'aborted':'Phiên nhận dạng bị ngắt. Bạn có thể bắt đầu lại.'
+ };
+ return descriptions[code]||('Nhận dạng giọng nói gặp lỗi: '+(code||'không xác định')+'.');
+}
+function n2SpeechClearTimers(){
+ const s=n2SpeechCheck;
+ if(s.restartTimer!==null){clearTimeout(s.restartTimer);s.restartTimer=null}
+ if(s.finishTimer!==null){clearTimeout(s.finishTimer);s.finishTimer=null}
+}
+function n2SpeechUpdateTranscript(){
+ const s=n2SpeechCheck;
+ n2UI.readingTranscript=[...s.recognized,...s.currentFinal,s.interim].join('');
+ if(n2UI.readingTranscript)n2SpeechStatus('🎤 Đã nhận dạng: '+n2UI.readingTranscript.slice(-115));
+}
+function n2SpeechFinalize(lesson,session){
+ const s=n2SpeechCheck;
+ if(session!==s.session||s.scored)return;
+ s.scored=true;s.active=false;s.stopping=false;
+ n2SpeechClearTimers();
+ n2UI.recognition=null;
+ // Keep interim text only when the recognizer did not return a final transcript.
+ n2UI.readingTranscript=[...s.recognized,...s.currentFinal,s.interim].join('');
+ const elapsed=Math.max(1,(performance.now()-s.startedAt)/1000);
+ document.querySelector('[data-reading-record]')?.removeAttribute('disabled');
+ const stop=document.querySelector('[data-reading-stop]');if(stop)stop.disabled=true;
+ scoreN2Reading(lesson,elapsed,s.errors.at(-1)||'');
+}
+function n2SpeechRunRecognizer(lesson,session){
+ const s=n2SpeechCheck;
+ if(session!==s.session||!s.active||s.stopping)return;
+ const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+ const recog=new SR();
+ n2UI.recognition=recog;
+ recog.lang='ja-JP';recog.continuous=true;recog.interimResults=true;recog.maxAlternatives=1;
+ recog.onresult=e=>{
+   if(session!==s.session)return;
+   s.currentFinal=[];s.interim='';
+   for(let i=0;i<e.results.length;i++){
+     const txt=e.results[i]?.[0]?.transcript||'';
+     if(e.results[i].isFinal)s.currentFinal.push(txt);
+     else s.interim+=txt;
+   }
+   if(s.currentFinal.length||s.interim)s.blankRestarts=0;
+   n2SpeechUpdateTranscript();
+ };
+ recog.onerror=e=>{
+   if(session!==s.session)return;
+   const code=e.error||'unknown';
+   if(code==='no-speech'){n2SpeechStatus('⚠️ Chưa nghe thấy tiếng Nhật. Đọc rõ hơn, ứng dụng sẽ thử nghe lại.');return}
+   s.errors.push(code);
+   n2SpeechStatus('⚠️ '+n2SpeechErrorHelp(code));
+   if(['not-allowed','service-not-allowed','audio-capture','language-not-supported','network'].includes(code)){
+     s.active=false;s.stopping=true;
+     const record=document.querySelector('[data-reading-record]');
+     if(record)record.disabled=false;
+     const stop=document.querySelector('[data-reading-stop]');
+     if(stop)stop.disabled=true;
+     if(!n2UI.readingTranscript){
+       const box=document.querySelector('#readingScoreBox');
+       if(box)box.innerHTML='<div class="score-panel fail"><strong>Chưa thể chấm.</strong><p>'+escapeText(n2SpeechErrorHelp(code))+'</p></div>';
+     }
+   }
+ };
+ recog.onend=()=>{
+   if(session!==s.session)return;
+   if(s.currentFinal.length)s.recognized.push(...s.currentFinal);
+   else if(s.interim)s.recognized.push(s.interim);
+   s.currentFinal=[];s.interim='';
+   n2UI.recognition=null;
+   n2SpeechUpdateTranscript();
+   if(s.stopping || !s.active){
+     if(s.errors.length && !s.recognized.length){
+       s.scored=true;n2SpeechClearTimers();
+       return;
+     }
+     s.finishTimer=setTimeout(()=>n2SpeechFinalize(lesson,session),300);
+     return;
+   }
+   if(!s.recognized.length)s.blankRestarts++;
+   else s.blankRestarts=0;
+   if(s.blankRestarts>=3){
+     s.active=false;s.stopping=true;
+     n2SpeechStatus('⚠️ Chrome không nhận ra lời nói sau nhiều lần thử. Hãy kiểm tra micro hoặc dùng Ghi âm nghe lại.');
+     const box=document.querySelector('#readingScoreBox');
+     if(box)box.innerHTML='<div class="score-panel fail"><strong>Chưa thể chấm.</strong><p>Không nhận được bản chép tiếng Nhật. Không thể suy ra điểm chỉ từ file âm thanh.</p></div>';
+     document.querySelector('[data-reading-record]')?.removeAttribute('disabled');
+     const stop=document.querySelector('[data-reading-stop]');if(stop)stop.disabled=true;
+     return;
+   }
+   n2SpeechStatus('⏳ Nhận dạng vừa ngắt; đang mở lại micro để tiếp tục...');
+   s.restartTimer=setTimeout(()=>{
+     s.restartTimer=null;
+     if(session===s.session&&s.active&&!s.stopping)n2SpeechRunRecognizer(lesson,session);
+   },400);
+ };
+ try{
+   recog.start();
+   n2SpeechStatus('🎤 Đang nghe tiếng Nhật... Hãy bắt đầu đọc.');
+ }catch(e){
+   s.active=false;s.stopping=true;s.errors.push('start-failed');
+   n2SpeechStatus('⚠️ Không khởi động được nhận dạng: '+(e?.message||'Lỗi trình duyệt'));
+   document.querySelector('[data-reading-record]')?.removeAttribute('disabled');
+   const stop=document.querySelector('[data-reading-stop]');if(stop)stop.disabled=true;
+ }
+}
+function startN2Reading(lesson){
+ const status=document.querySelector('#readingLiveStatus');
+ if(n2UI.mediaRecorder?.state==='recording'){
+   n2SpeechStatus('Đang ghi âm riêng. Hãy dừng ghi âm trước khi chấm phát âm.');return;
+ }
+ const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+ if(!SR){
+   n2SpeechStatus('⚠️ Trình duyệt này không hỗ trợ nhận dạng tiếng Nhật trực tiếp. Hãy thử Chrome Android hoặc ghi âm để nghe lại.');
+   return;
+ }
+ if(!window.isSecureContext){
+   n2SpeechStatus('⚠️ Cần mở ứng dụng qua HTTPS để dùng micro.');return;
+ }
+ n2StopReadingSpeech('⏹ Đã dừng giọng đọc mẫu để bạn đọc thử.');
+ stopN2Reading();
+ const s=n2SpeechCheck;
+ s.session++;s.active=true;s.stopping=false;s.scored=false;
+ s.startedAt=performance.now();s.recognized=[];s.currentFinal=[];s.interim='';
+ s.blankRestarts=0;s.errors=[];s.lesson=lesson;
+ n2UI.readingStartedAt=s.startedAt;n2UI.readingTranscript='';
+ const score=document.querySelector('#readingScoreBox');if(score)score.innerHTML='';
+ const start=document.querySelector('[data-reading-record]');if(start)start.disabled=true;
+ const stop=document.querySelector('[data-reading-stop]');if(stop)stop.disabled=false;
+ n2SpeechRunRecognizer(lesson,s.session);
+}
 function stopAndScoreN2Reading(lesson){
-  const duration=Math.max(1,(performance.now()-n2UI.readingStartedAt)/1000);
-  try{if(n2UI.mediaRecorder&&n2UI.mediaRecorder.state!=='inactive')n2UI.mediaRecorder.stop()}catch{}
-  try{n2UI.recognition?.stop()}catch{}
-  n2UI.mediaStream?.getTracks?.().forEach(t=>t.stop());
-  n2UI.mediaStream=null;
-  document.querySelector('[data-reading-record]')?.removeAttribute('disabled');
-  const stop=document.querySelector('[data-reading-stop]');if(stop)stop.disabled=true;
-  setTimeout(()=>scoreN2Reading(lesson,duration),500);
+ const s=n2SpeechCheck;
+ if(!s.active&&!s.stopping)return;
+ s.active=false;s.stopping=true;
+ n2SpeechClearTimers();
+ n2SpeechStatus('⏳ Đang chờ Chrome trả bản chép tiếng Nhật để chấm...');
+ const finishSession=s.session;
+ try{
+   if(n2UI.recognition)n2UI.recognition.stop();
+   else n2SpeechFinalize(lesson,finishSession);
+ }catch{n2SpeechFinalize(lesson,finishSession)}
+ // Some Android builds fail to deliver "onend"; finish without inventing speech.
+ if(!s.scored)s.finishTimer=setTimeout(()=>n2SpeechFinalize(lesson,finishSession),1750);
 }
-
 function stopN2Reading(){
-  try{if(n2UI.mediaRecorder&&n2UI.mediaRecorder.state!=='inactive')n2UI.mediaRecorder.stop()}catch{}
-  try{n2UI.recognition?.stop()}catch{}
-  n2UI.mediaStream?.getTracks?.().forEach(t=>t.stop());
-  n2UI.mediaRecorder=null;n2UI.mediaStream=null;n2UI.recognition=null;
+ const s=n2SpeechCheck;
+ s.session++;s.active=false;s.stopping=false;s.scored=true;
+ n2SpeechClearTimers();
+ try{n2UI.recognition?.abort()}catch{}
+ n2UI.recognition=null;
+ n2StopCaptureOnly();
+}
+async function n2CaptureAudioOnly(){
+ const el=document.querySelector('#readingCaptureStatus');
+ if(n2SpeechCheck.active||n2SpeechCheck.stopping){if(el)el.textContent='Hãy dừng phiên chấm trước khi ghi âm riêng.';return}
+ if(!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder){if(el)el.textContent='Trình duyệt này không hỗ trợ ghi âm.';return}
+ try{
+   const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+   n2UI.mediaStream=stream;
+   const recorder=new MediaRecorder(stream);n2UI.mediaRecorder=recorder;
+   const chunks=[];
+   recorder.ondataavailable=e=>{if(e.data?.size)chunks.push(e.data)};
+   recorder.onstop=()=>{
+     const blob=new Blob(chunks,{type:recorder.mimeType||'audio/webm'});
+     if(!blob.size)return;
+     if(n2UI.audioUrl)URL.revokeObjectURL(n2UI.audioUrl);
+     n2UI.audioUrl=URL.createObjectURL(blob);
+     const box=document.querySelector('#readingAudioBox');
+     if(box)box.innerHTML='<audio controls src="'+escapeText(n2UI.audioUrl)+'"></audio>';
+   };
+   recorder.start();
+   if(el)el.textContent='🔴 Đang ghi âm để nghe lại (chế độ này không chấm tự động).';
+   const start=document.querySelector('[data-record-only]');if(start)start.disabled=true;
+   const stop=document.querySelector('[data-record-only-stop]');if(stop)stop.disabled=false;
+ }catch(e){if(el)el.textContent='⚠️ Không mở được micro. Mở quyền trang web trong Chrome → Micro → Cho phép.';}
+}
+function n2StopCaptureOnly(){
+ try{if(n2UI.mediaRecorder&&n2UI.mediaRecorder.state!=='inactive')n2UI.mediaRecorder.stop()}catch{}
+ n2UI.mediaStream?.getTracks?.().forEach(t=>t.stop());
+ n2UI.mediaRecorder=null;n2UI.mediaStream=null;
+ const start=document.querySelector('[data-record-only]');if(start)start.disabled=false;
+ const stop=document.querySelector('[data-record-only-stop]');if(stop)stop.disabled=true;
+ const msg=document.querySelector('#readingCaptureStatus');
+ if(msg)msg.textContent='Đã dừng ghi âm. Bấm phát để nghe lại.';
 }
 
 function normalizeJa(s){
@@ -968,25 +1125,25 @@ function levenshtein(a,b){
   return prev[b.length];
 }
 
-function scoreN2Reading(lesson,duration){
+function scoreN2Reading(lesson,duration,speechError=''){
   const target=normalizeJa(lesson.text),spoken=normalizeJa(n2UI.readingTranscript);
   const box=document.querySelector('#readingScoreBox'),status=document.querySelector('#readingLiveStatus');
   if(!spoken){
-    if(box)box.innerHTML='<div class="score-panel fail"><strong>Chưa chấm được.</strong><p>Không nhận được bản chép giọng nói. Hãy dùng Chrome/Android, bật quyền micro và thử lại.</p></div>';
-    if(status)status.textContent='Đã dừng ghi âm.';
+    if(box)box.innerHTML='<div class="score-panel fail"><strong>Chưa thể chấm.</strong><p>'+escapeText(speechError?n2SpeechErrorHelp(speechError):'Chrome không trả bản chép tiếng Nhật. Kiểm tra quyền micro, kết nối mạng và thử “Bắt đầu đọc & chấm” lại. Ghi âm để nghe lại không thể tự cho điểm.')+'</p></div>';
+    if(status)status.textContent='Đã dừng nhận dạng. Không có chữ để so sánh nên chưa có điểm.';
     return;
   }
   const dist=levenshtein(target,spoken);
   const accuracy=Math.max(0,Math.round((1-dist/Math.max(target.length,spoken.length,1))*100));
-  const cpm=Math.round(target.length/(duration/60));
+  const cpm=Math.round(spoken.length/(duration/60));
   const speed=Math.max(0,Math.min(100,Math.round(100-Math.abs(cpm-260)*0.35)));
   const score=Math.round(accuracy*.85+speed*.15);
   const pass=score>=60;
   n2SaveReadingScore({date:new Date().toISOString(),lessonId:lesson.id,score,accuracy,cpm,speed});
-  if(status)status.textContent=`Nhận dạng: ${n2UI.readingTranscript}`;
+  if(status)status.textContent=`Nhận dạng được: ${n2UI.readingTranscript}`;
   if(box)box.innerHTML=`<div class="score-panel ${pass?'pass':'fail'}">
     <div class="score-main"><b>${score}</b><span>/100</span></div>
-    <div class="score-grid"><div><strong>${accuracy}%</strong><span>đọc đúng</span></div><div><strong>${cpm}</strong><span>ký tự/phút</span></div><div><strong>${speed}%</strong><span>nhịp độ</span></div></div>
+    <div class="score-grid"><div><strong>${accuracy}%</strong><span>khớp văn bản</span></div><div><strong>${cpm}</strong><span>ký tự/phút</span></div><div><strong>${speed}%</strong><span>nhịp độ</span></div></div>
     <p>${pass?'Đạt. Bạn có thể chuyển sang bài khác.':'Dưới 60 điểm: bài này chưa được tính qua. Hãy đọc lại.'}</p>
   </div>`;
 }
