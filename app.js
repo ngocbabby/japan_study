@@ -223,13 +223,14 @@ function renderRoadmap(){
  content+='<div class="plan2-tabs" role="group" aria-label="Xem lịch theo thời gian">'+
  [['today','Hôm nay'],['tomorrow','Ngày mai'],['week','7 ngày']].map(([key,label])=>'<button type="button" data-roadmap-view="'+key+'" class="'+(roadmapCompactState.tab===key?'active':'')+'" aria-pressed="'+(roadmapCompactState.tab===key)+'">'+label+'</button>').join('')+
  '</div>';
- if(roadmapCompactState.tab==='week')content+=roadmapCompactWeek();
+ if(roadmapCompactState.selectedDate)content+=roadmapCompactCards(roadmapCompactState.selectedDate);
+ else if(roadmapCompactState.tab==='week')content+=roadmapCompactWeek();
  else content+=roadmapCompactCards(roadmapCompactIso(roadmapCompactState.tab==='tomorrow'?1:0));
  content+='<div class="plan2-actions"><button data-roadmap-open-n2 class="plan2-outline" type="button">↪ Dời buổi N2 / chỉnh ưu tiên</button></div>'+
  '<details class="plan2-details plan2-source"><summary>Nguồn lịch & mức độ chính xác</summary><p>Lịch tuần cá nhân được ChatGPT ghi ngày '+escapeText((ROADMAP.generatedAt||'').slice(0,10))+'. Các ngày ngoài giai đoạn '+escapeText(ROADMAP.period?.from||'')+'–'+escapeText(ROADMAP.period?.to||'')+' chỉ có lịch lớp định kỳ. Đây không phải lịch đồng bộ trực tiếp. Buổi N2 dự kiến dựa trên KOSEI; thông báo từ giáo viên được ưu tiên.</p></details></div>';
  main.innerHTML=content;
- document.querySelectorAll('[data-roadmap-view]').forEach(b=>b.onclick=()=>{roadmapCompactState.tab=b.dataset.roadmapView;renderRoadmap()});
- document.querySelectorAll('[data-roadmap-date]').forEach(b=>b.onclick=()=>{roadmapCompactState.tab=b.dataset.roadmapDate===roadmapCompactIso(0)?'today':'tomorrow';if(roadmapCompactState.tab==='tomorrow'&&b.dataset.roadmapDate!==roadmapCompactIso(1)){roadmapCompactState.tab='week';roadmapCompactState.selectedDate=b.dataset.roadmapDate;}else roadmapCompactState.selectedDate=null;renderRoadmap()});
+ document.querySelectorAll('[data-roadmap-view]').forEach(b=>b.onclick=()=>{roadmapCompactState.tab=b.dataset.roadmapView;roadmapCompactState.selectedDate=null;renderRoadmap()});
+ document.querySelectorAll('[data-roadmap-date]').forEach(b=>b.onclick=()=>{roadmapCompactState.selectedDate=b.dataset.roadmapDate;renderRoadmap()});
  document.querySelectorAll('[data-roadmap-open-n2]').forEach(b=>b.onclick=()=>{state.page='n2';n2UI.view='planner';render()});
 }
 function dayCard(day,date,items){
