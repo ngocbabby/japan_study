@@ -43,8 +43,8 @@
     [106,'気づく','きづく','nhận ra, chú ý']
   ];
 
-  const vocabItems = rawVocab.map(([n,term,reading,meaning]) => ({
-    id:`n2-v-${n}`, n, term, reading, meaning
+  const vocabItems = (window.N2_MIMIKARA_1160 || rawVocab).map(([n,term,reading,meaning,hanViet]) => ({
+    id:`n2-v-${n}`, n, term, reading, meaning, hanViet:hanViet||''
   }));
 
   const vocabLessons = vocabLessonRanges.map(([from,to],i) => ({
@@ -107,13 +107,13 @@
   }));
 
   window.N2_STUDY_DATA = {
-    version:'2026-10-08',
+    version:'2026-10-09',
     vocabTotal:1160,
     vocabImported:vocabItems.length,
     vocabLessons,
     kanjiLessons,
     grammarLessons,
     readingLessons,
-    sourceNote:'Khung bài bám lộ trình N2 55 buổi. Dữ liệu item chỉ hiển thị khi đã được nhập từ tài liệu nguồn.'
+    sourceNote:'Mimikara Oboeru N2: 1160 từ theo đúng thứ tự gốc; chia 25 bài dựa trên lộ trình N2 55 buổi của KOSEI.'
   };
 })();
