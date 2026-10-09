@@ -7,6 +7,9 @@ const n2UI = {
   timer:null,
   flashTimer:null,
   flashFlipped:false,
+  flashPaused:false,
+  flashDeadline:0,
+  flashRemaining:0,
   locked:false,
   readingId:null,
   mediaRecorder:null,
@@ -235,7 +238,6 @@ function startN2Session(lessonId){
 function stopN2Timers(){
   if(n2UI.timer){clearInterval(n2UI.timer);n2UI.timer=null}
   if(n2UI.flashTimer){clearTimeout(n2UI.flashTimer);n2UI.flashTimer=null}
-  n2UI.locked=false;
 }
 
 function renderN2Study(){
@@ -278,7 +280,7 @@ function renderN2Flash(){
   `;
   document.querySelector('[data-n2-exit]').addEventListener('click',exitN2Study);
   document.querySelector('[data-n2-flip]').addEventListener('click',()=>n2FlipNow(item));
-  document.querySelector('[data-n2-pause]').addEventListener('click',()=>{stopN2Timers();document.querySelector('[data-n2-pause]').textContent='Đã dừng';});
+  document.querySelector('[data-n2-pause]').addEventListener('click',()=>n2ToggleFlashPause(item));
   document.querySelectorAll('[data-speak]').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();speakJapanese(b.dataset.speak)}));
   startN2FlashCycle(item);
 }
@@ -301,36 +303,67 @@ function n2FlashDurations(){
 
 function startN2FlashCycle(item){
   stopN2Timers();
-  const d=n2FlashDurations();
-  n2FlashCountdown(d.front,'Lật sau');
-  n2UI.flashTimer=setTimeout(()=>n2FlipNow(item),d.front);
+  n2UI.flashPaused=false;
+  n2ScheduleFlashStep(item,n2FlashDurations().front,'front');
+}
+
+function n2ScheduleFlashStep(item,ms,side){
+  stopN2Timers();
+  n2UI.flashDeadline=performance.now()+ms;
+  n2UI.flashRemaining=ms;
+  n2FlashCountdown(ms,side==='front'?'Lật sau':'Tiếp theo sau');
+  n2UI.flashTimer=setTimeout(()=>{
+    n2UI.flashTimer=null;
+    if(side==='front') return n2FlipNow(item);
+    const s=n2UI.session;
+    if(!s || n2UI.view!=='study') return;
+    s.index++;
+    renderN2Study();
+  },ms);
 }
 
 function n2FlashCountdown(ms,prefix){
   const label=document.querySelector('#n2FlashCountdown');
   if(!label)return;
   const end=performance.now()+ms;
-  n2UI.timer=setInterval(()=>{
+  const tick=()=>{
     const left=Math.max(0,end-performance.now());
     label.textContent=`${prefix} ${(left/1000).toFixed(1)}s`;
     if(left<=0&&n2UI.timer){clearInterval(n2UI.timer);n2UI.timer=null}
-  },100);
+  };
+  tick();
+  n2UI.timer=setInterval(tick,100);
+}
+
+function n2ToggleFlashPause(item){
+  const button=document.querySelector('[data-n2-pause]');
+  const label=document.querySelector('#n2FlashCountdown');
+  if(!n2UI.flashPaused){
+    n2UI.flashRemaining=Math.max(0,n2UI.flashDeadline-performance.now());
+    stopN2Timers();
+    n2UI.flashPaused=true;
+    if(button)button.textContent='▶ Tiếp tục';
+    if(label)label.textContent=`Tạm dừng · còn ${(n2UI.flashRemaining/1000).toFixed(1)}s`;
+  }else{
+    n2UI.flashPaused=false;
+    if(button)button.textContent='Tạm dừng';
+    n2ScheduleFlashStep(item,n2UI.flashRemaining,n2UI.flashFlipped?'back':'front');
+  }
 }
 
 function n2FlipNow(item){
   if(n2UI.flashFlipped) return;
   stopN2Timers();
+  n2UI.flashPaused=false;
   n2UI.flashFlipped=true;
   document.querySelector('.flash-front')?.classList.add('hidden-card');
   document.querySelector('.flash-back')?.classList.remove('hidden-card');
+  const pauseButton=document.querySelector('[data-n2-pause]');
+  if(pauseButton)pauseButton.textContent='Tạm dừng';
   if(n2UI.type==='vocab') speakJapanese(item.term);
   else if(n2UI.type==='kanji') speakJapanese((item.words||item.char).split('・')[0]);
   else speakJapanese(item.example||item.pattern);
-  const d=n2FlashDurations();
-  n2FlashCountdown(d.back,'Tiếp theo sau');
-  n2UI.flashTimer=setTimeout(()=>{
-    const s=n2UI.session;s.index++;renderN2Study();
-  },d.back);
+  n2ScheduleFlashStep(item,n2FlashDurations().back,'back');
 }
 
 function finishN2Flash(){
