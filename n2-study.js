@@ -989,6 +989,7 @@ function n2SpeechRunRecognizer(lesson,session){
  };
  recog.onend=()=>{
    if(session!==s.session)return;
+   const heardThisRound=Boolean(s.currentFinal.length||s.interim.trim());
    if(s.currentFinal.length)s.recognized.push(...s.currentFinal);
    else if(s.interim)s.recognized.push(s.interim);
    s.currentFinal=[];s.interim='';
@@ -999,11 +1000,12 @@ function n2SpeechRunRecognizer(lesson,session){
        s.scored=true;n2SpeechClearTimers();
        return;
      }
+     if(s.finishTimer!==null)clearTimeout(s.finishTimer);
      s.finishTimer=setTimeout(()=>n2SpeechFinalize(lesson,session),300);
      return;
    }
-   if(!s.recognized.length)s.blankRestarts++;
-   else s.blankRestarts=0;
+   if(heardThisRound)s.blankRestarts=0;
+   else s.blankRestarts++;
    if(s.blankRestarts>=3){
      s.active=false;s.stopping=true;
      n2SpeechStatus('⚠️ Chrome không nhận ra lời nói sau nhiều lần thử. Hãy kiểm tra micro hoặc dùng Ghi âm nghe lại.');
@@ -1066,7 +1068,7 @@ function stopAndScoreN2Reading(lesson){
    else n2SpeechFinalize(lesson,finishSession);
  }catch{n2SpeechFinalize(lesson,finishSession)}
  // Some Android builds fail to deliver "onend"; finish without inventing speech.
- if(!s.scored)s.finishTimer=setTimeout(()=>n2SpeechFinalize(lesson,finishSession),1750);
+ if(!s.scored&&s.finishTimer===null)s.finishTimer=setTimeout(()=>n2SpeechFinalize(lesson,finishSession),1750);
 }
 function stopN2Reading(){
  const s=n2SpeechCheck;
