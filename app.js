@@ -148,71 +148,90 @@ function typeClass(type){
   return type==='class'?'type-class':type==='review'?'type-review':type==='study'?'type-study':'type-busy';
 }
 
-function renderBotRoadmapDays(){
-  if(!ROADMAP.days?.length){
-    return '<div class="empty"><strong>Chưa có lộ trình</strong><p>Yêu cầu ChatGPT cập nhật app để tạo lịch mới.</p></div>';
-  }
-  return ROADMAP.days.map(day=>`<article class="day-card ${day.conflict?'day-conflict':''}">
-    <div class="day-head">
-      <span class="day-title">${escapeText(day.label)}</span>
-      <span class="date-pill">${escapeText(day.date.slice(8,10)+'/'+day.date.slice(5,7))}</span>
-    </div>
-    ${day.conflict?'<div class="conflict-banner">⚠ Có lịch học bị chồng giờ — cần bạn chọn ưu tiên.</div>':''}
-    ${day.items.map(item=>`<div class="schedule-item">
-      <div class="schedule-time">${escapeText(item.start)}</div>
-      <div class="schedule-body">
-        <strong>${escapeText(item.title)}</strong>
-        <p>${escapeText(item.detail||'')}</p>
-        <span class="type-chip ${typeClass(item.type)}">${typeLabel(item.type)}</span>
-      </div>
-    </div>`).join('')}
-    ${day.note?`<div class="day-note"><strong>AI ghi chú:</strong> ${escapeText(day.note)}</div>`:''}
-  </article>`).join('');
+/* One-screen daily plan. Keep older static AI calendar in a collapsed details view,
+ * and label anything inferred from KOSEI as an estimate. */
+const roadmapCompactState={tab:'today'};
+function roadmapCompactIso(offset){
+ const base=typeof n2PlanToday==='function'?n2PlanToday():new Date().toISOString().slice(0,10);
+ return typeof n2PlanShift==='function'?n2PlanShift(base,offset):base;
 }
-
+function roadmapCompactDay(iso){
+ const cached=ROADMAP.days?.find(d=>d.date===iso);
+ const meetings=typeof n2PlanClasses==='function'?n2PlanClasses(iso,1):[];
+ const cancelled=meetings.find(e=>e.id==='n2'&&e.cancelled);
+ let entries=cached?.items?.map(e=>({...e}))||[];
+ if(cancelled){
+   const found=entries.some(e=>/N2/i.test(e.title)&&/NGHỈ/.test(e.title));
+   entries=entries.filter(e=>!(e.type==='class'&&/N2/i.test(e.title)));
+   if(!found)entries.push({start:cancelled.start,title:'Lớp N2 · NGHỈ',detail:cancelled.reason||'Giáo viên báo nghỉ',type:'cancelled',origin:'teacher'});
+ }
+ if(!cached){
+   entries=meetings.map(e=>({start:e.start,title:e.label+(e.cancelled?' · NGHỈ':''),detail:e.cancelled?(e.reason||'Đã đánh dấu nghỉ'):'Lịch định kỳ, chưa xác nhận nội dung bài',type:e.cancelled?'cancelled':'class',origin:'calendar'}));
+ }
+ entries.sort((a,b)=>(a.start||'').localeCompare(b.start||''));
+ return {date:iso,cached,entries};
+}
+function roadmapCompactDateText(iso){
+ const parts=iso.split('-');return parts[2]+'/'+parts[1];
+}
+function roadmapCompactItem(item){
+ const status=item.type==='cancelled'?'NGHỈ':item.type==='class'?'LÊN LỚP':item.type==='review'?'ÔN':item.type==='study'?'CHUẨN BỊ':'LỊCH BẬN';
+ const tag=item.type==='cancelled'?'is-off':item.type==='class'?'is-class':item.type==='study'?'is-study':item.type==='review'?'is-review':'is-busy';
+ return '<div class="plan2-task"><span class="plan2-clock">'+escapeText(item.start||'—')+'</span><div class="plan2-task-text"><strong>'+escapeText(item.title)+'</strong>'+
+ (item.detail?'<p>'+escapeText(item.detail)+'</p>':'')+'</div><span class="plan2-status '+tag+'">'+status+'</span></div>';
+}
+function roadmapCompactCards(date){
+ const d=roadmapCompactDay(date);
+ const visible=d.entries.filter(x=>x.type!=='busy'&&x.type!=='work'),other=d.entries.filter(x=>x.type==='busy'||x.type==='work');
+ let h='<section class="plan2-card"><div class="plan2-section-head"><h3>'+escapeText(date===roadmapCompactIso(0)?'Hôm nay':date===roadmapCompactIso(1)?'Ngày mai':'Ngày '+roadmapCompactDateText(date))+'</h3><span class="plan2-date">'+roadmapCompactDateText(date)+'</span></div>';
+ if(!d.cached)h+='<p class="plan2-note">Ngày này chưa có kế hoạch cá nhân mới; chỉ hiển thị các lớp theo giờ định kỳ.</p>';
+ h+=visible.length?visible.slice(0,5).map(roadmapCompactItem).join(''):'<p class="plan2-empty">Chưa có việc học nào được ghi cho ngày này.</p>';
+ if(visible.length>5)h+='<details class="plan2-details"><summary>Xem thêm '+(visible.length-5)+' việc</summary>'+visible.slice(5).map(roadmapCompactItem).join('')+'</details>';
+ if(other.length)h+='<details class="plan2-details"><summary>Xem giờ đi làm / lịch bận ('+other.length+')</summary>'+other.map(roadmapCompactItem).join('')+'</details>';
+ if(d.cached?.conflict)h+='<p class="plan2-caution">⚠ Có lớp trùng giờ. Hãy chọn lớp tham dự thực tế.</p>';
+ return h+'</section>';
+}
+function roadmapCompactWeek(){
+ let out='<section class="plan2-card"><div class="plan2-section-head"><h3>7 ngày gần nhất</h3><span class="plan2-note">Bấm ngày để xem</span></div>';
+ for(let i=0;i<7;i++){
+   const date=roadmapCompactIso(i),data=roadmapCompactDay(date);
+   const cls=data.entries.filter(x=>x.type==='class').length;
+   const off=data.entries.some(x=>x.type==='cancelled');
+   const count=data.entries.filter(x=>x.type==='study'||x.type==='review').length;
+   const summary=off?'N2 nghỉ / dời':(cls?'Có '+cls+' lớp':'Không có lớp ghi nhận');
+   out+='<button type="button" class="plan2-dayline" data-roadmap-date="'+escapeText(date)+'"><span class="plan2-daynum">'+roadmapCompactDateText(date)+'</span><span><strong>'+escapeText(summary)+'</strong><small>'+(count?count+' mục tự học':'')+'</small></span><span aria-hidden="true">›</span></button>';
+ }
+ return out+'</section>';
+}
 function renderRoadmap(){
-  title.textContent='Lộ trình tuần';
-  setNav('roadmap');
-
-  const updated=ROADMAP.generatedAt
-    ? new Date(ROADMAP.generatedAt).toLocaleString('vi-VN',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})
-    : 'chưa có';
-
-  main.innerHTML=`
-    <section class="hero">
-      <div class="hero-grid">
-        <div>
-          <strong>Lộ trình do ChatGPT quản lý</strong>
-          <p>ChatGPT đọc Google Calendar bằng connector, phát hiện lịch bận/xung đột rồi cập nhật kế hoạch chung lên GitHub Pages.</p>
-        </div>
-        <div class="hero-stat"><b>${ROADMAP.days?.length||0}</b><span>ngày đã xếp</span></div>
-      </div>
-    </section>
-
-    <div class="section-head">
-      <div>
-        <p class="section-kicker">BOT SYNC</p>
-        <h2>${escapeText(ROADMAP.period?.from||'')} → ${escapeText(ROADMAP.period?.to||'')}</h2>
-      </div>
-      <span class="status-chip synced">CHATGPT</span>
-    </div>
-
-    <section class="n2-plan-panel"><h3>↪ Giáo viên báo nghỉ / dời lịch</h3><p>09/10 lớp N2 nghỉ, chuyển buổi dự kiến sang thứ Hai 12/10. Số buổi và bài cần chuẩn bị không bị bỏ qua.</p><button class="primary-btn" id="openN2Reschedule" type="button">📅 Dời ngày học, xem lịch mới →</button></section>
-
-    <div class="sync-line">Cập nhật gần nhất: <strong>${updated}</strong> · nguồn: ${escapeText(ROADMAP.source||'Google Calendar')}</div>
-
-    <section class="timeline">
-      ${renderBotRoadmapDays()}
-    </section>
-
-    <div class="notice">
-      <div>🧠</div>
-      <div><strong>Nguyên tắc planner</strong><p>${escapeText((ROADMAP.principles||[]).join(' · '))}</p></div>
-    </div>
-  `;
-  document.querySelector('#openN2Reschedule')?.addEventListener('click',()=>{state.page='n2';n2UI.view='planner';render()});
+ title.textContent='Lộ trình';
+ setNav('roadmap');
+ const today=roadmapCompactIso(0),p=typeof n2PlanLoad==='function'?n2PlanLoad():null;
+ const priority=p?.anchorDate&&typeof n2PlanPrioritize==='function'?n2PlanPrioritize(p,today):null;
+ const next=priority?.next||null;
+ const knownChanges=p&&typeof n2PlanChanges==='function'?n2PlanChanges(p):[];
+ const nearestOff=knownChanges.filter(c=>c.from>=today).sort((a,b)=>a.from.localeCompare(b.from))[0];
+ let content='<div class="plan2-screen">'+
+ '<div class="plan2-intro"><div><p class="plan2-eyebrow">HỌC ĐÚNG ƯU TIÊN</p><h2>Hôm nay học gì?</h2></div><button class="plan2-small-action" data-roadmap-open-n2 type="button">N2 ›</button></div>';
+ if(next){
+  content+='<section class="plan2-focus"><span class="plan2-focus-tag">📌 BUỔI N2 TIẾP THEO'+(p.confirmed?'':' · DỰ KIẾN')+'</span>'+
+  '<strong>'+escapeText(roadmapCompactDateText(next.date))+' · '+escapeText(next.start)+' · Buổi '+next.session+'</strong>'+
+  '<p>'+escapeText(priority.urgent[0]?.text||priority.due[0]?.text||'Đã xong phần chuẩn bị buổi gần nhất.')+'</p>'+
+  '<button class="plan2-primary" data-roadmap-open-n2 type="button">Xem bài cần chuẩn bị →</button></section>';
+ }else content+='<section class="plan2-focus"><strong>Chưa ghép buổi N2 tiếp theo</strong><p>Thiết lập trong N2 để xem đúng bài sắp học.</p><button class="plan2-primary" data-roadmap-open-n2 type="button">Thiết lập N2 →</button></section>';
+ if(nearestOff)content+='<p class="plan2-note">↪ Đã ghi: '+escapeText(roadmapCompactDateText(nearestOff.from))+' nghỉ → '+escapeText(roadmapCompactDateText(nearestOff.to))+' học tiếp.</p>';
+ content+='<div class="plan2-tabs" role="group" aria-label="Xem lịch theo thời gian">'+
+ [['today','Hôm nay'],['tomorrow','Ngày mai'],['week','7 ngày']].map(([key,label])=>'<button type="button" data-roadmap-view="'+key+'" class="'+(roadmapCompactState.tab===key?'active':'')+'" aria-pressed="'+(roadmapCompactState.tab===key)+'">'+label+'</button>').join('')+
+ '</div>';
+ if(roadmapCompactState.tab==='week')content+=roadmapCompactWeek();
+ else content+=roadmapCompactCards(roadmapCompactIso(roadmapCompactState.tab==='tomorrow'?1:0));
+ content+='<div class="plan2-actions"><button data-roadmap-open-n2 class="plan2-outline" type="button">↪ Dời buổi N2 / chỉnh ưu tiên</button></div>'+
+ '<details class="plan2-details plan2-source"><summary>Nguồn lịch & mức độ chính xác</summary><p>Lịch tuần cá nhân được ChatGPT ghi ngày '+escapeText((ROADMAP.generatedAt||'').slice(0,10))+'. Các ngày ngoài giai đoạn '+escapeText(ROADMAP.period?.from||'')+'–'+escapeText(ROADMAP.period?.to||'')+' chỉ có lịch lớp định kỳ. Đây không phải lịch đồng bộ trực tiếp. Buổi N2 dự kiến dựa trên KOSEI; thông báo từ giáo viên được ưu tiên.</p></details></div>';
+ main.innerHTML=content;
+ document.querySelectorAll('[data-roadmap-view]').forEach(b=>b.onclick=()=>{roadmapCompactState.tab=b.dataset.roadmapView;renderRoadmap()});
+ document.querySelectorAll('[data-roadmap-date]').forEach(b=>b.onclick=()=>{roadmapCompactState.tab=b.dataset.roadmapDate===roadmapCompactIso(0)?'today':'tomorrow';if(roadmapCompactState.tab==='tomorrow'&&b.dataset.roadmapDate!==roadmapCompactIso(1)){roadmapCompactState.tab='week';roadmapCompactState.selectedDate=b.dataset.roadmapDate;}else roadmapCompactState.selectedDate=null;renderRoadmap()});
+ document.querySelectorAll('[data-roadmap-open-n2]').forEach(b=>b.onclick=()=>{state.page='n2';n2UI.view='planner';render()});
 }
-
 function dayCard(day,date,items){
   return `<article class="day-card">
     <div class="day-head"><span class="day-title">${day}</span><span class="date-pill">${date}</span></div>
