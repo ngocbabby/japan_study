@@ -116,7 +116,7 @@ function renderN2Planner(){
  html+='<section class="n2-plan-panel"><h3>📘 55 buổi theo nguồn KOSEI</h3><p>Chọn từng buổi để xem bài học và bài tập nguồn. Không xem bài tập của buổi cũ là đã hoàn thành nếu chưa đánh dấu.</p>'+
  '<div class="n2-plan-sessions">'+all.map(l=>'<details><summary>Buổi '+l.number+' · '+n2PlanEscape(l.contents.slice(0,2).join(' · '))+'</summary>'+
  '<strong>Nội dung học:</strong><ul>'+l.contents.map(x=>'<li>'+n2PlanEscape(x)+'</li>').join('')+'</ul><strong>Bài tập về nhà:</strong><ul>'+l.homework.map(x=>'<li>'+n2PlanEscape(x)+'</li>').join('')+'</ul></details>').join('')+'</div></section>';
- html+='<section class="n2-plan-panel"><h3>🔔 Nhắc nhở</h3><p>Trang tự đổi việc ưu tiên theo ngày khi bạn mở app. Bạn có thể bật thông báo 20:00 hàng ngày trên thiết bị; thông báo nền khi đóng trang chưa được bảo đảm trên GitHub Pages.</p><button class="secondary-btn" id="planNotify">🔔 Bật thông báo thiết bị</button><p id="planNotifyStatus" role="status"></p></section>';
+ html+='<section class="n2-plan-panel"><h3>🔔 Nhắc nhở</h3><p>Trang tự đổi việc ưu tiên theo ngày khi bạn mở app. Có thể bật thông báo lúc 20:00 khi trang vẫn đang mở. Đây chưa phải push nền, nên đóng ứng dụng sẽ không có lời nhắc đáng tin cậy.</p><button class="secondary-btn" id="planNotify">🔔 Bật thông báo thiết bị</button><p id="planNotifyStatus" role="status"></p></section>';
  main.innerHTML=html;
  document.querySelector('[data-n2-root]').onclick=()=>{n2UI.view='root';renderN2()};
  document.querySelector('#planSaveAnchor').onclick=()=>{
@@ -132,6 +132,31 @@ function renderN2Planner(){
   const status=document.querySelector('#planNotifyStatus');
   if(!('Notification' in window)){status.textContent='Trình duyệt này không hỗ trợ Notification.';return}
   const permission=await Notification.requestPermission();
-  status.textContent=permission==='granted'?'Đã cho phép. Lời nhắc khi đang mở trang sẽ hoạt động; đóng trang chưa có push server.':'Chưa cấp quyền nhận thông báo.';
+  if(permission==='granted'){const p=n2PlanLoad();p.notifications=true;n2PlanSave(p);n2PlanNotifyCheck();}
+  status.textContent=permission==='granted'?'Đã bật nhắc lúc 20:00 khi ứng dụng đang mở. Khi đóng ứng dụng, trình duyệt không đảm bảo thông báo.':'Chưa cấp quyền nhận thông báo.';
  };
+}
+
+
+/* Notification API on a static GitHub Pages site is foreground-only here.
+ * No claim of guaranteed push after browser/app is closed. */
+function n2PlanNotifyCheck(){
+ const p=n2PlanLoad();
+ if(!p.notifications || !('Notification' in window)||Notification.permission!=='granted')return;
+ const now=new Date(),key=n2PlanToday();
+ const mins=now.getHours()*60+now.getMinutes();
+ if(mins<1200 || mins>=1210)return;
+ if(p.lastNotified===key)return;
+ const next=n2PlanPrioritize(p,key);
+ if(!next.next)return;
+ const what=next.urgent[0]?.text||next.due[0]?.text||next.backlog[0]?.text;
+ if(!what)return;
+ try{
+  new Notification('📘 N2 · Ưu tiên học trước',{body:'Buổi '+next.next.session+' ('+next.next.date+'): '+what,tag:'n2-daily-prep'});
+  p.lastNotified=key;n2PlanSave(p);
+ }catch{}
+}
+if(typeof window!=='undefined' && typeof window.setInterval==='function'){
+ window.setInterval(n2PlanNotifyCheck,60000);
+ window.addEventListener('focus',n2PlanNotifyCheck);
 }
