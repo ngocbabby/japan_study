@@ -625,24 +625,34 @@ function n2RenderReadingDisplay(lesson){
   if(v){v.textContent=n2UI.readingShowTranslation?'🌐 Ẩn dịch nghĩa':'🌐 Hiện dịch nghĩa';v.setAttribute('aria-pressed',String(n2UI.readingShowTranslation));v.setAttribute('aria-expanded',String(n2UI.readingShowTranslation))}
 }
 
-/* SpeechSynthesis: short sentence chunks avoid Chrome's long-utterance cutoff.
-   A run token ignores asynchronous onend/onerror from canceled utterances. */
-const n2ReadingVoice={status:'stopped',run:0,parts:[],index:0,lessonId:null,utterance:null};
+/* Chrome Android sometimes reports synth.speaking/paused even after resume has
+   silently lost its audio output. Instead of native pause()/resume(), pause
+   cancels the active short chunk; continue creates a NEW utterance for that
+   same chunk. Word-accurate seeking is not available in Web Speech. */
+const n2ReadingVoice={
+  status:'stopped',run:0,parts:[],index:0,lessonId:null,utterance:null,
+  bootTimer:null,startTimer:null,retries:0
+};
 
 function n2ReadingSentenceChunks(text){
   const sentences=String(text||'').match(/[^。！？!?]+[。！？!?]*/gu)||[];
   const chunks=[];
   for(const original of sentences){
     let part=original.trim();
-    while(part.length>80){
-      let cut=part.lastIndexOf('、',80)+1;
-      if(cut<25)cut=70;
+    while(part.length>65){
+      let cut=part.lastIndexOf('、',65)+1;
+      if(cut<20)cut=58;
       chunks.push(part.slice(0,cut));
       part=part.slice(cut).trim();
     }
     if(part)chunks.push(part);
   }
   return chunks;
+}
+function n2ClearReadingSpeechTimers(){
+  const speech=n2ReadingVoice;
+  if(speech.bootTimer!==null){clearTimeout(speech.bootTimer);speech.bootTimer=null}
+  if(speech.startTimer!==null){clearTimeout(speech.startTimer);speech.startTimer=null}
 }
 function n2UpdateReadingSpeechControls(message){
   const play=document.querySelector('[data-reading-listen]');
@@ -651,42 +661,124 @@ function n2UpdateReadingSpeechControls(message){
   const status=document.querySelector('#readingAudioStatus');
   const mode=n2ReadingVoice.status;
   if(play)play.textContent=mode==='stopped'?'🔊 Đọc đoạn văn':'↻ Đọc lại từ đầu';
-  if(pause){pause.disabled=mode==='stopped';pause.textContent=mode==='paused'?'▶ Tiếp tục':'⏸ Tạm dừng'}
+  if(pause){
+    pause.disabled=mode==='stopped';
+    pause.textContent=mode==='paused'?'▶ Tiếp tục':'⏸ Tạm dừng';
+  }
   if(stop)stop.disabled=mode==='stopped';
-  if(status)status.textContent=message||(mode==='playing'?'🔊 Đang đọc đoạn văn...':mode==='paused'?'⏸ Đã tạm dừng. Chọn Tiếp tục hoặc Dừng hẳn.':'Sẵn sàng nghe.');
+  if(status)status.textContent=message||(
+    mode==='starting'?'⏳ Đang chờ giọng đọc tiếng Nhật...':
+    mode==='playing'?'🔊 Đang đọc đoạn văn...':
+    mode==='paused'?'⏸ Đã tạm dừng. Tiếp tục sẽ đọc lại đoạn đang dở.':
+    'Sẵn sàng nghe.'
+  );
+}
+function n2CancelReadingUtterance(){
+  const speech=n2ReadingVoice;
+  // Invalidate onend/onerror events BEFORE cancel(). Android may fire them late.
+  speech.run++;
+  n2ClearReadingSpeechTimers();
+  speech.utterance=null;
+  try{
+    window.speechSynthesis?.cancel();
+    // Defensive cleanup of any stale paused state from an older app version.
+    if(window.speechSynthesis?.paused)window.speechSynthesis.resume();
+  }catch{}
+  return speech.run;
 }
 function n2StopReadingSpeech(message){
   const speech=n2ReadingVoice;
-  speech.run++;
-  speech.status='stopped';speech.parts=[];speech.index=0;speech.lessonId=null;speech.utterance=null;
-  try{window.speechSynthesis?.cancel()}catch{}
+  n2CancelReadingUtterance();
+  speech.status='stopped';
+  speech.parts=[];
+  speech.index=0;
+  speech.lessonId=null;
+  speech.retries=0;
   n2UpdateReadingSpeechControls(message||'⏹ Đã dừng đọc.');
+}
+function n2RetryReadingChunk(run,utterance){
+  const speech=n2ReadingVoice;
+  if(run!==speech.run||utterance!==speech.utterance||speech.status==='paused'||speech.status==='stopped')return;
+  if(speech.retries>=1){
+    n2StopReadingSpeech('⚠️ Không khởi động được giọng tiếng Nhật trên trình duyệt. Hãy kiểm tra âm lượng và giọng đọc tiếng Nhật trong cài đặt chuyển văn bản thành giọng nói, rồi bấm Đọc lại.');
+    return;
+  }
+  speech.retries++;
+  const nextRun=n2CancelReadingUtterance();
+  speech.status='starting';
+  n2UpdateReadingSpeechControls('⏳ Chrome chưa phát được tiếng. Đang thử lại đoạn '+(speech.index+1)+'...');
+  // Android TTS needs a brief gap after cancel() before queuing a new voice.
+  speech.bootTimer=setTimeout(()=>{
+    speech.bootTimer=null;
+    if(speech.run===nextRun&&speech.status==='starting')n2PlayReadingNext(nextRun);
+  },240);
 }
 function n2PlayReadingNext(run){
   const speech=n2ReadingVoice;
-  if(run!==speech.run||speech.status!=='playing')return;
+  if(run!==speech.run||!['playing','starting'].includes(speech.status))return;
   if(speech.index>=speech.parts.length){
     n2StopReadingSpeech('✅ Đã đọc hết đoạn văn.');
     return;
   }
   const synth=window.speechSynthesis;
-  const u=new SpeechSynthesisUtterance(speech.parts[speech.index]);
-  speech.utterance=u;
-  u.lang='ja-JP';u.rate=0.85;u.pitch=1;
+  const utterance=new SpeechSynthesisUtterance(speech.parts[speech.index]);
+  let started=false;
+  speech.utterance=utterance;
+  speech.status='starting';
+  utterance.lang='ja-JP';
+  utterance.rate=.85;
+  utterance.pitch=1;
   const jpVoice=synth.getVoices?.().find(v=>/^ja(?:-|_)/i.test(v.lang));
-  if(jpVoice)u.voice=jpVoice;
-  u.onend=()=>{
-    if(run!==speech.run)return;
+  if(jpVoice)utterance.voice=jpVoice;
+  utterance.onstart=()=>{
+    if(run!==speech.run||utterance!==speech.utterance||speech.status==='paused')return;
+    started=true;
+    if(speech.startTimer!==null){clearTimeout(speech.startTimer);speech.startTimer=null}
+    speech.retries=0;
+    speech.status='playing';
+    n2UpdateReadingSpeechControls('🔊 Đang đọc · đoạn '+(speech.index+1)+'/'+speech.parts.length);
+  };
+  utterance.onend=()=>{
+    if(run!==speech.run||utterance!==speech.utterance||speech.status==='paused')return;
+    if(!started){n2RetryReadingChunk(run,utterance);return}
+    n2ClearReadingSpeechTimers();
+    speech.utterance=null;
+    speech.retries=0;
     speech.index++;
-    if(speech.status==='playing')n2PlayReadingNext(run);
+    if(speech.index>=speech.parts.length){
+      n2StopReadingSpeech('✅ Đã đọc hết đoạn văn.');
+      return;
+    }
+    speech.status='starting';
+    n2UpdateReadingSpeechControls('⏳ Chuẩn bị đoạn '+(speech.index+1)+'/'+speech.parts.length+'...');
+    speech.bootTimer=setTimeout(()=>{
+      speech.bootTimer=null;
+      if(run===speech.run && speech.status==='starting')n2PlayReadingNext(run);
+    },70);
   };
-  u.onerror=e=>{
-    if(run!==speech.run)return;
-    if(e.error==='canceled'||e.error==='interrupted')return;
-    n2StopReadingSpeech('Không phát được âm thanh ('+(e.error||'lỗi giọng đọc')+'). Vui lòng kiểm tra giọng tiếng Nhật trên thiết bị.');
+  utterance.onerror=e=>{
+    if(run!==speech.run||utterance!==speech.utterance||speech.status==='paused')return;
+    if(['canceled','interrupted','audio-busy'].includes(e.error)){
+      n2RetryReadingChunk(run,utterance);
+      return;
+    }
+    n2StopReadingSpeech('⚠️ Không thể phát tiếng Nhật ('+(e.error||'lỗi giọng đọc')+'). Kiểm tra cài đặt Text-to-speech trên điện thoại.');
   };
-  synth.speak(u);
-  n2UpdateReadingSpeechControls('🔊 Đang đọc · đoạn '+(speech.index+1)+'/'+speech.parts.length);
+  n2UpdateReadingSpeechControls('⏳ Đang khởi động giọng đọc · đoạn '+(speech.index+1)+'/'+speech.parts.length+'...');
+  try{synth.speak(utterance)}catch(e){
+    n2StopReadingSpeech('⚠️ Không khởi động được loa đọc: '+(e?.message||'lỗi không xác định'));
+    return;
+  }
+  // Do not say "Đang đọc" until the browser confirms an actual start.
+  // One retry only, to avoid an endless silent loop on broken Android engines.
+  if(run===speech.run && speech.status==='starting'){
+    speech.startTimer=setTimeout(()=>{
+      speech.startTimer=null;
+      if(run===speech.run && speech.utterance===utterance && speech.status==='starting'){
+        n2RetryReadingChunk(run,utterance);
+      }
+    },8000);
+  }
 }
 function n2StartReadingSpeech(lesson){
   if(n2UI.mediaRecorder?.state==='recording'){
@@ -694,7 +786,7 @@ function n2StartReadingSpeech(lesson){
     return;
   }
   if(!('speechSynthesis' in window)||!('SpeechSynthesisUtterance' in window)){
-    n2UpdateReadingSpeechControls('Thiết bị này không hỗ trợ tính năng đọc thành tiếng.');
+    n2UpdateReadingSpeechControls('Trình duyệt không hỗ trợ phát giọng đọc.');
     return;
   }
   n2StopReadingSpeech();
@@ -702,23 +794,26 @@ function n2StartReadingSpeech(lesson){
   speech.parts=n2ReadingSentenceChunks(lesson.text);
   if(!speech.parts.length){n2UpdateReadingSpeechControls('Đoạn văn trống.');return}
   speech.lessonId=lesson.id;
-  speech.status='playing';
+  speech.status='starting';
+  speech.retries=0;
   n2PlayReadingNext(speech.run);
 }
 function n2ToggleReadingSpeechPause(){
   const speech=n2ReadingVoice;
-  const synth=window.speechSynthesis;
-  if(!synth||speech.status==='stopped')return;
-  if(speech.status==='playing'){
+  if(speech.status==='stopped')return;
+  if(speech.status!=='paused'){
+    // Chrome Android's native resume() can remain silent while "speaking" is
+    // true. Stop the TTS engine and remember the CURRENT chunk index instead.
+    n2CancelReadingUtterance();
     speech.status='paused';
-    synth.pause();
-    n2UpdateReadingSpeechControls('⏸ Đã tạm dừng · đoạn '+(speech.index+1)+'/'+speech.parts.length);
-  }else if(speech.status==='paused'){
-    speech.status='playing';
-    synth.resume();
-    // Some mobile engines discard the current utterance while paused.
-    if(!synth.speaking && !synth.pending)n2PlayReadingNext(speech.run);
-    else n2UpdateReadingSpeechControls('▶ Đang tiếp tục...');
+    n2UpdateReadingSpeechControls('⏸ Đã tạm dừng tại đoạn '+(speech.index+1)+'/'+speech.parts.length+'. Tiếp tục sẽ đọc lại đoạn này.');
+  }else{
+    const run=n2CancelReadingUtterance();
+    speech.status='starting';
+    speech.retries=0;
+    n2UpdateReadingSpeechControls('⏳ Đang khởi động lại đoạn '+(speech.index+1)+'/'+speech.parts.length+'...');
+    // Fresh utterance rather than native resume; never trust synth.speaking.
+    n2PlayReadingNext(run);
   }
 }
 
