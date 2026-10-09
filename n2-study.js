@@ -623,9 +623,9 @@ function n2ReadingSentenceChunks(text){
   const chunks=[];
   for(const original of sentences){
     let part=original.trim();
-    while(part.length>125){
-      let cut=part.lastIndexOf('、',125)+1;
-      if(cut<30)cut=115;
+    while(part.length>80){
+      let cut=part.lastIndexOf('、',80)+1;
+      if(cut<25)cut=70;
       chunks.push(part.slice(0,cut));
       part=part.slice(cut).trim();
     }
