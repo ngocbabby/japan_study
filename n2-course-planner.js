@@ -95,6 +95,7 @@ function renderN2Planner(){
  }
  const all=lessons.filter(x=>x.number>=1&&x.number<=55);
  const lessonEstimate=estimate && lessons[estimate.anchorSession-1];
+ const realPending=[...(teacher?.items||[]),...actual].filter(t=>!p.done[t.id]);
  const options=all.map(x=>'<option value="'+x.number+'" '+(p.anchorSession===x.number?'selected':'')+'>Buổi '+x.number+' · '+n2PlanEscape(x.contents.slice(0,2).join(', ').slice(0,72))+'</option>').join('');
  let html='<button class="foundation-inline-back" data-n2-root>← N2</button>'+
  '<section class="hero n2-hero"><strong>🗓️ Học gì trước buổi tới?</strong><p>Ưu tiên chuẩn bị cho lớp gần nhất. Chỉ khi xong việc ưu tiên mới chuyển sang bài tồn đọng.</p></section>'+
@@ -103,20 +104,20 @@ function renderN2Planner(){
  '<label>Buổi trong giáo trình<select id="planAnchorSession">'+options+'</select></label></div>'+
  '<button class="secondary-btn" id="planSaveAnchor">💾 Lưu mốc lớp N2</button>'+
  '<p class="n2-plan-hint">'+(p.anchorDate?(p.confirmed?'✅ Đã xác nhận: ':'⚠️ Mốc dự kiến, chưa xác nhận: ')+'buổi '+p.anchorSession+' ngày '+p.anchorDate+'. Lịch sau đây được suy ra theo T2–T4–T6; nghỉ/đổi buổi phải cập nhật.':'⚠️ Chưa chọn buổi thực tế. App chưa tự đoán bạn đang học đến đâu.')+'</p></div>';
- html+='<section class="n2-plan-panel"><h3>🧑‍🏫 Sensei thông báo (Zalo 06/10)</h3><p class="n2-plan-hint">Ảnh ghi “kiểm tra buổi sau” nhưng KHÔNG xác định ngày kiểm tra. Có thể đã kiểm tra trong buổi trước hôm nay. Đánh dấu “Đã kiểm tra” khi bạn xác nhận, không coi đây là bài tối nay.</p>'+
- (teacher?teacher.items.map(t=>'<div class="n2-plan-task"><label class="n2-plan-check"><input data-n2-plan-item="'+n2PlanEscape(t.id)+'" type="checkbox"><span>'+n2PlanEscape(t.text)+'</span></label><button class="secondary-btn" data-plan-open="'+n2PlanEscape(t.link)+'">Ôn nhanh →</button></div>').join(''):'')+'</section>';
+ html+='<div class="n2-plan-priority"><span class="n2-plan-pill">📌 ƯU TIÊN TỪ NGUỒN THỰC TẾ</span><h3>🧑‍🏫 Sensei thông báo (Zalo 06/10)</h3><p class="n2-plan-hint">Ảnh ghi “kiểm tra buổi sau” nhưng KHÔNG xác định ngày kiểm tra. Có thể đã kiểm tra trong buổi trước hôm nay. Đánh dấu “Đã kiểm tra” khi bạn xác nhận, không coi đây là bài tối nay.</p>'+
+ (teacher?teacher.items.map(t=>'<div class="n2-plan-task"><label class="n2-plan-check"><input data-n2-plan-item="'+n2PlanEscape(t.id)+'" type="checkbox"><span>'+n2PlanEscape(t.text)+'</span></label><button class="secondary-btn" data-plan-open="'+n2PlanEscape(t.link)+'">Ôn nhanh →</button></div>').join(''):'')+'</div>';
  html+='<section class="n2-plan-panel"><h3>📝 Danh sách bài tập SHub (từ ảnh)</h3><p class="n2-plan-hint">Ảnh chưa hiện hạn nộp, trạng thái 0/19 không khẳng định bài đã làm hoặc buổi học tương ứng. Bạn có thể tự tích khi hoàn tất.</p>'+
  actual.map(t=>'<div class="n2-plan-task"><label class="n2-plan-check"><input data-n2-plan-item="'+n2PlanEscape(t.id)+'" type="checkbox"><span>'+n2PlanEscape(t.text)+'</span></label></div>').join('')+'</section>';
  if(!p.anchorDate && lessonEstimate) html+='<section class="n2-plan-panel"><h3>🗓️ Tối 09/10: dự kiến buổi 6</h3><p>Bạn cho biết “chắc học buổi 6”. Chưa xác minh được với SHub, nên <strong>chưa tự ghép lịch</strong>.</p><p>Trong kế hoạch KOSEI, buổi 6: '+n2PlanEscape(lessonEstimate.contents.join(' · '))+'</p><button class="secondary-btn" id="planUseEstimate">Dùng buổi 6 làm mốc dự kiến</button></section>';
  if(target){
   html+='<div class="n2-plan-priority"><span class="n2-plan-pill">🔴 ƯU TIÊN 1 · '+(target.date===next.tomorrow?'HỌC TRƯỚC CHO NGÀY MAI':'CHUẨN BỊ BUỔI KẾ TIẾP')+'</span>'+
-  '<h2>'+n2PlanLabel(target)+'</h2><p>Giáo trình KOSEI: '+n2PlanEscape(target.lesson.contents.join(' · '))+'</p>'+
+  '<h2>'+n2PlanLabel(target)+'</h2><p>⚠️ '+(p.confirmed?'Mốc học do bạn xác nhận; ':'Mốc buổi học vẫn chỉ là dự đoán; ')+'nội dung KOSEI chỉ mang tính tham khảo: '+n2PlanEscape(target.lesson.contents.join(' · '))+'</p>'+
   '<h3>① Học trước bài sẽ lên lớp</h3>'+n2PlanLinked(next.urgent)+
   '<h3>② Bài tập cần hoàn thành trước buổi tới</h3>'+(next.due.length?n2PlanLinked(next.due):'<p>Chưa ghi nhận bài tập còn thiếu từ buổi trước.</p>')+
   '<div class="n2-plan-lock">'+(next.needPrep?'🔒 Hoàn tất mục ưu tiên trước khi chuyển sang bài còn tồn.':'✅ Đã hoàn thành phần ưu tiên. Có thể quay lại học các bài bỏ lỡ.')+'</div></div>';
  }else html+='<div class="n2-plan-panel"><p>📍 Chọn mốc buổi học ở trên để mở đúng bài cần chuẩn bị, bài tập và ưu tiên.</p></div>';
- if(!next.needPrep && next.backlog.length)html+='<section class="n2-plan-panel"><h3>🟡 Ưu tiên 2 · Bài chưa học</h3>'+n2PlanLinked(next.backlog.slice(0,16))+'</section>';
- else if(next.needPrep && next.backlog.length)html+='<div class="n2-plan-muted">📦 Có '+next.backlog.length+' đầu mục từ các buổi cũ chưa đánh dấu xong; sẽ hiện sau khi hoàn tất việc ưu tiên.</div>';
+ if(!next.needPrep && !realPending.length && next.backlog.length)html+='<section class="n2-plan-panel"><h3>🟡 Ưu tiên 2 · Bài chưa học</h3>'+n2PlanLinked(next.backlog.slice(0,16))+'</section>';
+ else if((next.needPrep || realPending.length) && next.backlog.length)html+='<div class="n2-plan-muted">📦 Có '+next.backlog.length+' đầu mục từ các buổi cũ chưa đánh dấu xong; sẽ hiện sau khi hoàn tất việc ưu tiên.</div>';
  html+='<section class="n2-plan-panel"><h3>📆 Lịch sắp tới</h3><p class="n2-plan-hint">Lớp N2 T2/T4/T6 · 21:00–23:00. Lớp Mất gốc T3/T5/T7 · 20:45–22:45. Theo Google Calendar đã đối chiếu.</p>'+
  n2PlanClasses(today,13).map(e=>n2PlanEventsHtml({...e,label:e.label||'Lớp học'})).join('')+
  (conflicts.length?'<p class="n2-plan-conflict">⚠️ Ngày mai trùng lịch: '+n2PlanEscape(conflicts.join(', '))+'</p>':'')+'</section>';
