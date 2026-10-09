@@ -286,14 +286,15 @@ function renderN2Flash(){
   main.innerHTML=`
     <div class="study-session-head"><button class="foundation-inline-back danger-link" data-n2-exit type="button">✕ Thoát</button><span>${s.index+1}/${s.queue.length}</span></div>
     <div class="phase-strip"><strong>${phase}</strong><span>${desc}</span></div>
-    <div class="n2-auto-line"><span id="n2FlashCountdown"></span><button class="secondary-btn small" data-n2-pause type="button">Tạm dừng</button></div>
+    <div class="n2-auto-line"><span id="n2FlashCountdown" role="status" aria-live="off"></span><div class="n2-flash-actions"><button class="secondary-btn small" data-n2-flip-side type="button" aria-label="Lật sang mặt sau hoặc mặt trước">↪ Xem đáp án</button><button class="secondary-btn small" data-n2-pause type="button">⏸ Tạm dừng</button></div></div>
     <section class="flash-card n2-auto-card" data-n2-flip>
-      <div class="flash-front">${n2FlashFront(item)}<span class="flip-hint">Tự lật sau vài giây · chạm để lật ngay</span></div>
+      <div class="flash-front">${n2FlashFront(item)}<span class="flip-hint">Chạm để xem đáp án · có thể lật lại mặt trước</span></div>
       <div class="flash-back hidden-card">${n2FlashBack(item)}</div>
     </section>
   `;
   document.querySelector('[data-n2-exit]').addEventListener('click',exitN2Study);
-  document.querySelector('[data-n2-flip]').addEventListener('click',()=>n2FlipNow(item));
+  document.querySelector('[data-n2-flip]').addEventListener('click',()=>n2ToggleFlashCard(item));
+  document.querySelector('[data-n2-flip-side]').addEventListener('click',()=>n2ToggleFlashCard(item));
   document.querySelector('[data-n2-pause]').addEventListener('click',()=>n2ToggleFlashPause(item));
   document.querySelectorAll('[data-speak]').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();speakJapanese(b.dataset.speak)}));
   startN2FlashCycle(item);
@@ -357,27 +358,47 @@ function n2ToggleFlashPause(item){
     stopN2Timers();
     n2UI.flashPaused=true;
     if(button)button.textContent='▶ Tiếp tục';
-    if(label)label.textContent=`Tạm dừng · còn ${(n2UI.flashRemaining/1000).toFixed(1)}s`;
+    if(label)label.textContent='Đã dừng tự chuyển · lật tự do';
   }else{
     n2UI.flashPaused=false;
-    if(button)button.textContent='Tạm dừng';
-    n2ScheduleFlashStep(item,n2UI.flashRemaining,n2UI.flashFlipped?'back':'front');
+    if(button)button.textContent='⏸ Tạm dừng';
+    // If the paused countdown expired, give enough time to see the card.
+    const remaining=Math.max(n2UI.flashRemaining,1000);
+    n2ScheduleFlashStep(item,remaining,n2UI.flashFlipped?'back':'front');
   }
 }
-
-function n2FlipNow(item){
-  if(n2UI.flashFlipped) return;
+function n2SetFlashSide(item,back,withSound){
   stopN2Timers();
-  n2UI.flashPaused=false;
-  n2UI.flashFlipped=true;
-  document.querySelector('.flash-front')?.classList.add('hidden-card');
-  document.querySelector('.flash-back')?.classList.remove('hidden-card');
-  const pauseButton=document.querySelector('[data-n2-pause]');
-  if(pauseButton)pauseButton.textContent='Tạm dừng';
-  if(n2UI.type==='vocab') speakJapanese(item.reading||item.term);
-  else if(n2UI.type==='kanji') speakJapanese((item.words||item.char).split('・')[0]);
-  else speakJapanese(item.example||item.pattern);
-  n2ScheduleFlashStep(item,n2FlashDurations().back,'back');
+  n2UI.flashFlipped=back;
+  document.querySelector('.flash-front')?.classList.toggle('hidden-card',back);
+  document.querySelector('.flash-back')?.classList.toggle('hidden-card',!back);
+  const flipButton=document.querySelector('[data-n2-flip-side]');
+  if(flipButton)flipButton.textContent=back?'↩ Mặt trước':'↪ Xem đáp án';
+  const timerButton=document.querySelector('[data-n2-pause]');
+  if(timerButton)timerButton.textContent=n2UI.flashPaused?'▶ Tiếp tục':'⏸ Tạm dừng';
+  if(back&&withSound){
+    if(n2UI.type==='vocab')speakJapanese(item.reading||item.term);
+    else if(n2UI.type==='kanji')speakJapanese((item.words||item.char).split('・')[0]);
+    else speakJapanese(item.example||item.pattern);
+  }
+  const side=back?'back':'front';
+  n2UI.flashRemaining=n2FlashDurations()[side];
+  if(n2UI.flashPaused){
+    const label=document.querySelector('#n2FlashCountdown');
+    if(label)label.textContent='Đang tạm dừng · bấm Tiếp tục để tự chuyển';
+  }else{
+    n2ScheduleFlashStep(item,n2UI.flashRemaining,side);
+  }
+}
+function n2ToggleFlashCard(item){
+  // Manual flips work in BOTH directions; reviewing the front restarts its
+  // 3-second timer rather than unexpectedly advancing to the next word.
+  n2SetFlashSide(item,!n2UI.flashFlipped,true);
+}
+function n2FlipNow(item){
+  // Auto flip only applies to a currently visible front side.
+  if(n2UI.flashFlipped)return;
+  n2SetFlashSide(item,true,true);
 }
 
 function finishN2Flash(){
