@@ -2,13 +2,14 @@
 const N2PLAN_KEY='japanStudy:n2:classPlanner:v2';
 const n2PlanState={page:'dashboard',selected:0};
 function n2PlanLoad(){
- try{return {...{anchorDate:'',anchorSession:1,confirmed:false,done:{},extra:{},tasks:{}},...JSON.parse(localStorage.getItem(N2PLAN_KEY)||'{}')}}catch{return {anchorDate:'',anchorSession:1,confirmed:false,done:{},extra:{},tasks:{}}}
+ try{return {...{anchorDate:'2026-10-09',anchorSession:6,confirmed:false,done:{},extra:{},tasks:{}},...JSON.parse(localStorage.getItem(N2PLAN_KEY)||'{}')}}catch{return {anchorDate:'2026-10-09',anchorSession:6,confirmed:false,done:{},extra:{},tasks:{}}}
 }
 function n2PlanSave(s){localStorage.setItem(N2PLAN_KEY,JSON.stringify(s))}
 function n2PlanDate(d){const t=new Date(d);return [t.getFullYear(),String(t.getMonth()+1).padStart(2,'0'),String(t.getDate()).padStart(2,'0')].join('-')}
 function n2PlanToday(){return n2PlanDate(new Date())}
 function n2PlanShift(date,n){const d=new Date(date+'T12:00:00+09:00');d.setDate(d.getDate()+n);return n2PlanDate(d)}
 function n2PlanDay(date){return new Date(date+'T12:00:00+09:00').getDay()}
+function n2PlanNextClassDate(date){let out=n2PlanShift(date,1);for(let i=0;i<7;i++,out=n2PlanShift(out,1))if([1,3,5].includes(n2PlanDay(out)))return out;return out}
 function n2PlanChanges(state){
  const seeded=window.N2_CLASS_SOURCE.classChanges||[];
  const custom=state?.changes||{};
@@ -129,7 +130,7 @@ function renderN2Planner(){
  }
  const all=lessons.filter(x=>x.number>=1&&x.number<=55);
  const lessonEstimate=estimate && lessons[estimate.anchorSession-1];
- const moveDefault=cancellations.some(c=>c.from===today)?n2PlanShift(today,3):today;
+ const moveDefault=cancellations.some(c=>c.from===today)?n2PlanNextClassDate(today):today;
 
  const realPending=[...(teacher?.items||[]),...actual].filter(t=>!p.done[t.id]);
  const options=all.map(x=>'<option value="'+x.number+'" '+(p.anchorSession===x.number?'selected':'')+'>Buổi '+x.number+' · '+n2PlanEscape(x.contents.slice(0,2).join(', ').slice(0,72))+'</option>').join('');
@@ -144,7 +145,7 @@ function renderN2Planner(){
  (teacher?teacher.items.map(t=>'<div class="n2-plan-task"><label class="n2-plan-check"><input data-n2-plan-item="'+n2PlanEscape(t.id)+'" type="checkbox"><span>'+n2PlanEscape(t.text)+'</span></label><button class="secondary-btn" data-plan-open="'+n2PlanEscape(t.link)+'">Ôn nhanh →</button></div>').join(''):'')+'</div>';
  html+='<section class="n2-plan-panel"><h3>📝 Danh sách bài tập SHub (từ ảnh)</h3><p class="n2-plan-hint">Ảnh chưa hiện hạn nộp, trạng thái 0/19 không khẳng định bài đã làm hoặc buổi học tương ứng. Bạn có thể tự tích khi hoàn tất.</p>'+
  actual.map(t=>'<div class="n2-plan-task"><label class="n2-plan-check"><input data-n2-plan-item="'+n2PlanEscape(t.id)+'" type="checkbox"><span>'+n2PlanEscape(t.text)+'</span></label></div>').join('')+'</section>';
- if(!p.anchorDate && lessonEstimate) html+='<section class="n2-plan-panel"><h3>🗓️ Tối 09/10: dự kiến buổi 6</h3><p>Bạn cho biết “chắc học buổi 6”. Chưa xác minh được với SHub, nên <strong>chưa tự ghép lịch</strong>.</p><p>Trong kế hoạch KOSEI, buổi 6: '+n2PlanEscape(lessonEstimate.contents.join(' · '))+'</p><button class="secondary-btn" id="planUseEstimate">Dùng buổi 6 làm mốc dự kiến</button></section>';
+ if(!p.confirmed && lessonEstimate) html+='<section class="n2-plan-panel"><h3>🗓️ Tối 09/10: dự kiến buổi 6</h3><p>Bạn cho biết “chắc học buổi 6”. Chưa xác minh được với SHub, nên <strong>đang dùng mốc dự kiến</strong>.</p><p>Trong kế hoạch KOSEI, buổi 6: '+n2PlanEscape(lessonEstimate.contents.join(' · '))+'</p><button class="secondary-btn" id="planUseEstimate">Dùng buổi 6 làm mốc dự kiến</button></section>';
  html+='<section class="n2-plan-panel"><h3>📆 Dời ngày học N2</h3><p>Nếu Sensei báo nghỉ, đánh dấu ngày nghỉ. Buổi học giữ nguyên số thứ tự, tự chuyển sang ngày N2 kế tiếp; toàn bộ buổi phía sau lùi theo, không nhân đôi bài.</p>'+
  '<div class="n2-plan-inputs"><label>Ngày được nghỉ<input type="date" id="n2MoveFrom" value="'+n2PlanEscape(today)+'"></label><label>Ngày học tiếp<input type="date" id="n2MoveTo" value="'+n2PlanEscape(n2PlanShift(today,3))+'"></label></div>'+
  '<label>Lý do<input id="n2MoveReason" class="n2-plan-input" value="Sensei báo nghỉ"></label>'+
