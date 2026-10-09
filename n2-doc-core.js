@@ -15,7 +15,7 @@ window.N2DocCore = (() => {
     const v=number(String(s||'').replace(/[①②③④]/g,c=>String('①②③④'.indexOf(c)+1)).toUpperCase());
     return /^[1-4]$/.test(v)?Number(v)-1:/^[A-D]$/.test(v)?v.charCodeAt(0)-65:null;
   };
-  const stemRegex=/^(?:(?:【\s*)?(?:(?:第\s*\d{1,3}\s*問)|(?:問(?:題)?|Ｑ|Q)\s*\d{1,3})(?:\s*[】\]）).:：、．]*)?)(.*)$/u;
+  const stemRegex=/^(?:【\s*)?(?:第\s*(\d{1,3})\s*問|(?:問(?:題)?|Ｑ|Q)\s*(\d{1,3}))(?:\s*[】\]）).:：、．]*)?(.*)$/u;
   const choiceRegex=/^\s*([1-4１-４①②③④Ａ-ＤA-D])\s*[.．、:：)）]?\s+(.+)$/u;
   function dictionary(){
     const all=new Map();
@@ -78,17 +78,17 @@ window.N2DocCore = (() => {
     const answers=parseAnswerKey(original),questions=[];
     for(let i=0;i<lines.length && questions.length<MAX_QUESTIONS;i++){
       const h=lines[i].match(stemRegex);
-      if(!h || !/^(?:【\s*)?(?:第\s*\d{1,3}\s*問|(?:問(?:題)?|Ｑ|Q)\s*\d{1,3})/u.test(h[0]))continue;
-      const num=Number((h[0].match(/(?:第\s*|問(?:題)?\s*|[QＱ]\s*)(\d{1,3})/u)||[])[1]);
+      if(!h || !(h[1]||h[2]))continue;
+      const num=Number(h[1]||h[2]);
       if(num<1 || num>300)continue;
-      let question=(h[2]||'').trim();
+      let question=(h[3]||'').trim();
       if(/^(?:[:：=＝\-→])\s*[1-4]$/.test(question))continue;
       const opts=[];
       let j=i+1,linesConsumed=0;
       while(j<lines.length && j<i+21){
         const line=lines[j];
         const nextHeader=line.match(stemRegex);
-        if(nextHeader && /^(?:【\s*)?(?:第\s*\d{1,3}\s*問|(?:問(?:題)?|Ｑ|Q)\s*\d{1,3})/u.test(nextHeader[0]) && j>i+1)break;
+        if(nextHeader && (nextHeader[1]||nextHeader[2]) && j>i+1)break;
         const m=line.match(choiceRegex);
         const expected=opts.length;
         if(m&&optionNo(m[1])===expected){
