@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#f4c63d" />
+  <meta name="color-scheme" content="light" />
+  <title>Japan Study</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="foundation-extra.css" />
+  <link rel="stylesheet" href="n2-styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <button id="backBtn" class="icon-btn hidden" type="button" aria-label="Quay lại">←</button>
+      <div class="brand">
+        <p class="eyebrow">JAPAN STUDY</p>
+        <h1 id="pageTitle">Học gì hôm nay?</h1>
+      </div>
+      <button id="settingsBtn" class="icon-btn" type="button" aria-label="Cài đặt">⚙️</button>
+    </header>
+
+    <main id="appMain" aria-live="polite"></main>
+
+    <nav class="bottom-nav">
+      <button class="nav-btn active" data-nav="home" type="button"><span>⌂</span><small>Home</small></button>
+      <button class="nav-btn" data-nav="roadmap" type="button"><span>▦</span><small>Lộ trình</small></button>
+      <button class="nav-btn" data-nav="review" type="button"><span>↻</span><small>Ôn hôm nay</small></button>
+      <button class="nav-btn" data-nav="progress" type="button"><span>◔</span><small>Tiến độ</small></button>
+    </nav>
+  </div>
+
+  <dialog id="settingsDialog">
+    <form method="dialog" class="dialog-card">
+      <div class="dialog-head">
+        <div>
+          <p class="section-kicker">CÀI ĐẶT</p>
+          <h2>Japan Study</h2>
+        </div>
+        <button class="icon-btn" value="cancel" aria-label="Đóng">✕</button>
+      </div>
+      <div class="setting-row">
+        <div>
+          <strong>ChatGPT bot sync</strong>
+          <p>Lộ trình được ChatGPT đọc từ Google Calendar rồi cập nhật trực tiếp lên app. Không cần đăng nhập Calendar trên từng thiết bị.</p>
+        </div>
+        <span class="status-chip synced">BOT SYNC</span>
+      </div>
+      <div class="setting-row">
+        <div>
+          <strong>Giới hạn học/ngày</strong>
+          <p>Không để lịch AI nhồi quá mức.</p>
+        </div>
+        <strong>120 phút</strong>
+      </div>
+      <div class="setting-row">
+        <div>
+          <strong>Tỷ lệ ôn lại</strong>
+          <p>Giữ chỗ cho kiến thức cũ trước khi thêm bài mới.</p>
+        </div>
+        <strong>30%</strong>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="roadmap-data.js"></script>
+  <script src="foundation-data.js"></script>
+  <script src="grammar-details.js"></script>
+  <script src="app.js"></script>
+  <script src="foundation-study.js"></script>
+  <script src="grammar-engine.js"></script>
+  <script src="n2-vocab-1160.js"></script>
+  <script src="n2-kanji-full.js"></script>
+  <script src="n2-grammar-full.js"></script>
+  <script src="n2-reading-passages.js"></script>
+  <script src="n2-data.js"></script>
+  <script src="n2-study.js"></script>
+</body>
+</html>
