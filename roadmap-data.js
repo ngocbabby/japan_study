@@ -24,22 +24,22 @@ window.JAPAN_STUDY_ROADMAP_DATA = {
     {
       date: "2026-10-09",
       label: "Thứ 6",
-      note: "Ngày có N2 buổi tối. Học ngắn buổi sáng, tối không chen thêm.",
+      note: "Giáo viên báo nghỉ lớp N2 ngày 09/10. Dời buổi học sang thứ Hai 12/10; phần chuẩn bị vẫn giữ ưu tiên.",
       items: [
         { start: "05:30", end: "05:45", title: "Ôn Mất gốc hôm qua", detail: "Active recall: tự nhớ lại trước khi mở tài liệu.", type: "review", origin: "ai" },
         { start: "05:45", end: "06:15", title: "Chuẩn bị N2", detail: "Từ vựng trọng tâm + xem trước 1 đoạn đọc.", type: "study", origin: "ai" },
         { start: "08:30", end: "17:00", title: "Đi làm - công ty cũ", detail: "Lịch cố định", type: "busy", origin: "calendar" },
         { start: "17:15", end: "19:15", title: "Tăng ca - công ty cũ", detail: "Không xếp học vào khoảng này", type: "busy", origin: "calendar" },
-        { start: "21:00", end: "23:00", title: "Lớp N2", detail: "Buổi học trên lớp", type: "class", origin: "calendar" }
+        { start: "21:00", end: "23:00", title: "N2 · GIÁO VIÊN BÁO NGHỈ", detail: "Nghỉ buổi 09/10, học tiếp T2 12/10. Không tính đã học và không tăng số buổi.", type: "busy", origin: "teacher" }
       ]
     },
     {
       date: "2026-10-10",
       label: "Thứ 7",
       conflict: true,
-      note: "Có 3 lớp chồng giờ từ 20:45. ChatGPT sẽ không tự chọn lớp thay bạn; cần chốt lớp ưu tiên.",
+      note: "Lớp N2 hôm qua đã nghỉ. Chỉ học theo lớp đã chọn; không tính phần ôn N2 như đã lên lớp.",
       items: [
-        { start: "05:45", end: "06:05", title: "Ôn N2 hôm qua", detail: "Chỉ ôn phần sai/không nhớ.", type: "review", origin: "ai" },
+        { start: "05:45", end: "06:05", title: "Chuẩn bị N2 học bù T2", detail: "Ôn từ vựng và Kanji thầy giao; không đánh dấu đã học buổi bị nghỉ.", type: "study", origin: "ai" },
         { start: "08:30", end: "17:00", title: "Đi làm T7 - công ty cũ", detail: "Lịch cố định tháng 10", type: "busy", origin: "calendar" },
         { start: "17:45", end: "18:15", title: "Chuẩn bị Kaiwa/Azuchi", detail: "10 từ khóa + 3 câu muốn nói trong lớp.", type: "study", origin: "ai" },
         { start: "19:00", end: "21:00", title: "日本語教室 あづち", detail: "Lớp hội thoại tại Azuchi", type: "class", origin: "calendar" },
@@ -64,7 +64,7 @@ window.JAPAN_STUDY_ROADMAP_DATA = {
         { start: "09:00", end: "09:40", title: "N2 - Từ vựng + Ngữ pháp", detail: "1 phiên học mới có giới hạn.", type: "study", origin: "ai" },
         { start: "14:00", end: "14:30", title: "Mất gốc - N5/N4", detail: "Ôn phần nền còn yếu, không mở chương mới nếu chưa vững.", type: "review", origin: "ai" },
         { start: "20:20", end: "20:45", title: "Chuẩn bị N2", detail: "Xem nhanh nội dung buổi tối.", type: "study", origin: "ai" },
-        { start: "21:00", end: "23:00", title: "Lớp N2", detail: "Buổi học trên lớp", type: "class", origin: "calendar" }
+        { start: "21:00", end: "23:00", title: "Lớp N2", detail: "Học tiếp buổi N2 đã nghỉ 09/10; không nhảy sang buổi mới.", type: "class", origin: "teacher" }
       ]
     },
     {
