@@ -62,6 +62,8 @@ function renderN2Root(){
   const importedKanji=d.kanjiLessons.reduce((n,x)=>n+x.items.length,0);
   const importedGrammar=d.grammarLessons.reduce((n,x)=>n+x.items.length,0);
   const importedReading=(d.readingPractice||[]).filter(x=>x.text).length;
+  const planState=(typeof n2PlanLoad==='function')?n2PlanLoad():null;
+  const planPriority=planState?.anchorDate?n2PlanPrioritize(planState,n2PlanToday()):null;
   main.innerHTML=`
     <section class="hero n2-hero">
       <div class="hero-grid">
@@ -72,6 +74,8 @@ function renderN2Root(){
         <div class="hero-stat"><b>55</b><span>buổi lộ trình</span></div>
       </div>
     </section>
+
+    ${planPriority?.next?`<button class="n2-plan-home-prompt" data-n2-plan-top type="button"><span class="n2-plan-pill">📌 HỌC ƯU TIÊN</span><strong>Buổi ${planPriority.next.session} · ${planPriority.next.date} · ${planPriority.next.start}</strong><small>${escapeText(planPriority.urgent[0]?.text || planPriority.due[0]?.text || 'Đã hoàn tất việc chuẩn bị. Ôn các bài chưa học.')}</small><span class="n2-plan-openhint">Mở lịch học →</span></button>`:`<button class="n2-plan-home-prompt" data-n2-plan-top type="button"><strong>📅 Ghép lịch học N2 với lộ trình KOSEI</strong><small>Chọn buổi N2 thực tế để biết trước bài ngày mai và bài tập còn thiếu.</small><span class="n2-plan-openhint">Thiết lập lịch →</span></button>`}
 
     <div class="n2-data-status">
       <strong>Dữ liệu nguồn</strong>
@@ -101,6 +105,7 @@ function renderN2Root(){
   if(read)read.addEventListener('click',()=>{n2UI.view='reading';renderN2()});
   document.querySelector('[data-n2-docs]')?.addEventListener('click',()=>{n2UI.view='docs';n2DocUI.view='list';renderN2()});
   document.querySelector('[data-n2-planner]')?.addEventListener('click',()=>{n2UI.view='planner';renderN2()});
+  document.querySelector('[data-n2-plan-top]')?.addEventListener('click',()=>{n2UI.view='planner';renderN2()});
 }
 
 function n2Category(icon,name,desc,type,lessons){
