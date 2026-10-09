@@ -17,7 +17,9 @@ const n2UI = {
   recognition:null,
   readingStartedAt:0,
   readingTranscript:'',
-  audioUrl:null
+  audioUrl:null,
+  readingShowFurigana:null,
+  readingShowTranslation:null
 };
 
 function n2Data(){ return window.N2_STUDY_DATA || {vocabLessons:[],kanjiLessons:[],grammarLessons:[],readingLessons:[]}; }
@@ -41,6 +43,7 @@ function n2SaveProgress(type,lessonId,payload){
 
 function renderN2(){
   setNav('');
+  if(n2UI.view!=='reading-detail' && n2ReadingVoice.status!=='stopped') n2StopReadingSpeech();
   if(n2UI.view==='root') return renderN2Root();
   if(n2UI.view==='category') return renderN2Category();
   if(n2UI.view==='detail') return renderN2LessonDetail();
@@ -56,7 +59,7 @@ function renderN2Root(){
   const d=n2Data();
   const importedKanji=d.kanjiLessons.reduce((n,x)=>n+x.items.length,0);
   const importedGrammar=d.grammarLessons.reduce((n,x)=>n+x.items.length,0);
-  const importedReading=d.readingLessons.filter(x=>x.text).length;
+  const importedReading=(d.readingPractice||[]).filter(x=>x.text).length;
   main.innerHTML=`
     <section class="hero n2-hero">
       <div class="hero-grid">
@@ -71,7 +74,7 @@ function renderN2Root(){
     <div class="n2-data-status">
       <strong>Dữ liệu nguồn</strong>
       <span>Mimikara: ${d.vocabImported||0}/${d.vocabTotal||1160} từ đã nhập</span>
-      <span>Kanji: ${importedKanji} mục · Ngữ pháp: ${importedGrammar} mẫu · Đọc: ${importedReading}/${d.readingLessons.length} đoạn</span>
+      <span>Kanji: ${importedKanji} mục · Ngữ pháp: ${importedGrammar} mẫu · Đọc: ${importedReading} đoạn · lộ trình ${d.readingLessons.length} mục</span>
     </div>
 
     <div class="section-head"><div><p class="section-kicker">N2</p><h2>Nội dung học</h2></div></div>
@@ -79,7 +82,7 @@ function renderN2Root(){
       ${n2Category('語','Từ vựng','Mimikara Oboeru N2 · 25 bài theo đúng dải số của lộ trình','vocab',d.vocabLessons)}
       ${n2Category('漢','Kanji','Soumatome N2 · tuần 1 → tuần 8','kanji',d.kanjiLessons)}
       ${n2Category('文','Ngữ pháp','Shin Kanzen Master N2 · học ý nghĩa, cấu trúc, ngữ cảnh và câu điền','grammar',d.grammarLessons)}
-      ${n2ReadingCategory('読','Đọc','Nghe mẫu → tự đọc → ghi âm → chấm độ đúng + tốc độ',d.readingLessons)}
+      ${n2ReadingCategory('読','Đọc','Nghe mẫu → tự đọc → ghi âm → chấm độ đúng + tốc độ',d.readingPractice||[])}
     </section>
 
     <div class="notice">
@@ -581,15 +584,161 @@ function renderN2ReadingList(){
 
 function n2CurrentReading(){return (n2Data().readingPractice||[]).find(x=>x.id===n2UI.readingId)}
 
+
+/* Reading controls: dictionary-backed ruby + two independent visibility preferences. */
+function n2ReadingGetPref(name){
+  try{return localStorage.getItem('japanStudy:n2:'+name)==='1'}catch{return false}
+}
+function n2ReadingSetPref(name,enabled){
+  try{localStorage.setItem('japanStudy:n2:'+name,enabled?'1':'0')}catch{}
+}
+function n2RenderReadingDisplay(lesson){
+  const text=document.querySelector('#n2ReadingJapanese');
+  if(text){
+    if(n2UI.readingShowFurigana && typeof window.n2ReadingRubyHTML==='function'){
+      const result=window.n2ReadingRubyHTML(lesson.text);
+      text.innerHTML=result.html;
+      const help=document.querySelector('#readingFuriganaHelp');
+      if(help){help.hidden=result.coverage===100;help.textContent='Furigana: '+result.coverage+'% chữ Hán được gắn cách đọc; phần chưa có dữ liệu giữ nguyên, không đoán âm.'}
+    }else{
+      text.textContent=lesson.text;
+      const help=document.querySelector('#readingFuriganaHelp');
+      if(help)help.hidden=true;
+    }
+  }
+  const translation=document.querySelector('#readingVietnamese');
+  if(translation)translation.hidden=!n2UI.readingShowTranslation;
+  const f=document.querySelector('[data-reading-furigana]');
+  if(f){f.textContent=n2UI.readingShowFurigana?'あ Ẩn Furigana':'あ Hiện Furigana';f.setAttribute('aria-pressed',String(n2UI.readingShowFurigana))}
+  const v=document.querySelector('[data-reading-translation]');
+  if(v){v.textContent=n2UI.readingShowTranslation?'🌐 Ẩn dịch nghĩa':'🌐 Hiện dịch nghĩa';v.setAttribute('aria-pressed',String(n2UI.readingShowTranslation));v.setAttribute('aria-expanded',String(n2UI.readingShowTranslation))}
+}
+
+/* SpeechSynthesis: short sentence chunks avoid Chrome's long-utterance cutoff.
+   A run token ignores asynchronous onend/onerror from canceled utterances. */
+const n2ReadingVoice={status:'stopped',run:0,parts:[],index:0,lessonId:null,utterance:null};
+
+function n2ReadingSentenceChunks(text){
+  const sentences=String(text||'').match(/[^。！？!?]+[。！？!?]*/gu)||[];
+  const chunks=[];
+  for(const original of sentences){
+    let part=original.trim();
+    while(part.length>80){
+      let cut=part.lastIndexOf('、',80)+1;
+      if(cut<25)cut=70;
+      chunks.push(part.slice(0,cut));
+      part=part.slice(cut).trim();
+    }
+    if(part)chunks.push(part);
+  }
+  return chunks;
+}
+function n2UpdateReadingSpeechControls(message){
+  const play=document.querySelector('[data-reading-listen]');
+  const pause=document.querySelector('[data-reading-pause]');
+  const stop=document.querySelector('[data-reading-tts-stop]');
+  const status=document.querySelector('#readingAudioStatus');
+  const mode=n2ReadingVoice.status;
+  if(play)play.textContent=mode==='stopped'?'🔊 Đọc đoạn văn':'↻ Đọc lại từ đầu';
+  if(pause){pause.disabled=mode==='stopped';pause.textContent=mode==='paused'?'▶ Tiếp tục':'⏸ Tạm dừng'}
+  if(stop)stop.disabled=mode==='stopped';
+  if(status)status.textContent=message||(mode==='playing'?'🔊 Đang đọc đoạn văn...':mode==='paused'?'⏸ Đã tạm dừng. Chọn Tiếp tục hoặc Dừng hẳn.':'Sẵn sàng nghe.');
+}
+function n2StopReadingSpeech(message){
+  const speech=n2ReadingVoice;
+  speech.run++;
+  speech.status='stopped';speech.parts=[];speech.index=0;speech.lessonId=null;speech.utterance=null;
+  try{window.speechSynthesis?.cancel()}catch{}
+  n2UpdateReadingSpeechControls(message||'⏹ Đã dừng đọc.');
+}
+function n2PlayReadingNext(run){
+  const speech=n2ReadingVoice;
+  if(run!==speech.run||speech.status!=='playing')return;
+  if(speech.index>=speech.parts.length){
+    n2StopReadingSpeech('✅ Đã đọc hết đoạn văn.');
+    return;
+  }
+  const synth=window.speechSynthesis;
+  const u=new SpeechSynthesisUtterance(speech.parts[speech.index]);
+  speech.utterance=u;
+  u.lang='ja-JP';u.rate=0.85;u.pitch=1;
+  const jpVoice=synth.getVoices?.().find(v=>/^ja(?:-|_)/i.test(v.lang));
+  if(jpVoice)u.voice=jpVoice;
+  u.onend=()=>{
+    if(run!==speech.run)return;
+    speech.index++;
+    if(speech.status==='playing')n2PlayReadingNext(run);
+  };
+  u.onerror=e=>{
+    if(run!==speech.run)return;
+    if(e.error==='canceled'||e.error==='interrupted')return;
+    n2StopReadingSpeech('Không phát được âm thanh ('+(e.error||'lỗi giọng đọc')+'). Vui lòng kiểm tra giọng tiếng Nhật trên thiết bị.');
+  };
+  synth.speak(u);
+  n2UpdateReadingSpeechControls('🔊 Đang đọc · đoạn '+(speech.index+1)+'/'+speech.parts.length);
+}
+function n2StartReadingSpeech(lesson){
+  if(n2UI.mediaRecorder?.state==='recording'){
+    n2UpdateReadingSpeechControls('Hãy dừng ghi âm trước khi nghe giọng mẫu.');
+    return;
+  }
+  if(!('speechSynthesis' in window)||!('SpeechSynthesisUtterance' in window)){
+    n2UpdateReadingSpeechControls('Thiết bị này không hỗ trợ tính năng đọc thành tiếng.');
+    return;
+  }
+  n2StopReadingSpeech();
+  const speech=n2ReadingVoice;
+  speech.parts=n2ReadingSentenceChunks(lesson.text);
+  if(!speech.parts.length){n2UpdateReadingSpeechControls('Đoạn văn trống.');return}
+  speech.lessonId=lesson.id;
+  speech.status='playing';
+  n2PlayReadingNext(speech.run);
+}
+function n2ToggleReadingSpeechPause(){
+  const speech=n2ReadingVoice;
+  const synth=window.speechSynthesis;
+  if(!synth||speech.status==='stopped')return;
+  if(speech.status==='playing'){
+    speech.status='paused';
+    synth.pause();
+    n2UpdateReadingSpeechControls('⏸ Đã tạm dừng · đoạn '+(speech.index+1)+'/'+speech.parts.length);
+  }else if(speech.status==='paused'){
+    speech.status='playing';
+    synth.resume();
+    // Some mobile engines discard the current utterance while paused.
+    if(!synth.speaking && !synth.pending)n2PlayReadingNext(speech.run);
+    else n2UpdateReadingSpeechControls('▶ Đang tiếp tục...');
+  }
+}
+
 function renderN2ReadingDetail(){
   const lesson=n2CurrentReading();if(!lesson){n2UI.view='reading';return renderN2ReadingList()}
   title.textContent=lesson.label;
   const ready=!!lesson.text;
+  if(n2UI.readingShowFurigana===null)n2UI.readingShowFurigana=n2ReadingGetPref('readingFurigana');
+  if(n2UI.readingShowTranslation===null)n2UI.readingShowTranslation=n2ReadingGetPref('readingTranslation');
   main.innerHTML=`
     <button class="foundation-inline-back" data-n2-reading-back type="button">← Đọc N2</button>
     <div class="lesson-detail-head"><div><p class="section-kicker">${escapeText(lesson.exercise)}</p><h2>${escapeText(lesson.label)}</h2><p>${escapeText(lesson.source||'')} · ${lesson.verified?'Đã đối chiếu PDF':'Bản phiên chép, cần đối chiếu PDF'}</p></div></div>
     ${ready?`
-      <section class="reading-passage"><div class="reading-toolbar"><button class="primary-btn" data-reading-listen type="button">🔊 Nghe đoạn văn</button></div><p lang="ja">${escapeText(lesson.text)}</p></section>
+      <section class="reading-passage">
+        <div class="reading-toolbar reading-audio-toolbar">
+          <button class="primary-btn" data-reading-listen type="button">🔊 Đọc đoạn văn</button>
+          <button class="secondary-btn" data-reading-pause type="button" disabled>⏸ Tạm dừng</button>
+          <button class="secondary-btn" data-reading-tts-stop type="button" disabled>⏹ Dừng hẳn</button>
+        </div>
+        <div class="reading-toolbar reading-display-toolbar" role="group" aria-label="Tuỳ chọn hiển thị đoạn văn">
+          <button class="secondary-btn n2-reading-toggle" data-reading-furigana aria-pressed="false" type="button">あ Hiện Furigana</button>
+          <button class="secondary-btn n2-reading-toggle" data-reading-translation aria-controls="readingVietnamese" aria-expanded="false" aria-pressed="false" type="button">🌐 Hiện dịch nghĩa</button>
+        </div>
+        <p id="readingAudioStatus" class="reading-audio-status" role="status" aria-live="polite">Sẵn sàng nghe.</p>
+        <p id="readingFuriganaHelp" class="reading-furigana-help" hidden></p>
+        <p id="n2ReadingJapanese" lang="ja">${escapeText(lesson.text)}</p>
+      </section>
+      <section id="readingVietnamese" class="reading-translation" lang="vi" hidden>
+        <h3>🇻🇳 Dịch nghĩa tiếng Việt</h3>
+        <p>${escapeText(lesson.translation||'Chưa có bản dịch tiếng Việt cho đoạn văn này.')}</p>
+      </section>
       <section class="reading-recorder">
         <h3>Ghi âm bài đọc của bạn</h3>
         <p>Điểm ước tính = 85% độ khớp văn bản máy nhận dạng + 15% nhịp độ. Đây chưa phải phép đo chuẩn phát âm từng âm tiết. Dưới 60 điểm cần luyện lại.</p>
@@ -600,14 +749,29 @@ function renderN2ReadingDetail(){
       </section>`
     :`<div class="n2-import-warning"><strong>Chưa có nguyên đoạn văn trong dữ liệu app.</strong><p>Khung bài đã gắn đúng vị trí trong lộ trình. Cần nhập nguyên văn từ PDF nguồn trước khi bật ghi âm/chấm điểm.</p></div>`}
   `;
-  document.querySelector('[data-n2-reading-back]').addEventListener('click',()=>{stopN2Reading();n2UI.view='reading';renderN2()});
+  document.querySelector('[data-n2-reading-back]').addEventListener('click',()=>{n2StopReadingSpeech();stopN2Reading();n2UI.view='reading';renderN2()});
   if(!ready)return;
-  document.querySelector('[data-reading-listen]').addEventListener('click',()=>speakJapanese(lesson.text));
+  n2RenderReadingDisplay(lesson);
+  n2UpdateReadingSpeechControls();
+  document.querySelector('[data-reading-listen]').addEventListener('click',()=>n2StartReadingSpeech(lesson));
+  document.querySelector('[data-reading-pause]').addEventListener('click',n2ToggleReadingSpeechPause);
+  document.querySelector('[data-reading-tts-stop]').addEventListener('click',()=>n2StopReadingSpeech());
+  document.querySelector('[data-reading-furigana]').addEventListener('click',()=>{
+    n2UI.readingShowFurigana=!n2UI.readingShowFurigana;
+    n2ReadingSetPref('readingFurigana',n2UI.readingShowFurigana);
+    n2RenderReadingDisplay(lesson);
+  });
+  document.querySelector('[data-reading-translation]').addEventListener('click',()=>{
+    n2UI.readingShowTranslation=!n2UI.readingShowTranslation;
+    n2ReadingSetPref('readingTranslation',n2UI.readingShowTranslation);
+    n2RenderReadingDisplay(lesson);
+  });
   document.querySelector('[data-reading-record]').addEventListener('click',()=>startN2Reading(lesson));
   document.querySelector('[data-reading-stop]').addEventListener('click',()=>stopAndScoreN2Reading(lesson));
 }
 
 async function startN2Reading(lesson){
+  n2StopReadingSpeech('⏹ Đã dừng đọc mẫu để ghi âm giọng của bạn.');
   stopN2Reading();
   const status=document.querySelector('#readingLiveStatus');
   try{
@@ -707,6 +871,10 @@ backBtn.addEventListener('click',e=>{
   if(n2UI.view==='study'){exitN2Study();return}
   if(n2UI.view==='detail'){n2UI.view='category';n2UI.tab='lessons';renderN2();return}
   if(n2UI.view==='category'){n2UI.view='root';renderN2();return}
-  if(n2UI.view==='reading-detail'){stopN2Reading();n2UI.view='reading';renderN2();return}
+  if(n2UI.view==='reading-detail'){n2StopReadingSpeech();stopN2Reading();n2UI.view='reading';renderN2();return}
   if(n2UI.view==='reading'){n2UI.view='root';renderN2();return}
 },true);
+window.addEventListener('pagehide',()=>n2StopReadingSpeech());
+document.querySelectorAll('.bottom-nav [data-nav]').forEach(button=>button.addEventListener('click',()=>{
+  if(n2ReadingVoice.status!=='stopped')n2StopReadingSpeech();
+}));

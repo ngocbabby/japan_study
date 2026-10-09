@@ -13,3 +13,21 @@
 /* N2 Kanji: vocabulary examples with kana, meaning, and individual audio. */
 .n2-kanji-words{display:grid;gap:7px;margin-top:12px}.n2-word-pair{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto;align-items:center;gap:8px;padding:8px 0;border-top:1px solid #eee;font-size:.86rem;overflow-wrap:anywhere}.n2-word-pair>b{font-weight:700}.n2-word-pair .audio-btn.compact{padding:7px;min-width:32px}.n2-word-pair span{min-width:0}
 @media(max-width:480px){.n2-word-pair{grid-template-columns:minmax(0,1fr) auto}.n2-word-pair span:nth-child(2){grid-column:1/2;grid-row:2}.n2-word-pair button{grid-column:2;grid-row:1 / span 2}}
+
+
+/* Reader: controllable audio and accessible study overlays. */
+.reading-audio-toolbar{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:10px}
+.reading-audio-toolbar button,.reading-display-toolbar button{min-height:43px;padding:10px 8px;border-radius:11px;white-space:normal;line-height:1.35}
+.reading-audio-toolbar button:disabled{opacity:.46;cursor:not-allowed}
+.reading-display-toolbar{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:10px}
+.reading-display-toolbar .n2-reading-toggle[aria-pressed="true"]{border-color:#c7962b;background:#fff0bd;color:#63430b;font-weight:700}
+.reading-audio-status{font-size:.86rem;color:#654f25;background:#fff9df;border-radius:10px;padding:9px 12px;margin:4px 0 14px;line-height:1.5}
+.reading-furigana-help{font-size:.8rem;line-height:1.55;color:#896420}
+.reading-passage #n2ReadingJapanese{font-size:clamp(1.1rem,4.5vw,1.25rem);line-height:2.45;margin-bottom:5px;white-space:pre-wrap;overflow-wrap:anywhere}
+#n2ReadingJapanese ruby{ruby-position:over;white-space:nowrap}
+#n2ReadingJapanese rt{font-size:.55em;font-weight:500;color:#8a5420;line-height:1.2}
+.reading-translation{border:1px solid #e6d8ac;border-radius:18px;margin:12px 0;padding:16px;background:#fffaf0;color:#332b24}
+.reading-translation h3{font-size:1rem;margin:0 0 10px}
+.reading-translation p{line-height:1.85;white-space:pre-wrap;overflow-wrap:anywhere;margin:0}
+#readingVietnamese[hidden],#readingFuriganaHelp[hidden]{display:none!important}
+@media(max-width:380px){.reading-audio-toolbar{grid-template-columns:repeat(2,minmax(0,1fr))}.reading-audio-toolbar button:first-child{grid-column:1 / -1}}
