@@ -164,7 +164,7 @@ function renderN2Planner(){
  html+='<details class="plan2-card"><summary>📚 Toàn bộ 55 buổi & nguồn dữ liệu</summary><p class="plan2-note">KOSEI là lịch dự kiến; Zalo và SHub là nguồn nhiệm vụ thật đã nhập từ ảnh. Thời gian lớp theo Calendar, chưa đồng bộ hai chiều.</p>'+
  '<div class="n2-plan-sessions">'+source.lessons.map(l=>'<details><summary>Buổi '+l.number+' · '+esc(l.contents[0]||'Ôn tập')+'</summary>'+
  '<p>'+l.contents.map(esc).join(' · ')+'</p><strong>BTVN</strong><p>'+l.homework.map(esc).join(' · ')+'</p></details>').join('')+'</div></details>';
- html+='<details class="plan2-card"><summary>🔔 Cài đặt nhắc học</summary><p class="plan2-note">Chỉ thông báo khi trang vẫn mở; chưa có push nền.</p><button type="button" class="secondary-btn" id="planNotify">Bật thông báo 20:00</button><p id="planNotifyStatus" role="status"></p></details></div>';
+ html+='<details class="plan2-card"><summary>🔔 Cài đặt nhắc học</summary><p class="plan2-note">Chỉ nhắc lúc 20:00 khi trang đang mở, chưa hỗ trợ nhắc nền khi đóng trình duyệt.</p><button type="button" class="secondary-btn" id="planNotify">🔔 Xin quyền thông báo</button> <button type="button" class="secondary-btn" id="planNotifyTest">Thử thông báo</button><p id="planNotifyStatus" role="status"></p></details></div>';
  main.innerHTML=html;
  document.querySelector('[data-n2-root]').onclick=()=>{n2UI.view='root';renderN2()};
  document.querySelector('#planChangeShow').onclick=()=>{const d=document.querySelector('#planSettings');d.open=true;d.scrollIntoView({behavior:'smooth',block:'start'})};
@@ -187,32 +187,70 @@ function renderN2Planner(){
    else if(p.changes)delete p.changes[id];
    n2PlanSave(p);renderN2Planner();
  });
+ document.querySelector('#planNotifyStatus').textContent=n2PlanPermissionHelp();
  document.querySelector('#planNotify').onclick=async()=>{
    const status=document.querySelector('#planNotifyStatus');
-   if(!('Notification' in window)){status.textContent='Không hỗ trợ thông báo trên trình duyệt này.';return}
-   const permission=await Notification.requestPermission();
-   if(permission==='granted'){const cfg=n2PlanLoad();cfg.notifications=true;n2PlanSave(cfg);n2PlanNotifyCheck()}
-   status.textContent=permission==='granted'?'Đã bật nhắc khi app đang mở.':'Chưa cấp quyền.';
+   if(!('Notification' in window)){status.textContent=n2PlanPermissionHelp();return}
+   if(!window.isSecureContext){status.textContent='Hãy mở ứng dụng bằng HTTPS để bật thông báo.';return}
+   try{
+     const permission=Notification.permission==='granted'?'granted':await Notification.requestPermission();
+     if(permission!=='granted'){status.textContent=n2PlanPermissionHelp();return}
+     const registration=await n2PlanNotificationServiceWorker();
+     if(!registration || typeof registration.showNotification!=='function')throw Error('Trình duyệt không hỗ trợ hiện thông báo bằng Service Worker.');
+     const settings=n2PlanLoad();settings.notifications=true;n2PlanSave(settings);
+     status.textContent='✅ Đã cấp quyền. Khi Japan Study đang mở vào 20:00, app sẽ hiện nhắc học. Bấm “Thử thông báo” để kiểm tra.';
+   }catch(e){status.textContent='⚠️ '+(e?.message||'Không thể bật thông báo.')+' '+n2PlanPermissionHelp()}
+ };
+ document.querySelector('#planNotifyTest').onclick=async()=>{
+   const status=document.querySelector('#planNotifyStatus');
+   if(!('Notification' in window)||Notification.permission!=='granted'){
+     status.textContent=n2PlanPermissionHelp();return;
+   }
+   try{
+     await n2PlanShowNotification('🔔 Japan Study · Kiểm tra thông báo','Nếu thấy thông báo này, nhắc học khi mở app đã hoạt động.','n2-test');
+     status.textContent='✅ Đã gửi thông báo thử. Nếu chưa thấy, kiểm tra thông báo của Chrome trong cài đặt Android.';
+   }catch(e){status.textContent='⚠️ '+(e?.message||'Không hiện được thông báo.')}
  };
 }
 
-/* Notification API on a static GitHub Pages site is foreground-only here.
- * No claim of guaranteed push after browser/app is closed. */
-function n2PlanNotifyCheck(){
+/* Notifications use a Service Worker for Android Chrome (new Notification()
+ * cannot reliably display system notifications on mobile).
+ * This is NOT background push: timers only work while the page remains open.
+ */
+function n2PlanPermissionHelp(){
+ if(!('Notification' in window))return 'Thiết bị/trình duyệt không hỗ trợ Notification. Hãy thử Chrome Android.';
+ if(!window.isSecureContext)return 'Chỉ dùng được trên trang HTTPS.';
+ if(Notification.permission==='denied')return '🚫 Chrome đã chặn quyền thông báo. Bấm biểu tượng chỉnh trang bên trái địa chỉ → Quyền trang web → Thông báo → Cho phép. Kiểm tra cả Cài đặt Android → Ứng dụng → Chrome → Thông báo.';
+ if(Notification.permission==='granted')return '✅ Trang đã có quyền thông báo. Nhấn “Thử thông báo” để kiểm tra Android có hiển thị không.';
+ return '⏳ Chưa cấp quyền. Nhấn “Xin quyền thông báo”; nếu không thấy cửa sổ hỏi, kiểm tra Cài đặt trang web của Chrome.';
+}
+async function n2PlanNotificationServiceWorker(){
+ if(!('serviceWorker' in navigator))throw Error('Chrome không hỗ trợ Service Worker trên trang này.');
+ return navigator.serviceWorker.register('./n2-notify-sw.js',{scope:'./'});
+}
+async function n2PlanShowNotification(title,body,tag){
+ const registration=await n2PlanNotificationServiceWorker();
+ if(typeof registration.showNotification!=='function')throw Error('Trình duyệt không hỗ trợ thông báo qua Service Worker.');
+ await registration.showNotification(title,{body,tag});
+}
+let n2PlanNotifyInFlight=false;
+async function n2PlanNotifyCheck(){
  const p=n2PlanLoad();
- if(!p.notifications || !('Notification' in window)||Notification.permission!=='granted')return;
+ if(!p.notifications || !('Notification' in window)||Notification.permission!=='granted'||n2PlanNotifyInFlight)return;
  const now=new Date(),key=n2PlanToday();
  const mins=now.getHours()*60+now.getMinutes();
- if(mins<1200 || mins>=1210)return;
- if(p.lastNotified===key)return;
+ if(mins<1200 || mins>=1210 || p.lastNotified===key)return;
  const next=n2PlanPrioritize(p,key);
  if(!next.next)return;
  const what=next.urgent[0]?.text||next.due[0]?.text||next.backlog[0]?.text;
  if(!what)return;
+ n2PlanNotifyInFlight=true;
  try{
-  new Notification('📘 N2 · Ưu tiên học trước',{body:'Buổi '+next.next.session+' ('+next.next.date+'): '+what,tag:'n2-daily-prep'});
-  p.lastNotified=key;n2PlanSave(p);
- }catch{}
+   await n2PlanShowNotification('📘 N2 · Ưu tiên học trước','Buổi '+next.next.session+' ('+next.next.date+'): '+what,'n2-daily-prep');
+   p.lastNotified=key;n2PlanSave(p);
+ }catch(e){
+   console.warn('Japan Study notification not delivered:',e);
+ }finally{n2PlanNotifyInFlight=false}
 }
 if(typeof window!=='undefined' && typeof window.setInterval==='function'){
  window.setInterval(n2PlanNotifyCheck,60000);
