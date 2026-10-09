@@ -90,6 +90,33 @@
     {id:'n2-g-1-5',pattern:'～か～ないかのうちに',meaning:'gần như đồng thời; vừa... chưa kịp... thì...',structure:'Vる + か + Vない + かのうちに',example:'ベルが鳴るか鳴らないかのうちに、学生が教室を出た。',blank:'ベルが鳴る（　）、学生が教室を出た。'}
   ];
 
+
+  // Prefer the complete course datasets. Keep the original small samples only
+  // as a fallback when the independent files are unavailable.
+  if(Array.isArray(window.N2_KANJI_FULL) && window.N2_KANJI_FULL.length===48){
+    for(const imported of window.N2_KANJI_FULL){
+      const slot=kanjiLessons.find(x=>x.id===imported.id);
+      if(!slot)continue;
+      slot.items=imported.items;
+      slot.topic=imported.topic;
+      slot.topicVi=imported.topicVi;
+      slot.sourcePage=imported.sourcePage;
+      slot.source='Nihongo Soumatome N2 Kanji · '+imported.topicVi;
+    }
+  }
+
+  if(Array.isArray(window.N2_GRAMMAR_FULL) && window.N2_GRAMMAR_FULL.length===26){
+    const firstLessonExamples=new Map(grammarLessons[0].items.map((g,i)=>[i+1,g]));
+    for(const imported of window.N2_GRAMMAR_FULL){
+      const slot=grammarLessons.find(x=>x.id===imported.id);
+      if(!slot)continue;
+      slot.items=imported.items.map((g,i)=>{
+        const seed=imported.id==='grammar-01'?firstLessonExamples.get(i+1):null;
+        return {...g,structure:g.structure||seed?.structure||'',blank:g.blank||seed?.blank||''};
+      });
+    }
+  }
+
   const readingPlan = [
     ['対比1','練習 1'],['対比2','練習 3'],['言い換え1','練習 6'],['言い換え2','練習 8'],['比喩','練習 10'],
     ['疑問提示文1','練習 13'],['疑問提示文2','練習 15'],['主張表現1','練習 19'],['指示語','練習 21'],
@@ -107,13 +134,13 @@
   }));
 
   window.N2_STUDY_DATA = {
-    version:'2026-10-09',
+    version:'2026-10-09-grammar-kanji',
     vocabTotal:1160,
     vocabImported:vocabItems.length,
     vocabLessons,
     kanjiLessons,
     grammarLessons,
     readingLessons,
-    sourceNote:'Mimikara Oboeru N2: 1160 từ theo đúng thứ tự gốc; chia 25 bài dựa trên lộ trình N2 55 buổi của KOSEI.'
+    sourceNote:'Mimikara Oboeru N2: 1160 từ / 25 bài. Nihongo Soumatome N2 Kanji: 8 tuần / 48 bài. Shin Kanzen N2: 26 bài ngữ pháp.'
   };
 })();
