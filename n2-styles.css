@@ -52,3 +52,18 @@
 .n2-doc-choices{display:grid;gap:9px;margin:15px 0}.n2-doc-choices button{text-align:left;white-space:normal;line-height:1.5;min-height:45px}.n2-doc-choices button:disabled{opacity:.75}
 .n2-doc-question{white-space:pre-wrap;line-height:1.6}
 @media(max-width:420px){.n2-doc-tabs{grid-template-columns:1fr}.n2-doc-tabs button{padding:9px}}
+
+/* Course calendar priority queue */
+.n2-plan-panel,.n2-plan-priority,.n2-plan-muted{padding:16px;margin:13px 0;border:1px solid #e8e3d8;border-radius:18px;background:#fff;color:#282722}
+.n2-plan-panel h3,.n2-plan-priority h3{margin:12px 0 9px}.n2-plan-panel p,.n2-plan-priority p{line-height:1.65}
+.n2-plan-priority{border:2px solid #e5b83d;background:#fffaf0}
+.n2-plan-pill{font-size:.77rem;font-weight:800;color:#844600;background:#ffe8b2;padding:7px 11px;border-radius:999px;display:inline-block}
+.n2-plan-inputs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}.n2-plan-inputs label{font-size:.87rem;display:flex;flex-direction:column;gap:6px}
+.n2-plan-inputs input,.n2-plan-inputs select{min-width:0;max-width:100%;width:100%;padding:11px 7px;border:1px solid #d6cbb0;border-radius:10px;background:white;box-sizing:border-box}
+.n2-plan-check{display:flex;gap:10px;align-items:flex-start;margin:0;font-size:.94rem;line-height:1.55}.n2-plan-check input{width:19px;height:19px;flex-shrink:0;accent-color:#ba8b09;margin-top:2px}
+.n2-plan-task{border-bottom:1px solid #eee3d3;padding:12px 0;display:flex;justify-content:space-between;align-items:center;gap:12px}.n2-plan-task:last-child{border:0}.n2-plan-task button{flex-shrink:0;font-size:.83rem;padding:8px}
+.n2-plan-hint,.n2-plan-muted{font-size:.85rem;color:#655c4c}.n2-plan-lock{margin-top:14px;padding:11px;background:#fff0c4;border-radius:11px;font-size:.88rem}
+.n2-plan-event{display:flex;gap:12px;padding:11px 0;border-bottom:1px solid #eee}.n2-plan-date{white-space:nowrap;color:#805b12;font-weight:700}.n2-plan-event p{margin:3px 0 0;font-size:.8rem}
+.n2-plan-conflict{color:#a22f19;background:#ffe8dd;padding:11px;border-radius:11px}.n2-plan-sessions details{border-bottom:1px solid #eee;padding:9px 0}
+.n2-plan-sessions summary{cursor:pointer;font-weight:650}.n2-plan-sessions li{margin:6px 0;line-height:1.55}
+@media(max-width:480px){.n2-plan-inputs{grid-template-columns:1fr}.n2-plan-task{flex-direction:column;align-items:stretch}.n2-plan-task button{align-self:flex-end}}
