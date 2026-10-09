@@ -207,7 +207,7 @@ function n2KnowledgeRow(item,i){
     return `<article class="knowledge-row"><div class="knowledge-index">${item.n||i+1}</div><div class="knowledge-main"><strong class="jp-term">${escapeText(item.term)}</strong><span class="reading">${escapeText(item.reading||'')}</span><p>${escapeText(item.meaning||'')}</p></div><button class="audio-btn" data-speak="${escapeText(item.reading||item.term)}" type="button">🔊</button></article>`;
   }
   if(n2UI.type==='kanji'){
-    return `<article class="knowledge-row"><div class="kanji-char">${escapeText(item.char)}</div><div class="knowledge-main"><strong>${escapeText(item.meaning||'')}</strong><span class="reading">${escapeText(item.reading||'')}</span><p>${escapeText(item.words||'')}</p></div><button class="audio-btn" data-speak="${escapeText((item.words||item.char).split('・')[0])}" type="button">🔊</button></article>`;
+    return `<article class="knowledge-row"><div class="kanji-char">${escapeText(item.char)}</div><div class="knowledge-main"><strong>${escapeText(item.hanViet||item.meaning||'')}</strong><span class="reading">${escapeText(item.reading||'')}</span>${item.wordEntries?.length?`<div class="n2-kanji-words">${item.wordEntries.map(w=>`<div class="n2-word-pair"><span><b>${escapeText(w.term)}</b> · ${escapeText(w.reading)}</span><span>${escapeText(w.meaning)}</span><button class="audio-btn compact" data-speak="${escapeText(w.reading)}" type="button" aria-label="Nghe từ">🔊</button></div>`).join('')}</div>`:`<p>${escapeText(item.words||'')}</p>`}</div></article>`;
   }
   return `<article class="knowledge-row grammar-row"><div class="knowledge-index">${i+1}</div><div class="knowledge-main"><strong class="grammar-pattern">${escapeText(item.pattern)}</strong><p>${escapeText(item.meaning||'')}</p><span class="reading">${escapeText(item.structure||'')}</span><p class="jp-example">${escapeText(item.example||'')}</p></div><button class="audio-btn" data-speak="${escapeText(item.example||item.pattern)}" type="button">🔊</button></article>`;
 }
@@ -427,16 +427,18 @@ function n2BuildQuestion(item,index){
     const options=n2MakeOptions(correct,pool);
     return {kicker:reverse?'NGHĨA → KANJI':'KANJI → NGHĨA',prompt:reverse?item.meaning:item.char,sub:item.reading||'',speak:(item.words||item.char).split('・')[0],options,correctIndex:options.indexOf(correct)};
   }
-  const sentenceMode=n2UI.session.phase==='quiz-weak' || (n2UI.session.phase==='verify-quiz' && index%2===1);
-  const correct=sentenceMode?item.pattern:item.meaning;
-  const pool=all.filter(x=>x.id!==item.id).map(x=>sentenceMode?x.pattern:x.meaning).filter(Boolean);
+  const phase=n2UI.session.phase;
+  const mode=phase==='quiz-all'?index%2:phase==='quiz-weak'?(n2UI.session.round+index)%2:(index+1)%2;
+  // Ask for the grammar *function* via its Vietnamese situational context.
+  // A full unmasked Japanese sentence would reveal the correct pattern.
+  const correct=mode?item.pattern:item.meaning;
+  const pool=all.filter(x=>x.id!==item.id).map(x=>mode?x.pattern:x.meaning).filter(Boolean);
   const options=n2MakeOptions(correct,pool);
   return {
-    kicker:sentenceMode?'CÂU → MẪU NGỮ PHÁP':'MẪU → CHỨC NĂNG',
-    prompt:sentenceMode?(item.blank||item.example):item.pattern,
-    sub:sentenceMode?'Chọn mẫu phù hợp nhất':item.structure,
-    speak:sentenceMode?item.example:'',
-    options,correctIndex:options.indexOf(correct)
+    kicker:mode?'NGỮ CẢNH → MẪU NGỮ PHÁP':'MẪU → CHỨC NĂNG',
+    prompt:mode?(item.exampleVi||item.meaning):item.pattern,
+    sub:mode?'Chọn mẫu ngữ pháp phù hợp với câu tiếng Việt':(item.structure||'Chọn đúng ý nghĩa và cách dùng'),
+    speak:'',options,correctIndex:options.indexOf(correct)
   };
 }
 
