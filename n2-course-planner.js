@@ -9,30 +9,63 @@ function n2PlanDate(d){const t=new Date(d);return [t.getFullYear(),String(t.getM
 function n2PlanToday(){return n2PlanDate(new Date())}
 function n2PlanShift(date,n){const d=new Date(date+'T12:00:00+09:00');d.setDate(d.getDate()+n);return n2PlanDate(d)}
 function n2PlanDay(date){return new Date(date+'T12:00:00+09:00').getDay()}
+function n2PlanChanges(state){
+ const seeded=window.N2_CLASS_SOURCE.classChanges||[];
+ const custom=state?.changes||{};
+ return seeded.filter(x=>custom[x.id]!==false).concat(Object.values(custom).filter(x=>x&&typeof x==='object'&&x.from&&x.to));
+}
+function n2PlanRescheduledDates(state){
+ if(!state.anchorDate)return [];
+ const weekdays=window.N2_CLASS_SOURCE.timetable.find(t=>t.id==='n2').days;
+ const changes=n2PlanChanges(state);
+ const dates=[];
+ // Iterate the fixed course sequence, skipping teacher-cancelled days without
+ // consuming a lesson number. Future classes therefore shift, never double.
+ for(let d=state.anchorDate,guard=0;guard<240&&dates.length<56;d=n2PlanShift(d,1),guard++){
+   if(!weekdays.includes(n2PlanDay(d)))continue;
+   if(changes.some(c=>c.classId==='n2'&&c.from===d))continue;
+   dates.push(d);
+ }
+ return dates;
+}
 function n2PlanClasses(from,days=38){
  const src=window.N2_CLASS_SOURCE;
+ const state=n2PlanLoad(),changes=n2PlanChanges(state);
  const out=[];
  for(let i=0;i<days;i++){
   const date=n2PlanShift(from,i),weekday=n2PlanDay(date);
-  for(const t of src.timetable)if(t.days.includes(weekday))out.push({date,...t});
+  for(const t of src.timetable){
+    if(!t.days.includes(weekday))continue;
+    const changed=changes.find(c=>c.classId===t.id&&c.from===date);
+    if(changed)out.push({date,...t,cancelled:true,label:t.label+' · NGHỈ',reason:changed.reason});
+    else out.push({date,...t});
+  }
   for(const e of src.special)if(e.date===date)out.push({...e,source:'Google Calendar'});
  }
  return out.sort((a,b)=>(a.date+a.start).localeCompare(b.date+b.start));
 }
-function n2PlanN2Dates(anchorDate,from,days=100){
- const a=new Date(anchorDate+'T12:00:00+09:00'),b=new Date(from+'T12:00:00+09:00');
- const delta=Math.floor((b-a)/86400000);
- const start=n2PlanShift(anchorDate,-Math.max(0,delta+9));
- const events=n2PlanClasses(start,Math.min(365,days+Math.max(0,delta)+20)).filter(c=>c.id==='n2');
- return events;
-}
 function n2PlanSessions(state,from,days=24){
  if(!state.anchorDate)return [];
- const base=n2PlanN2Dates(state.anchorDate,from,Math.max(38,days+14)).filter(e=>e.date>=state.anchorDate);
- const s=base.findIndex(e=>e.date===state.anchorDate);
- if(s<0)return [];
- return base.slice(s).map((e,i)=>({...e,session:state.anchorSession+i,lesson:window.N2_CLASS_SOURCE.lessons[state.anchorSession+i-1]}))
-  .filter(e=>e.session<=55 && e.date>=from && e.date<n2PlanShift(from,days));
+ const dates=n2PlanRescheduledDates(state),limit=n2PlanShift(from,days);
+ return dates.map((date,i)=>({date,id:'n2',label:'Lớp N2',start:'21:00',end:'23:00',
+    session:state.anchorSession+i,lesson:window.N2_CLASS_SOURCE.lessons[state.anchorSession+i-1]}))
+  .filter(e=>e.session<=55&&e.date>=from&&e.date<limit&&e.lesson);
+}
+function n2PlanAddMove(state,from,to,reason){
+ if(!from||!to||to<=from)throw Error('Ngày học bù phải sau ngày nghỉ.');
+ const valid=window.N2_CLASS_SOURCE.timetable.find(t=>t.id==='n2').days;
+ if(!valid.includes(n2PlanDay(from))||!valid.includes(n2PlanDay(to)))throw Error('Ngày nghỉ và ngày học bù phải là T2, T4 hoặc T6.');
+ const changes=n2PlanChanges(state);
+ if(changes.some(c=>c.classId==='n2'&&c.from===from))throw Error('Ngày này đã được đánh dấu nghỉ.');
+ const sequence=n2PlanRescheduledDates(state);
+ if(state.anchorDate&&sequence.length&&from>=state.anchorDate){
+   const i=sequence.indexOf(from);
+   if(i===-1)throw Error('Ngày này không có buổi N2 để dời.');
+   if(sequence[i+1]!==to)throw Error('Để không trùng buổi, chọn ngày học N2 kế tiếp: '+sequence[i+1]+'.');
+ }
+ const id='local-'+from;
+ state.changes={...(state.changes||{}),[id]:{id,classId:'n2',from,to,reason:reason||'Giáo viên báo nghỉ'}};
+ return state;
 }
 function n2PlanPrioritize(state,date=n2PlanToday()){
  const upcoming=n2PlanSessions(state,date,21);
@@ -84,6 +117,7 @@ function n2PlanEventsHtml(e){
 function renderN2Planner(){
  title.textContent='N2 · Lịch & ưu tiên';
  const p=n2PlanLoad(),today=n2PlanToday(),next=n2PlanPrioritize(p,today);
+ const cancellations=n2PlanChanges(p);
  const source=window.N2_CLASS_SOURCE, actual=source.shubAssignments||[], teacher=source.teacherMessages?.[0], estimate=source.estimatedLesson;
  const target=next.next,lessons=window.N2_CLASS_SOURCE.lessons;
  const upcoming=n2PlanSessions(p,today,32).slice(0,11);
@@ -95,6 +129,8 @@ function renderN2Planner(){
  }
  const all=lessons.filter(x=>x.number>=1&&x.number<=55);
  const lessonEstimate=estimate && lessons[estimate.anchorSession-1];
+ const moveDefault=cancellations.some(c=>c.from===today)?n2PlanShift(today,3):today;
+
  const realPending=[...(teacher?.items||[]),...actual].filter(t=>!p.done[t.id]);
  const options=all.map(x=>'<option value="'+x.number+'" '+(p.anchorSession===x.number?'selected':'')+'>Buổi '+x.number+' · '+n2PlanEscape(x.contents.slice(0,2).join(', ').slice(0,72))+'</option>').join('');
  let html='<button class="foundation-inline-back" data-n2-root>← N2</button>'+
@@ -109,6 +145,12 @@ function renderN2Planner(){
  html+='<section class="n2-plan-panel"><h3>📝 Danh sách bài tập SHub (từ ảnh)</h3><p class="n2-plan-hint">Ảnh chưa hiện hạn nộp, trạng thái 0/19 không khẳng định bài đã làm hoặc buổi học tương ứng. Bạn có thể tự tích khi hoàn tất.</p>'+
  actual.map(t=>'<div class="n2-plan-task"><label class="n2-plan-check"><input data-n2-plan-item="'+n2PlanEscape(t.id)+'" type="checkbox"><span>'+n2PlanEscape(t.text)+'</span></label></div>').join('')+'</section>';
  if(!p.anchorDate && lessonEstimate) html+='<section class="n2-plan-panel"><h3>🗓️ Tối 09/10: dự kiến buổi 6</h3><p>Bạn cho biết “chắc học buổi 6”. Chưa xác minh được với SHub, nên <strong>chưa tự ghép lịch</strong>.</p><p>Trong kế hoạch KOSEI, buổi 6: '+n2PlanEscape(lessonEstimate.contents.join(' · '))+'</p><button class="secondary-btn" id="planUseEstimate">Dùng buổi 6 làm mốc dự kiến</button></section>';
+ html+='<section class="n2-plan-panel"><h3>📆 Dời ngày học N2</h3><p>Nếu Sensei báo nghỉ, đánh dấu ngày nghỉ. Buổi học giữ nguyên số thứ tự, tự chuyển sang ngày N2 kế tiếp; toàn bộ buổi phía sau lùi theo, không nhân đôi bài.</p>'+
+ '<div class="n2-plan-inputs"><label>Ngày được nghỉ<input type="date" id="n2MoveFrom" value="'+n2PlanEscape(today)+'"></label><label>Ngày học tiếp<input type="date" id="n2MoveTo" value="'+n2PlanEscape(n2PlanShift(today,3))+'"></label></div>'+
+ '<label>Lý do<input id="n2MoveReason" class="n2-plan-input" value="Sensei báo nghỉ"></label>'+
+ '<button class="secondary-btn" id="n2MoveSubmit">↪ Dời buổi học</button><p id="n2MoveStatus" role="status"></p>'+
+ '<h4>Những ngày đã thay đổi</h4>'+
+ (cancellations.length?cancellations.map(c=>'<div class="n2-plan-task"><span><strong>⏸ '+n2PlanEscape(c.from)+'</strong> → '+n2PlanEscape(c.to)+'<br><small>'+n2PlanEscape(c.reason)+'</small></span><button data-move-undo="'+n2PlanEscape(c.id)+'" class="secondary-btn">Hoàn tác</button></div>').join(''):'<p>Chưa có buổi nghỉ.</p>')+'</section>';
  if(target){
   html+='<div class="n2-plan-priority"><span class="n2-plan-pill">🔴 ƯU TIÊN 1 · '+(target.date===next.tomorrow?'HỌC TRƯỚC CHO NGÀY MAI':'CHUẨN BỊ BUỔI KẾ TIẾP')+'</span>'+
   '<h2>'+n2PlanLabel(target)+'</h2><p>⚠️ '+(p.confirmed?'Mốc học do bạn xác nhận; ':'Mốc buổi học vẫn chỉ là dự đoán; ')+'nội dung KOSEI chỉ mang tính tham khảo: '+n2PlanEscape(target.lesson.contents.join(' · '))+'</p>'+
@@ -137,6 +179,17 @@ function renderN2Planner(){
  });
  document.querySelectorAll('[data-plan-open]').forEach(el=>el.onclick=()=>n2PlanOpen(el.dataset.planOpen));
  document.querySelector('#planUseEstimate')?.addEventListener('click',()=>{const state=n2PlanLoad();state.anchorDate=estimate.anchorDate;state.anchorSession=estimate.anchorSession;state.confirmed=false;n2PlanSave(state);renderN2Planner()});
+ document.querySelector('#n2MoveSubmit').onclick=()=>{
+   const date=document.querySelector('#n2MoveFrom').value,to=document.querySelector('#n2MoveTo').value,reason=document.querySelector('#n2MoveReason').value;
+   try{n2PlanAddMove(p,date,to,reason);n2PlanSave(p);renderN2Planner()}
+   catch(e){document.querySelector('#n2MoveStatus').textContent='⚠️ '+e.message}
+ };
+ document.querySelectorAll('[data-move-undo]').forEach(b=>b.onclick=()=>{
+   const id=b.dataset.moveUndo;
+   if((source.classChanges||[]).some(c=>c.id===id)){p.changes={...(p.changes||{}),[id]:false}}
+   else if(p.changes)delete p.changes[id];
+   n2PlanSave(p);renderN2Planner();
+ });
  document.querySelector('#planNotify').onclick=async()=>{
   const status=document.querySelector('#planNotifyStatus');
   if(!('Notification' in window)){status.textContent='Trình duyệt này không hỗ trợ Notification.';return}
