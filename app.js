@@ -192,7 +192,7 @@ function roadmapCompactCards(date){
  return h+'</section>';
 }
 function roadmapCompactWeek(){
- let out='<section class="plan2-card"><div class="plan2-section-head"><h3>7 ngày gần nhất</h3><span class="plan2-note">Bấm ngày để xem</span></div>';
+ let out='<section class="plan2-card"><div class="plan2-section-head"><h3>7 ngày tới</h3><span class="plan2-note">Bấm ngày để xem</span></div>';
  for(let i=0;i<7;i++){
    const date=roadmapCompactIso(i),data=roadmapCompactDay(date);
    const cls=data.entries.filter(x=>x.type==='class').length;
