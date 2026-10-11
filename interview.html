@@ -1,41 +1,33 @@
 <!doctype html>
 <html lang="vi">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="color-scheme" content="light">
-  <meta name="theme-color" content="#f4c63d">
-  <title>Luyện phỏng vấn · Japan Study</title>
-  <link rel="stylesheet" href="./styles.css?v=20261011-1949">
-  <link rel="stylesheet" href="./interview-trainer.css?v=20261011-1949">
-  <style>
-    .interview-standalone .iv-root { padding-top: 8px }
-    .interview-standalone .topbar { grid-template-columns:44px 1fr 44px }
-    .interview-standalone .topbar .icon-btn { display:inline-flex;align-items:center;justify-content:center;text-decoration:none;font-size:22px }
-    .interview-standalone .back-link { text-decoration:none;color:#202020 }
-    .interview-standalone .app-shell { padding-bottom:30px }
-    .interview-standalone .version-tag {font-size:10px;color:#766e5e;text-align:center;margin:20px 0}
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f4c63d">
+<meta name="color-scheme" content="light">
+<title>Giáo trình Kaiwa phỏng vấn · Japan Study</title>
+<link rel="stylesheet" href="./styles.css?v=20261011-book3">
+<link rel="stylesheet" href="./interview-trainer.css?v=20261011-book3">
+<link rel="stylesheet" href="./interview-book.css?v=20261011-book3">
 </head>
-<body class="interview-standalone">
-  <div class="app-shell">
-    <header class="topbar">
-      <a class="icon-btn back-link" href="./index.html?v=20261011-1949" aria-label="Quay lại Japan Study">←</a>
-      <div class="brand"><p class="eyebrow">JAPAN STUDY · INTERVIEW LAB</p><h1 id="pageTitle">Luyện phỏng vấn</h1></div>
-      <a class="icon-btn back-link" href="./index.html?v=20261011-1949" title="Trang chính" aria-label="Trang chính">⌂</a>
-    </header>
-    <main id="appMain" aria-live="polite"><div class="notice"><div>📚</div><div><strong>Đang mở bộ câu hỏi Kaiwa…</strong><p>Nếu màn hình không thay đổi, hãy tải lại trang một lần.</p></div></div></main>
-    <div class="version-tag">Interview Lab · 20261011-1949</div>
-  </div>
-  <script src="./interview-bank.js?v=20261011-1949"></script>
-  <script src="./interview-trainer.js?v=20261011-1949"></script>
-  <script>
-    if (typeof window.renderInterviewTrainer === 'function') {
-      window.renderInterviewTrainer();
-    } else {
-      document.querySelector('#appMain').innerHTML =
-        '<section class="notice"><div>⚠️</div><div><strong>Không tải được bài luyện.</strong><p>Hãy thử tải lại trang hoặc mở trong Chrome. Nếu vẫn lỗi, gửi ảnh màn hình cho ChatGPT.</p></div></section>';
-    }
-  </script>
-</body>
-</html>
+<body>
+<div class="app-shell ib-shell">
+ <header class="topbar">
+  <a class="icon-btn" href="./index.html?v=20261011-book3" style="display:flex;align-items:center;justify-content:center;text-decoration:none;color:#243748;font-size:22px" aria-label="Về trang chủ">←</a>
+  <div class="brand"><p class="eyebrow">JAPAN STUDY · 面接</p><h1 id="pageTitle">Luyện phỏng vấn</h1></div>
+  <a class="icon-btn" href="./index.html?v=20261011-book3" style="display:flex;align-items:center;justify-content:center;text-decoration:none;color:#243748;font-size:20px" aria-label="Trang chủ">⌂</a>
+ </header>
+ <nav class="ib-global-tabs" aria-label="Chế độ học">
+  <button type="button" data-ib-tab="book" class="active">📖 Giáo trình đầy đủ</button>
+  <button type="button" data-ib-tab="practice">🎙 Luyện phản xạ</button>
+  <button type="button" data-ib-tab="review">🔁 Ôn hôm nay</button>
+ </nav>
+ <main id="appMain" aria-live="polite">
+  <div class="notice">Đang tải giáo trình Kaiwa…</div>
+ </main>
+</div>
+<script src="./interview-nacl.min.js?v=20261011-book3"></script>
+<script src="./interview-private-vault.js?v=20261011-book3"></script>
+<script src="./interview-trainer.js?v=20261011-book3"></script>
+<script src="./interview-book.js?v=20261011-book3"></script>
+</body></html>
