@@ -162,14 +162,14 @@ function bookContent(){
  for(let i=0;i<c.items.length;i++){
    const p=c.items[i],t=p.t;
    const q=t.match(/^Câu (\d+)\./)||idx===23&&t.match(/^CÂU (\d+)\./);
-   if(q&&current){body+=rateBar(current);current=null;}
-   if(q)current=(idx===23?'s':'q')+q[1];
+   if(q&&current&&((idx>=1&&idx<=20)||idx===23)){body+=rateBar(current);current=null;}
+   if(q&&((idx>=1&&idx<=20)||idx===23))current=(idx===23?'s':'q')+q[1];
    const r=paragraphView(p,i,c,state.hideAnswers,phase);
    phase=r.phase;
    const isKana=/^（[\u3040-\u30ff]/.test(t)||phase==='kana'&&p.k!=='HEADING_3';
    body+=state.hideKana&&isKana?'<div class="ib-kana-hidden">あ Hiragana đang ẩn · bấm hiện trên thanh công cụ</div>':r.html;
  }
- if(current)body+=rateBar(current);
+ if(current&&((idx>=1&&idx<=20)||idx===23))body+=rateBar(current);
  if(idx===0||idx===22)body+=rateBar(idx===0?'intro':'intro-short');
  body+='</section>';
  body+='<div class="ib-chapter-bottom">'+(prev?control('← Chương trước','chapter',prev):'<span></span>')+(next?control('Chương tiếp →','chapter',next,'primary'):'<span>Đã đến chương cuối ✓</span>')+'</div>';
@@ -260,7 +260,7 @@ function render(preserve=false){
    if(typeof window.renderInterviewTrainer==='function')window.renderInterviewTrainer();
    else pageShell('<section class="ib-lock"><h2>Bộ luyện đang khởi động</h2>'+control('Quay lại sổ tay','tab-book')+'</section>');
  }else chapterRead();
- if(preserve)window.scrollTo(0,y);else window.scrollTo({top:0,behavior:'instant'});
+ if(preserve)window.scrollTo(0,y);else window.scrollTo({top:0,behavior:'auto'});
 }
 function filterOutline(query){
  const q=String(query||'').trim().toLowerCase();document.querySelectorAll('.ib-chapter-link').forEach(b=>{b.hidden=!!q&&!b.dataset.search.includes(q)});
