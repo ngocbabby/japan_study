@@ -54,6 +54,7 @@ function render(){
   if(state.page==='roadmap') return renderRoadmap();
   if(state.page==='foundation') return renderFoundation();
   if(state.page==='n2') return renderN2();
+  if(state.page==='interview' && typeof renderInterviewTrainer==='function') return renderInterviewTrainer();
   if(state.page==='interview') return renderInterview();
   if(state.page==='interview-day') return renderInterviewDay();
   if(state.page==='kaiwa') return renderKaiwa();
@@ -111,9 +112,9 @@ function renderHome(){
         <div>
           <div class="module-icon">面</div>
           <h3>Luyện phỏng vấn</h3>
-          <p>Lưu theo từng ngày học: hội thoại, từ vựng, ngữ pháp, kanji và phần cần lướt lại.</p>
+          <p>65 bài luyện từ tài liệu Kaiwa: thẻ nhớ, phỏng vấn giả lập, nghe tiếng Nhật, ghi âm và trò chơi.</p>
         </div>
-        <div class="module-meta"><span>2 buổi đã lưu</span><span class="chev">›</span></div>
+        <div class="module-meta"><span>56 câu hỏi + 8 bài Sensei</span><span class="chev">›</span></div>
       </button>
 
       <button class="module-card" data-open="kaiwa" type="button">
