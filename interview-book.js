@@ -192,7 +192,7 @@ function gameQuestions(c){
  if(number===21)return B.priority.map(n=>B.cards.find(x=>x.number===n)).filter(Boolean);
  if(number===0)return [{id:'intro',question:'自己紹介をお願いします。',meaning:'Hãy tự giới thiệu',responses:[{jp:B.intro.lines[0].jp,vi:B.intro.meaning}]}];
  if(number===22)return [{id:'intro-short',question:'自己紹介をお願いします。',meaning:'Hãy tự giới thiệu ngắn gọn',responses:[{jp:c.items.find(p=>onlyJapanese(p.t))?.t||'',vi:''}]}];
- return B.cards.filter(x=>[1,12,18,24,35].includes(x.number));
+ return [];
 }
 function gameStart(kind){
  const c=chapter(),pool=gameQuestions(c);
@@ -274,6 +274,7 @@ function navigate(id,anchor){
 function setTab(tab){
  stopSpeech();state.tab=tab;state.game=null;state.hideAnswers=false;state.hideKana=false;
  render();
+ document.querySelectorAll('[data-ib-tab]').forEach(el=>el.classList.toggle('active',el.dataset.ibTab===tab));
 }
 async function audioDB(){
  if(!window.indexedDB)return null;
