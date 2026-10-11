@@ -156,6 +156,12 @@ function bookContent(){
  body+='<div class="ib-practice-shortcuts">'+control('🎙️ Ghi âm chương','record-toggle',null,state.recording?'danger':'')+
  control('🎮 Game trong chương','game-open')+control('📝 Luyện trả lời','practice-tab')+'</div>';
  body+='<div id="ib-record-panel" class="ib-record-panel">'+recordPanel()+'</div>';
+ if(idx===0){
+  const pairs=state.data.bank.intro.lines;
+  body+='<details class="ib-paired"><summary>📗 Luyện 13 câu: tiếng Nhật + Hiragana cùng dòng (mở để xem)</summary><div class="ib-pair-list">'+
+  pairs.map((line,i)=>'<div class="ib-pair-row"><span class="ib-pair-number">'+String(i+1).padStart(2,'0')+'</span><div><strong lang="ja">'+E(line.jp)+'</strong><p>'+E(line.kana)+'</p></div>'+control('🔊','intro-speak',i)+'</div>').join('')+
+  '</div></details>';
+ }
  if(state.game?.id===c.id)body+=gameView(c);
  let phase='note',current=null;
  body+='<section class="ib-lesson" aria-label="Toàn văn chương">';
@@ -334,6 +340,7 @@ function onClick(ev){
  if(a==='hide-kana'){state.hideKana=!state.hideKana;render(true);return}
  if(a==='play-all'){if(state.playing)stopSpeech();else playChapter();updatePlayButton();return}
  if(a==='speak'){stopSpeech();speakLine(chapter().items[Number(v)]?.t||'');return}
+ if(a==='intro-speak'){stopSpeech();speakLine(state.data.bank.intro.lines[Number(v)]?.jp||'');return}
  if(a==='record-toggle'){toggleRecord();return}
  if(a==='download-record'){downloadRecording();return}
  if(a==='practice-tab'){setTab('practice');return}
