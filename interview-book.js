@@ -220,7 +220,7 @@ function gameView(c){
  const g=state.game,entry=g?.questionPool?.[g.index];if(!entry)return '<div class="ib-game"><h3>🎉 Xong lượt!</h3><strong>'+E(g?.score)+' điểm</strong>'+control('Chơi lại','game-restart')+control('Đóng game','game-close')+'</div>';
  const answer=entry.responses?.[0]?.jp||'';
  let content='<section class="ib-game" id="ib-game"><div class="ib-game-title"><div><p class="ib-eyebrow">GAME TRONG CHƯƠNG · '+(g.index+1)+' / '+g.questionPool.length+'</p><h3>'+(g.kind==='order'?'🧩 Ghép câu theo thứ tự':'🎧 Nghe và chọn nghĩa')+'</h3></div>'+control('✕ Đóng','game-close')+'</div>';
- content+='<p class="ib-game-question">'+E(entry.question)+'</p>';
+ content+='<div class="ib-game-modes">'+control('🧩 Ghép câu','game-order',null,g.kind==='order'?'selected':'')+control('🎧 Nghe chọn nghĩa','game-listen',null,g.kind==='listen'?'selected':'')+'</div><p class="ib-game-question">'+E(entry.question)+'</p>';
  if(g.kind==='order'){
    const picked=g.picked.map(id=>g.pieces.find(z=>z.id===id)).filter(Boolean);
    content+='<div class="ib-picked">'+(picked.length?picked.map(z=>control(E(z.text),'piece-undo',z.id,'piece')).join(''):'Chọn các mảnh bên dưới để ghép thành đáp án...')+'</div><div class="ib-shuffled">'+g.pieces.filter(z=>!g.picked.includes(z.id)).map(z=>control(E(z.text),'piece-pick',z.id,'piece')).join('')+'</div>'+
