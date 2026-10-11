@@ -112,9 +112,9 @@ function renderHome(){
         <div>
           <div class="module-icon">面</div>
           <h3>Luyện phỏng vấn</h3>
-          <p>65 bài luyện từ tài liệu Kaiwa: thẻ nhớ, phỏng vấn giả lập, nghe tiếng Nhật, ghi âm và trò chơi.</p>
+          <p>Giáo trình đầy đủ 25 chương theo file gốc, học thuộc với âm thanh, ghi âm, trò chơi và ôn cách quãng.</p>
         </div>
-        <div class="module-meta"><span>56 câu hỏi + 8 bài Sensei</span><span class="chev">›</span></div>
+        <div class="module-meta"><span>25 phần · 56 câu hỏi · 8 bài Sensei</span><span class="chev">›</span></div>
       </button>
 
       <button class="module-card" data-open="kaiwa" type="button">
@@ -361,7 +361,7 @@ function renderProgress(){
 }
 
 function bindOpeners(){
-  document.querySelectorAll('[data-open]').forEach(b=>b.addEventListener('click',()=>{if(b.dataset.open==='interview'){window.location.assign('./interview.html?v=20261011-1949');return;}go(b.dataset.open)}));
+  document.querySelectorAll('[data-open]').forEach(b=>b.addEventListener('click',()=>{if(b.dataset.open==='interview'){window.location.assign('./interview.html?v=20261011-book3');return;}go(b.dataset.open)}));
 }
 
 backBtn.addEventListener('click',()=>{
