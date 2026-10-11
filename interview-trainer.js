@@ -1,6 +1,7 @@
 /* Interview trainer: offline-first, no paid API. */
 (function(){
 'use strict';
+window.mountInterviewTrainer=function(){
 const KEY='ngoc_interview_training_v1', B=window.JAPAN_INTERVIEW_BANK;
 if(!B)return;
 let saved={};try{saved=JSON.parse(localStorage.getItem(KEY)||'{}')}catch{}
@@ -106,4 +107,5 @@ function click(action){
 }
 window.renderInterviewTrainer=function(){ui.mode='home';render();};
 window.__INTERVIEW_TRAINER_TEST__={count:items.length,questionCount:B.cards.length,senseiCount:B.sensei.length,introLength:B.intro.lines.length};
+};
 })();
