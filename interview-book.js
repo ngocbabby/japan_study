@@ -111,9 +111,9 @@ function topicQuestionCount(chapterId){
  if(n>=1&&n<=20)return B.cards.filter(x=>x.sectionId==='topic'+n).length;
  if(n===0)return 13;if(n===23)return 8;if(n===21)return 12;return 0;
 }
-function sidebar(){
+function sidebar(context='desktop'){
  const list=allChapters();
- return '<aside class="ib-sidebar"><div class="ib-side-title"><strong>📚 25 PHẦN TÀI LIỆU</strong><small>Hiển thị đúng thứ tự file gốc</small></div><label class="ib-search"><span>⌕</span><input id="ib-search" type="search" placeholder="Tìm chương, câu, từ khóa..." value="'+E(state.query)+'"></label>'+
+ return '<aside class="ib-sidebar"><div class="ib-side-title"><strong>📚 25 PHẦN TÀI LIỆU</strong><small>Hiển thị đúng thứ tự file gốc</small></div><label class="ib-search"><span>⌕</span><input id="ib-search-'+E(context)+'" data-role="ib-search" type="search" placeholder="Tìm chương, câu, từ khóa..." value="'+E(state.query)+'"></label>'+
  '<div class="ib-toc-list">'+list.map(c=>'<button class="ib-chapter-link '+(c.id===state.chapter?'active':'')+'" data-action="chapter" data-value="'+E(c.id)+'" data-search="'+E((c.title+' '+(c.items||[]).map(x=>x.t).join(' ')).toLowerCase())+'"><span class="ib-numeric">'+E(c.id.slice(1).padStart(2,'0'))+'</span><span>'+E(c.title.replace(/^\d+\.\s*/,''))+'</span><span class="ib-toc-count">'+(c.items?.length||c.count||0)+'</span></button>').join('')+'</div></aside>';
 }
 function rateBar(id){
@@ -239,8 +239,8 @@ function chapterRead(){
  const html='<div class="ib-topline"><div><p class="ib-eyebrow">KAIWA ・ SỔ TAY TƯƠNG TÁC</p><h2>Đọc nguyên văn, học thuộc thông minh</h2><p>Giáo trình 25 phần từ Google Docs. Học từng chương, không cắt nhỏ nội dung.</p></div>'+
  '<div class="ib-summary"><b>'+numbers.seen+'/'+numbers.total+'</b><small>bài đã luyện</small></div></div>'+
  '<div class="ib-daily"><strong>🎯 Lộ trình một buổi 20–25 phút</strong><span>5 phút ôn · 10 phút đọc chương · 7 phút tự nói/ghi âm · 3 phút game</span>'+control('Xem các câu đến hạn','tab-review')+'</div>'+
- '<details class="ib-mobile-toc"><summary>📚 Đổi chương · '+E(c.title)+'</summary>'+sidebar()+'</details>'+
- '<div class="ib-layout">'+sidebar()+'<article class="ib-main">'+bookContent()+'</article></div>';
+ '<details class="ib-mobile-toc"><summary>📚 Đổi chương · '+E(c.title)+'</summary>'+sidebar('mobile')+'</details>'+
+ '<div class="ib-layout">'+sidebar('desktop')+'<article class="ib-main">'+bookContent()+'</article></div>';
  pageShell(html);
  filterOutline(state.query);
  loadRecording(c.id);
@@ -354,7 +354,7 @@ function onClick(ev){
  if(a==='game-next'){state.game.index++;prepGame();render(true);return}
 }
 root.addEventListener('click',onClick);
-root.addEventListener('input',e=>{if(e.target?.id==='ib-search'){state.query=e.target.value;filterOutline(state.query)}});
+root.addEventListener('input',e=>{if(e.target?.dataset?.role==='ib-search'){state.query=e.target.value;filterOutline(state.query)}});
 root.addEventListener('change',e=>{if(e.target?.id==='ib-rate')state.rate=Number(e.target.value)});
 root.addEventListener('keydown',e=>{if(e.target?.id==='ib-key'&&e.key==='Enter'){e.preventDefault();unlock(e.target.value)}});
 document.querySelectorAll('[data-ib-tab]').forEach(el=>el.addEventListener('click',()=>{
