@@ -121,29 +121,28 @@ function rateBar(id){
  return '<div class="ib-rate-bar"><span class="ib-status '+(isDue?'is-due':'')+'">'+E(s)+'</span>'+
  control('↻ Chưa nhớ','grade',id+':again')+control('✓ Nhớ được','grade',id+':good')+control('★ Rất dễ','grade',id+':easy')+'</div>';
 }
-function paragraphView(p,i,c,hide,phase){
+function paragraphView(p,i,c,hide,phase,readingPlan){
  const t=p.t;let status=phase;
  if(/^Câu \d+\./.test(t)||/^CÂU \d+\./.test(t)||/^Q[：:]/.test(t))status='question';
  if(/^Trả lời\b/.test(t)||/^A[:：]/.test(t)||/^A\s*[–-].*：/.test(t)||/^【日本語/.test(t))status='answer';
- if(/^【ひらがな/.test(t))status='kana';
  if(/^【NGHĨA/.test(t))status='meaning';
- const j=onlyJapanese(t),kana=/^（[\u3040-\u30ff]/.test(t)||status==='kana'&&p.k!=='HEADING_3';
+ const reading=readingPlan.readings.get(i)||readingPlan.inline.get(i)?.reading||'';
  const isQuestion=/^Câu \d+\./.test(t)||/^Q[：:]/.test(t);
- const kind=(isQuestion?'question':kana?'kana':j?'answer':status==='meaning'?'meaning':'note');
- const tokens=p.r?.length?p.r:[{t:p.t}];
- let markups=tokens.map(run=>{
-   const background=run.h&&/^#[0-9a-f]{6}$/i.test(run.h)?'background-color:'+run.h+';':'';
-   const color=run.c&&/^#[0-9a-f]{6}$/i.test(run.c)?'color:'+run.c+';':'';
-   const attrs=(run.b?'font-weight:700;':'')+(run.i?'font-style:italic;':'')+(run.u?'text-decoration:underline;':'')+background+color;
-   return '<span'+(attrs?' style="'+attrs+'"':'')+(run.h?' class="ib-source-highlight"':'')+'>'+E(run.t)+'</span>';
- }).join('');
- // Keep exactly the source text, including intentionally separate teacher notes and alternate answers.
+ const j=onlyJapanese(t),kind=isQuestion?'question':reading?'answer':j?'answer':status==='meaning'?'meaning':'note';
+ const embedded=readingPlan.inline.get(i)||null;
+ let start=0,end=embedded?embedded.start:t.length;
+ const head=t.match(/^Câu \d+\.\s*|^Q[：:]\s*|^A(?:[：:]|\s*[–-][^：]*：)\s*|^(?:Nếu làm ca đêm được|Nếu ưu tiên ca ngày nhưng có thể trao đổi):\s*|^\d+\.\s*/);
+ if(head)start=head[0].length;
+ if(start>end)start=0;
+ const ruby=window.KaiwaRuby;
+ const markup=ruby
+  ?ruby.decorate(p,start,end,reading,!!state.showFurigana,embedded)
+  :E(t);
  const level=p.k==='HEADING_2'?'h3':p.k==='HEADING_3'?'h4':'div';
  const questionNumber=t.match(/^Câu (\d+)\./)||c.id==='c23'&&t.match(/^CÂU (\d+)\./);
  const anchor=questionNumber?' id="ib-anchor-'+(c.id==='c23'?'s':'q')+questionNumber[1]+'"':'';
- return {html:'<div class="ib-paragraph '+(level!=='div'?'heading ':'')+'kind-'+kind+'"'+anchor+'>'+
- (j&&!kana?'<button type="button" class="ib-mini-speak" data-action="speak" data-value="'+i+'" aria-label="Nghe tiếng Nhật đoạn này" title="Nghe tiếng Nhật">🔊</button>':'')+
- '<'+level+' class="ib-copy '+(hide&&kind==='answer'?'is-blurred':'')+'">'+markups+'</'+level+'></div>',phase:status,questionNumber:questionNumber?questionNumber[1]:null};
+ return {html:'<div data-read-row="'+i+'" class="ib-paragraph '+(level!=='div'?'heading ':'')+'kind-'+kind+'"'+anchor+'>'+
+ '<'+level+' lang="'+(j||reading?'ja':'vi')+'" class="ib-copy '+(hide&&kind==='answer'?'is-blurred':'')+'">'+markup+'</'+level+'></div>',phase:status,questionNumber:questionNumber?questionNumber[1]:null};
 }
 function bookContent(){
  const c=chapter(),idx=Number(c.id.slice(1)),stats=studyStats(),prev=idx>0?'c'+(idx-1):null,next=idx<24?'c'+(idx+1):null;
