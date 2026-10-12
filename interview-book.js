@@ -3,6 +3,7 @@
 'use strict';
 const $ = (s) => document.querySelector(s);
 const root = $('#appMain');
+window.KaiwaAudio?.subscribe(()=>window.KaiwaAudio?.paint(root));
 const E = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const KEY = 'ngoc_iv_local_unlock_v2';
 const STATS = 'ngoc_interview_training_v1';
@@ -262,6 +263,7 @@ function chapterRead(){
  '<details class="ib-mobile-toc"><summary>📚 Đổi chương · '+E(c.title)+'</summary>'+sidebar('mobile')+'</details>'+
  '<div class="ib-layout">'+sidebar('desktop')+'<article class="ib-main">'+bookContent()+'</article></div>';
  pageShell(html);
+ window.KaiwaAudio?.paint(root);
  filterOutline(state.query);
  loadRecording(c.id);
 }
