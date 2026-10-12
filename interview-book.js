@@ -5,7 +5,9 @@ const $ = (s) => document.querySelector(s);
 const root = $('#appMain');
 window.KaiwaAudio?.subscribe(()=>window.KaiwaAudio?.paint(root));
 const E = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const KEY = 'ngoc_iv_local_unlock_v2';
+// Public GitHub Pages study material: automatic access without a login or unlock form.
+// Any visitor can recover and read the lesson data; this key is NOT a privacy control.
+const AUTOMATIC_DOCUMENT_KEY = 'RHoplErU7oQExPxTDF9P5VzqeZipM0o-FV-cZFpSMSk';
 const STATS = 'ngoc_interview_training_v1';
 const CHAPTER = 'ngoc_iv_last_chapter_v2';
 const V = window.JAPAN_INTERVIEW_PRIVATE;
@@ -18,27 +20,27 @@ function decode64(input) {
  return new Uint8Array(out);
 }
 function bytesToText(bytes){return new TextDecoder().decode(bytes)}
-function unlock(secret){
+function loadLessons(){
  try {
-   const key=decode64(secret), nonce=decode64(V.nonce);
-   if(key.length!==32||nonce.length!==24)throw Error('Định dạng khóa không hợp lệ.');
-   if(!window.nacl||typeof window.nacl.secretbox?.open!=='function')throw Error('Không tải được thư viện mã hóa. Hãy tải lại trang.');
+   const key=decode64(AUTOMATIC_DOCUMENT_KEY),nonce=decode64(V.nonce);
+   if(!window.nacl||typeof window.nacl.secretbox?.open!=='function')throw Error('Không tải được thư viện đọc tài liệu.');
    const bytes=window.nacl.secretbox.open(decode64(V.ciphertext),nonce,key);
-   if(!bytes)throw Error('Khóa không đúng. Hãy sao chép chính xác khóa được gửi trong chat.');
+   if(!bytes)throw Error('Không đọc được dữ liệu giáo trình.');
    const data=JSON.parse(bytesToText(bytes));
-   if(data.chapters?.length!==25||data.bank?.cards?.length!==56)throw Error('Dữ liệu tài liệu không đầy đủ.');
+   if(data.chapters?.length!==25||data.bank?.cards?.length!==56)throw Error('Dữ liệu giáo trình không đầy đủ.');
    state.data=data;
    window.JAPAN_INTERVIEW_BANK=data.bank;
    if(typeof window.mountInterviewTrainer==='function')window.mountInterviewTrainer();
+   const previous=(()=>{try{return localStorage.getItem(CHAPTER)}catch{return null}})();
+   if(data.chapters.some(c=>c.id===previous))state.chapter=previous;
    state.feedback='';
-   const remembered=$('#ib-remember');
-   if(!remembered||remembered.checked)try{localStorage.setItem(KEY,secret.trim())}catch{}
-   else try{localStorage.removeItem(KEY)}catch{}
-   try{const previous=localStorage.getItem(CHAPTER);if(data.chapters.some(c=>c.id===previous))state.chapter=previous;}catch{}
-   state.justUnlocked=true;
    render();
    return true;
- }catch(err){state.feedback=err.message||'Không thể mở khóa tài liệu.';render();return false}
+ }catch(err){
+   state.feedback=err?.message||'Không tải được giáo trình.';
+   showLoadError();
+   return false;
+ }
 }
 function pageShell(inner) {
  root.innerHTML='<div class="ib-app">'+inner+'</div>';
@@ -66,14 +68,10 @@ function studyStats(){
  return {total:ids.length,seen:ids.filter(id=>db[id]?.tries).length,due:ids.filter(id=>!db[id]?.due||db[id].due<=today()).length,mastered:ids.filter(id=>(db[id]?.step||0)>=4).length};
 }
 function control(label,action,val,cls=''){return '<button type="button" class="ib-control '+cls+'" data-action="'+E(action)+'"'+(val!==undefined?' data-value="'+E(val)+'"':'')+'>'+label+'</button>'}
-function lockPage(){
- const outline=allChapters();
- pageShell('<section class="ib-lock"><div class="ib-lock-icon">🔐</div><p class="ib-eyebrow">GIÁO TRÌNH CÁ NHÂN · PRIVATE</p><h2>Đọc đầy đủ 25 phần tài liệu Kaiwa</h2><p>Tài liệu nguyên văn và phần tô màu của sensei đã được mã hóa. Nhập khóa được gửi trong ChatGPT để mở tài liệu trên thiết bị này. Không có tài khoản và không mất phí.</p>'+
- '<label class="ib-field" for="ib-key">Khóa mở tài liệu</label><div class="ib-unlock-form"><input id="ib-key" type="password" autocomplete="off" spellcheck="false" placeholder="Dán khóa được gửi trong ChatGPT">'+control('Mở khóa','unlock',null,'primary')+'</div>'+
- '<label class="ib-check"><input type="checkbox" id="ib-remember" checked> Nhớ khóa trên trình duyệt này để lần sau không cần nhập lại</label>'+
+function showLoadError(){
+ pageShell('<section class="ib-lock"><h2>Chưa tải được giáo trình</h2><p>Không cần mật khẩu. Có thể mạng đang chậm hoặc các tệp chưa cập nhật xong.</p>'+
  (state.feedback?'<p class="ib-error" role="alert">'+E(state.feedback)+'</p>':'')+
- '<div class="ib-lock-notes">🔒 Dữ liệu giải mã trong trình duyệt · 🎤 Ghi âm lưu ở thiết bị · 📄 Không đăng thêm thông tin cá nhân dạng đọc được lên GitHub</div>'+
- '<details class="ib-outline"><summary>Xem trước mục lục 25 phần</summary>'+outline.map(c=>'<div>'+E(c.title)+'</div>').join('')+'</details></section>');
+ control('↻ Tải lại trang','reload',null,'primary')+'</section>');
 }
 function stopSpeech(message){window.KaiwaAudio?.stop(message)}
 function onlyJapanese(text){
@@ -194,7 +192,7 @@ function bookContent(){
  if(idx===0||idx===22)body+=rateBar(idx===0?'intro':'intro-short');
  body+='</section>';
  body+='<div class="ib-chapter-bottom">'+(prev?control('← Chương trước','chapter',prev):'<span></span>')+(next?control('Chương tiếp →','chapter',next,'primary'):'<span>Đã đến chương cuối ✓</span>')+'</div>';
- body+='<div class="ib-source">Bản nguồn: Google Docs “kaiwa phỏng vấn”, không tự sửa lời sensei. Các chỗ đánh dấu màu được giữ trong bản đọc. '+control('🔒 Khóa tài liệu','lock')+'</div>';
+ body+='<div class="ib-source">Bản nguồn: Google Docs “kaiwa phỏng vấn”, giữ nguyên highlight. Website công khai; ghi âm chỉ lưu trên thiết bị.'+'</div>';
  return body;
 }
 function recordPanel(){
@@ -255,7 +253,7 @@ function gameView(c){
 }
 function chapterRead(){
  const c=chapter();
- if(!c)return lockPage();
+ if(!c)return showLoadError();
  const numbers=studyStats();
  const html='<div class="ib-topline"><div><p class="ib-eyebrow">KAIWA ・ SỔ TAY TƯƠNG TÁC</p><h2>Đọc nguyên văn, học thuộc thông minh</h2><p>Giáo trình 25 phần từ Google Docs. Học từng chương, không cắt nhỏ nội dung.</p></div>'+
  '<div class="ib-summary"><b>'+numbers.seen+'/'+numbers.total+'</b><small>bài đã luyện</small></div></div>'+
@@ -276,7 +274,7 @@ function reviewView(){
 }
 function render(preserve=false){
  const y=preserve?window.scrollY:0;
- if(!state.data)lockPage();
+ if(!state.data)showLoadError();
  else if(state.tab==='review')reviewView();
  else if(state.tab==='practice'){
    if(typeof window.renderInterviewTrainer==='function')window.renderInterviewTrainer();
@@ -347,11 +345,10 @@ function onClick(ev){
  const node=ev.target.closest('[data-action]');if(!node)return;
  const a=node.dataset.action,v=node.dataset.value||'';
  if(!state.data){
-   if(a==='unlock')unlock($('#ib-key')?.value||'');
+   if(a==='reload')window.location?.reload();
    return;
  }
  if(a==='chapter'){navigate(v);return}
- if(a==='lock'){if(state.recording)state.recording.stop();stopSpeech();try{localStorage.removeItem(KEY)}catch{}state.data=null;window.JAPAN_INTERVIEW_BANK=null;state.feedback='Đã khóa tài liệu trên thiết bị này.';render();return}
  if(a==='hide-answers'){state.hideAnswers=!state.hideAnswers;render(true);return}
  if(a==='toggle-furigana'){state.showFurigana=!state.showFurigana;render(true);return}
  if(a==='reader-start'){playChapter();return}
@@ -380,12 +377,11 @@ function onClick(ev){
 root.addEventListener('click',onClick);
 root.addEventListener('input',e=>{if(e.target?.dataset?.role==='ib-search'){state.query=e.target.value;filterOutline(state.query)}});
 root.addEventListener('change',e=>{if(e.target?.id==='ib-rate')state.rate=Number(e.target.value)});
-root.addEventListener('keydown',e=>{if(e.target?.id==='ib-key'&&e.key==='Enter'){e.preventDefault();unlock(e.target.value)}});
 document.querySelectorAll('[data-ib-tab]').forEach(el=>el.addEventListener('click',()=>{
- if(!state.data){$('#ib-key')?.focus();return}
+ if(!state.data)return;
  setTab(el.dataset.ibTab);
 }));
 window.addEventListener('beforeunload',()=>{stopSpeech();state.stream?.getTracks().forEach(t=>t.stop())});
-const remembered=(()=>{try{return localStorage.getItem(KEY)}catch{return null}})();
-if(remembered)unlock(remembered);else render();
+try{localStorage.removeItem('ngoc_iv_local_unlock_v2')}catch{}
+loadLessons();
 })();
