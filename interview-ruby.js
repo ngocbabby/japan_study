@@ -79,18 +79,65 @@ function decoratedRange(p,start,end){
  }
  return out||escapeHtml(p.t.slice(start,end));
 }
-function decorate(p,japaneseStart,japaneseEnd,reading,showRuby){
+function decorate(p,japaneseStart,japaneseEnd,reading,showRuby,omit){
  const raw=p.t.slice(japaneseStart,japaneseEnd);
  const aligned=showRuby&&reading?align(raw,reading):null;
- if(!aligned||!aligned.annotated)return decoratedRange(p,0,p.t.length);
- let out=decoratedRange(p,0,japaneseStart);
+ const gap=(start,end)=>omit&&start<omit.end&&end>omit.start
+   ?(start<omit.start?decoratedRange(p,start,omit.start):'')+
+    (end>omit.end?decoratedRange(p,omit.end,end):'')
+   :decoratedRange(p,start,end);
+ if(!aligned||!aligned.annotated)return gap(0,p.t.length);
+ let out=gap(0,japaneseStart);
  for(const part of aligned.parts){
    const fragment=decoratedRange(p,japaneseStart+part.from,japaneseStart+part.to);
    out+=part.reading&&KANJI.test(raw.slice(part.from,part.to))
      ?'<ruby class="ib-ruby">'+fragment+'<rt>'+escapeHtml(part.reading)+'</rt></ruby>'
      :fragment;
  }
- return out+decoratedRange(p,japaneseEnd,p.t.length);
+ return out+gap(japaneseEnd,p.t.length);
 }
-window.KaiwaRuby={align,decorate,normalize,trimReading,decoratedRange,escapeHtml};
+function isReadingOnly(text){
+ const t=String(text||'').trim();
+ return /^[（(][\u3040-\u30ff\s、。！？・「」ー]+[）)]$/u.test(t) && /[\u3041-\u3096]/u.test(t);
+}
+function plan(chapter){
+ if(chapter.__rubyPlan)return chapter.__rubyPlan;
+ const hidden=new Set(),readings=new Map(),inline=new Map(),arr=chapter.items||[];
+ if(chapter.id==='c0'){
+  const a=arr.findIndex(x=>x.t.startsWith('【日本語'));
+  const b=arr.findIndex(x=>x.t.startsWith('【ひらがな'));
+  const c=arr.findIndex(x=>x.t.startsWith('【NGHĨA'));
+  if(a>=0&&b>a&&c>b){
+    const first=arr.slice(a+1,b),second=arr.slice(b+1,c);
+    if(first.length===second.length)first.forEach((_,j)=>readings.set(a+1+j,second[j].t));
+    for(let j=b;j<c;j++)hidden.add(j);
+  }
+ }
+ for(let i=0;i<arr.length;i++){
+  if(hidden.has(i))continue;
+  const text=arr[i].t;
+  if(isReadingOnly(text)){
+    const previous=i>0?arr[i-1].t:'';
+    if(i>0&&/[\p{Script=Han}\p{Script=Katakana}]/u.test(previous)){
+      readings.set(i-1,trimReading(text));
+      hidden.add(i);
+    }
+    continue;
+  }
+  // Some priority sentences contain their old hiragana and Vietnamese meaning
+  // in a single paragraph. Keep both written parts but omit only the phonetic parentheses.
+  if(chapter.id==='c21'){
+    const m=/（([^）]+)）/u.exec(text);
+    if(m && /[\u3040-\u3096]/u.test(m[1])){
+      const before=text.slice(0,m.index);
+      if(/[\p{Script=Han}\p{Script=Katakana}]/u.test(before))
+        inline.set(i,{reading:m[1],start:m.index,end:m.index+m[0].length});
+    }
+  }
+ }
+ const data={hidden,readings,inline};
+ Object.defineProperty(chapter,'__rubyPlan',{value:data,configurable:true});
+ return data;
+}
+window.KaiwaRuby={align,decorate,normalize,trimReading,decoratedRange,escapeHtml,plan,isReadingOnly};
 })();
