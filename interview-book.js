@@ -9,7 +9,7 @@ const STATS = 'ngoc_interview_training_v1';
 const CHAPTER = 'ngoc_iv_last_chapter_v2';
 const V = window.JAPAN_INTERVIEW_PRIVATE;
 const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
-const state = {data:null,chapter:'c0',tab:'book',query:'',hideAnswers:false,hideKana:false,rate:0.87,playing:false,playToken:0,recording:null,stream:null,recordUrl:null,recordBlob:null,game:null,feedback:'',justUnlocked:false,focusedQuestion:null};
+const state = {data:null,chapter:'c0',tab:'book',query:'',hideAnswers:false,hideKana:false,showFurigana:false,rate:0.87,playing:false,playToken:0,recording:null,stream:null,recordUrl:null,recordBlob:null,game:null,feedback:'',justUnlocked:false,focusedQuestion:null};
 function decode64(input) {
  const text=String(input||'').trim().replace(/-/g,'+').replace(/_/g,'/').replace(/[^A-Za-z0-9+/]/g,'');
  const out=[];let buffer=0,bits=0;
@@ -184,10 +184,10 @@ function bookContent(){
    const q=t.match(/^Câu (\d+)\./)||idx===23&&t.match(/^CÂU (\d+)\./);
    if(q&&current&&((idx>=1&&idx<=20)||idx===23)){body+=rateBar(current);current=null;}
    if(q&&((idx>=1&&idx<=20)||idx===23))current=(idx===23?'s':'q')+q[1];
-   const r=paragraphView(p,i,c,state.hideAnswers,phase);
+   if(readingPlan.hidden.has(i)||(idx===0&&i<2))continue;
+   const r=paragraphView(p,i,c,state.hideAnswers,phase,readingPlan);
    phase=r.phase;
-   const isKana=/^（[\u3040-\u30ff]/.test(t)||phase==='kana'&&p.k!=='HEADING_3';
-   body+=state.hideKana&&isKana?'<div class="ib-kana-hidden">あ Hiragana đang ẩn · bấm hiện trên thanh công cụ</div>':r.html;
+   body+=r.html;
  }
  if(current&&((idx>=1&&idx<=20)||idx===23))body+=rateBar(current);
  if(idx===0||idx===22)body+=rateBar(idx===0?'intro':'intro-short');
@@ -351,10 +351,10 @@ function onClick(ev){
  if(a==='chapter'){navigate(v);return}
  if(a==='lock'){if(state.recording)state.recording.stop();stopSpeech();try{localStorage.removeItem(KEY)}catch{}state.data=null;window.JAPAN_INTERVIEW_BANK=null;state.feedback='Đã khóa tài liệu trên thiết bị này.';render();return}
  if(a==='hide-answers'){state.hideAnswers=!state.hideAnswers;render(true);return}
- if(a==='hide-kana'){state.hideKana=!state.hideKana;render(true);return}
- if(a==='play-all'){if(state.playing)stopSpeech();else playChapter();updatePlayButton();return}
- if(a==='speak'){stopSpeech();speakLine(chapter().items[Number(v)]?.t||'');return}
- if(a==='intro-speak'){stopSpeech();speakLine(state.data.bank.intro.lines[Number(v)]?.jp||'');return}
+ if(a==='toggle-furigana'){state.showFurigana=!state.showFurigana;render(true);return}
+ if(a==='reader-start'){playChapter();return}
+ if(a==='reader-pause'){window.KaiwaAudio?.togglePause();return}
+ if(a==='reader-stop'){stopSpeech('⏹ Đã dừng hẳn.');return}
  if(a==='record-toggle'){toggleRecord();return}
  if(a==='download-record'){downloadRecording();return}
  if(a==='practice-tab'){setTab('practice');return}
