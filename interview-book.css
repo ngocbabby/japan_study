@@ -135,3 +135,49 @@
 .ib-pair-number{font-size:10px;color:#a0aab0;font-weight:900}
 .ib-pair-row .ib-control{min-width:34px;padding:5px;font-size:12px}
 .ib-game-modes{display:flex;gap:7px;flex-wrap:wrap;margin:9px 0}
+
+/* v4: compact furigana reader with a single sticky N2-style audio player */
+.ib-audio-card{
+ position:sticky;top:0;z-index:11;background:rgba(255,253,245,.98);
+ border:1px solid #e4d9b5;border-radius:14px;padding:12px 13px 9px;
+ box-shadow:0 5px 20px #413b2417;backdrop-filter:blur(12px);margin-bottom:10px
+}
+.ib-audio-heading{display:flex;gap:9px;align-items:baseline;flex-wrap:wrap;margin-bottom:9px}
+.ib-audio-heading strong{color:#283e4d;font-size:13px}
+.ib-audio-heading span{color:#7b7569;font-size:11px}
+.ib-audio-actions{display:flex;gap:7px;align-items:center;flex-wrap:wrap}
+.ib-audio-actions .ib-control{min-height:37px}
+.ib-audio-actions .ib-control:disabled{opacity:.48;cursor:not-allowed;background:#f1eee7;color:#7e858c}
+.ib-audio-actions .ib-rate-select{margin-left:auto}
+#ib-audio-status{margin:8px 0 0!important;font-size:11px!important;color:#526774;line-height:1.4}
+.ib-display-controls{padding:7px 9px;gap:7px}
+.ib-record-details,.ib-file-note{border:1px solid #e7e6dd;border-radius:12px;background:#fcfbf7;margin:10px 0;overflow:hidden}
+.ib-record-details>summary,.ib-file-note>summary{font-weight:760;font-size:12px;padding:10px 13px;cursor:pointer;color:#43576a}
+.ib-record-details .ib-record-panel{margin:0;border:0;border-top:1px solid #e7e6dd;border-radius:0}
+.ib-file-note p{font-size:11px;line-height:1.65;color:#677782;margin:8px 13px}
+.ib-file-note p:last-child{margin-bottom:13px}
+.ib-lesson{padding:13px 20px 22px}
+.ib-paragraph{margin:5px 0;line-height:1.65}
+.ib-paragraph.kind-answer{padding:3px 0 3px 4px;line-height:1.75;font-size:15.5px}
+.ib-paragraph.kind-question{padding:9px 11px;margin-top:14px;line-height:1.6}
+.ib-paragraph.kind-question .ib-copy{font-size:inherit}
+.ib-paragraph.heading{margin-top:16px;margin-bottom:8px}
+.ib-paragraph.kind-meaning{line-height:1.6}
+.ib-paragraph .ib-mini-speak{display:none!important}
+.ib-paragraph.is-reading{background:#fff7d4;border-radius:8px;box-shadow:0 0 0 6px #fff7d4}
+.ib-paragraph.is-reading.kind-question{background:#fff1c7;box-shadow:0 0 0 2px #edda9f}
+.ib-ruby{ruby-position:over;white-space:normal;line-height:1.8;ruby-align:center}
+.ib-ruby rt{font-size:.54em;line-height:1;color:#35717e;font-weight:600;padding:0 1px}
+.ib-control:disabled{opacity:.5;cursor:not-allowed}
+@media(max-width:720px){
+ .ib-audio-card{border-radius:11px;padding:10px 9px;margin-bottom:8px;top:0}
+ .ib-audio-heading{margin-bottom:7px}
+ .ib-audio-heading span{font-size:10px}
+ .ib-audio-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
+ .ib-audio-actions .ib-control{font-size:11px;padding:8px 4px;min-width:0;white-space:normal}
+ .ib-audio-actions .ib-rate-select{grid-column:1/-1;margin-left:0;justify-content:end}
+ .ib-lesson{padding:12px 14px}
+ .ib-paragraph.kind-answer{font-size:15px;padding-left:2px}
+ .ib-paragraph.kind-question{font-size:15px;padding:9px 8px}
+ .ib-ruby rt{font-size:.56em}
+}
