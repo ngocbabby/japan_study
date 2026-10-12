@@ -74,36 +74,51 @@ function lockPage(){
  '<div class="ib-lock-notes">🔒 Dữ liệu giải mã trong trình duyệt · 🎤 Ghi âm lưu ở thiết bị · 📄 Không đăng thêm thông tin cá nhân dạng đọc được lên GitHub</div>'+
  '<details class="ib-outline"><summary>Xem trước mục lục 25 phần</summary>'+outline.map(c=>'<div>'+E(c.title)+'</div>').join('')+'</details></section>');
 }
-function speechSupport(){return 'speechSynthesis' in window}
-function stopSpeech(){state.playToken++;state.playing=false;if(speechSupport())window.speechSynthesis.cancel()}
+function stopSpeech(message){window.KaiwaAudio?.stop(message)}
 function onlyJapanese(text){
  const t=String(text||'').trim();
  if(/^（/.test(t)||/^→/.test(t)||/^(?:※|GHI CHÚ|BẢN |Tôi |Bạn |Vì |Chú ý|Trả lời|Nếu |Câu hỏi \d+)/i.test(t))return '';
- const cleaned=t.replace(/^Câu \d+\.\s*/,'').replace(/^Q[：:]\s*/,'').replace(/^A(?:[：:]|\s*[–-][^：]*：)\s*/,'').replace(/^\d+\.\s*/,'').trim();
- if(/[\u3040-\u30ff\u3400-\u9fff]/.test(cleaned)&&!(/[\u00c0-\u1ef9]/.test(cleaned)&&cleaned.length>70))return cleaned;
+ let clean=t.replace(/^Câu \d+\.\s*/,'').replace(/^Q[：:]\s*/,'').replace(/^A(?:[：:]|\s*[–-][^：]*：)\s*/,'').trim();
+ if(/^\d+\.\s*/.test(clean))clean=clean.replace(/^\d+\.\s*/,'');
+ if(/^【/.test(clean)||/[\u00c0-\u1ef9]/.test(clean))return '';
+ if(/[\u3040-\u30ff\u3400-\u9fff]/u.test(clean))return clean;
  return '';
 }
-function speakLine(text,then){
- if(!speechSupport()){flash('Trình duyệt chưa hỗ trợ đọc tiếng Nhật. Thử Chrome, Edge hoặc Safari.');return}
- const phrase=onlyJapanese(text)||String(text||'');
- if(!phrase)return;
- const utterance=new SpeechSynthesisUtterance(phrase);
- utterance.lang='ja-JP';utterance.rate=state.rate;utterance.pitch=1;
- const available=speechSynthesis.getVoices().filter(v=>/^ja/i.test(v.lang));
- if(available.length)utterance.voice=available.find(v=>v.localService)||available[0];
- utterance.onend=()=>{if(typeof then==='function')then()};
- utterance.onerror=()=>{state.playing=false;updatePlayButton()};
- speechSynthesis.speak(utterance);
+function spokenJapanese(c,plan,i){
+ const t=c.items[i]?.t||'';
+ if(!t||plan.hidden.has(i))return '';
+ if(c.id==='c0'){
+  const a=c.items.findIndex(x=>x.t.startsWith('【日本語'));
+  const b=c.items.findIndex(x=>x.t.startsWith('【ひらがな'));
+  if(i<=a||i>=b)return '';
+ }
+ if(/^（/.test(t)||/^(?:【|CÂU \d+\.|GHI NHỚ|GHI CHÚ|BẢN |LƯU Ý|Trả lời|※)/.test(t))return '';
+ let str=t;
+ const inside=plan.inline.get(i);
+ if(inside)str=str.slice(0,inside.start);
+ else if(str.includes('\n→'))str=str.slice(0,str.indexOf('\n→'));
+ str=str.replace(/^Câu \d+\.\s*/,'').replace(/^Q[：:]\s*/,'').replace(/^A(?:[：:]|\s*[–-][^：]*：)\s*/,'').trim();
+ if(c.id==='c21')str=str.replace(/^\d+\.\s*/,'').split('→')[0].trim();
+ if(/^Nếu .+[:：]/.test(str))str=str.slice(str.search(/[:：]/)+1).trim();
+ if(/[\u00c0-\u1ef9]/u.test(str))return '';
+ if(!/[\u3040-\u30ff\u3400-\u9fff]/u.test(str))return '';
+ // Skip stand-alone phonetic text even where it wasn't enclosed in parentheses.
+ if(c.id==='c24'&&!/[\p{Script=Han}]/u.test(str))return '';
+ return str;
+}
+function chapterReadingLines(c){
+ const plan=window.KaiwaRuby?.plan(c)||{hidden:new Set(),readings:new Map(),inline:new Map()};
+ return c.items.map((row,i)=>({text:spokenJapanese(c,plan,i),row:i})).filter(x=>x.text);
 }
 function playChapter(){
- stopSpeech();
- const c=chapter(),lines=c.items.map(p=>onlyJapanese(p.t)).filter(Boolean).filter(x=>!/^[ぁ-んァ-ヶー\s、。！!？?（）]+$/.test(x));
- if(!lines.length)return flash('Chương này không có đoạn tiếng Nhật phù hợp để phát.');
- let i=0;const token=state.playToken;state.playing=true;updatePlayButton();
- function next(){if(token!==state.playToken)return;if(i>=lines.length){state.playing=false;updatePlayButton();return;}speakLine(lines[i++],next)}
- next();
+ if(state.recording){flash('Hãy dừng ghi âm trước khi bật bài đọc.');return;}
+ const c=chapter(),lines=chapterReadingLines(c);
+ window.KaiwaAudio?.start(c.id,lines,state.rate);
 }
-function updatePlayButton(){document.querySelectorAll('[data-action="play-all"]').forEach(b=>b.textContent=state.playing?'■ Dừng nghe':'▶ Nghe toàn chương')}
+function speakLine(text){
+ window.KaiwaAudio?.speakOnce(onlyJapanese(text)||String(text||''),state.rate);
+}
+function updatePlayButton(){window.KaiwaAudio?.paint(root)}
 function flash(msg){const el=$('#ib-feedback');if(el){el.textContent=msg;el.hidden=false}else alert(msg)}
 function getStatus(id){const p=progress(id);if(!p.tries)return 'Chưa học';if(p.step>=4)return 'Đã nhớ tốt';if(p.due<=today())return 'Đến hạn ôn';return 'Đang học'}
 function topicQuestionCount(chapterId){
