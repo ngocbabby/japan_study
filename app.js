@@ -361,7 +361,7 @@ function renderProgress(){
 }
 
 function bindOpeners(){
-  document.querySelectorAll('[data-open]').forEach(b=>b.addEventListener('click',()=>{if(b.dataset.open==='interview'){window.location.assign('./interview.html?v=20261012-kaiwa4');return;}go(b.dataset.open)}));
+  document.querySelectorAll('[data-open]').forEach(b=>b.addEventListener('click',()=>{if(b.dataset.open==='interview'){window.location.assign('./interview.html?v=20261012-kaiwa5');return;}go(b.dataset.open)}));
 }
 
 backBtn.addEventListener('click',()=>{
