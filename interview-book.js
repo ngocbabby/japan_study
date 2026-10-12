@@ -161,21 +161,21 @@ function paragraphView(p,i,c,hide,phase,readingPlan){
 }
 function bookContent(){
  const c=chapter(),idx=Number(c.id.slice(1)),stats=studyStats(),prev=idx>0?'c'+(idx-1):null,next=idx<24?'c'+(idx+1):null;
- let body='<header class="ib-chapter-head"><p class="ib-eyebrow">CHƯƠNG '+String(idx).padStart(2,'0')+' / 24 · TÀI LIỆU GỐC</p><h2>'+E(c.title.replace(/^\d+\.\s*/,''))+'</h2><p>Hiển thị đầy đủ nội dung của chương theo đúng thứ tự Google Docs. Chạm 🔊 để nghe từng câu.</p>'+
+ const readingPlan=window.KaiwaRuby?.plan(c)||{hidden:new Set(),readings:new Map(),inline:new Map()};
+ let body='<header class="ib-chapter-head"><p class="ib-eyebrow">CHƯƠNG '+String(idx).padStart(2,'0')+' / 24 · TÀI LIỆU GỐC</p><h2>'+E(c.title.replace(/^\d+\.\s*/,''))+'</h2><p>Nội dung giữ nguyên theo file gốc. Bật Furigana trên chữ Kanji khi cần; nút nghe sẽ đọc liên tục cả bài.</p>'+
  '<div class="ib-chapter-meta"><span>'+c.items.length+' đoạn nội dung</span><span>'+topicQuestionCount(c.id)+' bài/câu luyện</span></div></header>';
- body+='<div class="ib-toolbar">'+control(state.hideAnswers?'👁 Hiện đáp án':'🙈 Che đáp án','hide-answers',null,state.hideAnswers?'selected':'')+
- control(state.hideKana?'あ Hiện Hiragana':'あ Ẩn Hiragana','hide-kana',null,state.hideKana?'selected':'')+
- control(state.playing?'■ Dừng nghe':'▶ Nghe toàn chương','play-all')+
- '<label class="ib-rate-select">Tốc độ <select id="ib-rate"><option value="0.75" '+(state.rate===0.75?'selected':'')+'>0,75×</option><option value="0.87" '+(state.rate===0.87?'selected':'')+'>0,87×</option><option value="1" '+(state.rate===1?'selected':'')+'>1×</option><option value="1.15" '+(state.rate===1.15?'selected':'')+'>1,15×</option></select></label></div>';
- body+='<div class="ib-practice-shortcuts">'+control('🎙️ Ghi âm chương','record-toggle',null,state.recording?'danger':'')+
- control('🎮 Game trong chương','game-open')+control('📝 Luyện trả lời','practice-tab')+'</div>';
- body+='<div id="ib-record-panel" class="ib-record-panel">'+recordPanel()+'</div>';
- if(idx===0){
-  const pairs=state.data.bank.intro.lines;
-  body+='<details class="ib-paired"><summary>📗 Luyện 13 câu: tiếng Nhật + Hiragana cùng dòng (mở để xem)</summary><div class="ib-pair-list">'+
-  pairs.map((line,i)=>'<div class="ib-pair-row"><span class="ib-pair-number">'+String(i+1).padStart(2,'0')+'</span><div><strong lang="ja">'+E(line.jp)+'</strong><p>'+E(line.kana)+'</p></div>'+control('🔊','intro-speak',i)+'</div>').join('')+
-  '</div></details>';
- }
+ const playback=window.KaiwaAudio?.getState()?.status||'stopped';
+ body+='<section class="ib-audio-card" aria-label="Nghe đọc toàn chương"><div class="ib-audio-heading"><strong>🔊 Nghe toàn bài</strong><span>Phát liên tục tiếng Nhật · giống mục Đọc N2</span></div>'+
+ '<div class="ib-audio-actions">'+control('🔊 Đọc cả bài','reader-start',null,'primary')+
+ '<button type="button" class="ib-control" data-action="reader-pause" '+(playback==='stopped'?'disabled':'')+'>⏸ Tạm dừng</button>'+
+ '<button type="button" class="ib-control" data-action="reader-stop" '+(playback==='stopped'?'disabled':'')+'>⏹ Dừng hẳn</button>'+
+ '<label class="ib-rate-select">Tốc độ <select id="ib-rate"><option value="0.75" '+(state.rate===0.75?'selected':'')+'>0,75×</option><option value="0.87" '+(state.rate===0.87?'selected':'')+'>0,87×</option><option value="1" '+(state.rate===1?'selected':'')+'>1×</option><option value="1.15" '+(state.rate===1.15?'selected':'')+'>1,15×</option></select></label></div>'+
+ '<p id="ib-audio-status" role="status" aria-live="polite">Sẵn sàng nghe.</p></section>';
+ body+='<div class="ib-toolbar ib-display-controls">'+control(state.showFurigana?'あ Ẩn Furigana':'あ Hiện Furigana','toggle-furigana',null,state.showFurigana?'selected':'')+
+ control(state.hideAnswers?'👁 Hiện đáp án':'🙈 Che đáp án','hide-answers',null,state.hideAnswers?'selected':'')+
+ control('🎮 Game trong chương','game-open')+control('📝 Luyện phản xạ','practice-tab')+'</div>';
+ body+='<details class="ib-record-details" '+(state.recording?'open':'')+'><summary>🎙️ Ghi âm và nghe lại giọng của bạn</summary><div id="ib-record-panel" class="ib-record-panel">'+recordPanel()+'</div></details>';
+ if(idx===0)body+='<details class="ib-file-note"><summary>💡 Ghi chú học tập trong tài liệu gốc</summary><p>'+E(c.items[0]?.t||'')+'</p><p>'+E(c.items[1]?.t||'')+'</p></details>';
  if(state.game?.id===c.id)body+=gameView(c);
  let phase='note',current=null;
  body+='<section class="ib-lesson" aria-label="Toàn văn chương">';
