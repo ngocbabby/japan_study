@@ -1,0 +1,46 @@
+/* KOSEI N2: pre-class desk, mobile-first. */
+.n2prep-shell{display:grid;gap:13px;padding-bottom:35px;color:#2d271f}
+.n2prep-hero{padding:20px;border-radius:19px;background:#fff0b3;border:1px solid #e5c65c;color:#33280b}
+.n2prep-hero h2{font-size:1.52rem;margin:7px 0}.n2prep-hero p{margin:5px 0 12px}
+.n2prep-overline{font-weight:800;letter-spacing:.06em;font-size:.69rem}
+.n2prep-hero small{font-size:.78rem;line-height:1.55;display:block;margin-top:9px}
+.n2prep-progress{display:grid;gap:6px;margin-top:12px;font-weight:750;font-size:.85rem}
+.n2prep-progress progress{height:10px;width:100%;accent-color:#876312}
+.n2prep-quicknav{display:flex;gap:7px;overflow-x:auto;padding:1px 0 3px}
+.n2prep-quicknav a{white-space:nowrap;text-decoration:none;border:1px solid #dcd1b5;background:#fffaf0;color:#6c4d06;border-radius:999px;font-size:.83rem;padding:9px 13px;font-weight:750}
+.n2prep-panel{border:1px solid #e7e0d1;border-radius:16px;background:#fff;padding:16px;min-width:0;overflow-wrap:anywhere}
+.n2prep-panel h3{margin:0 0 10px;font-size:1.14rem}
+.n2prep-panel h4{margin:18px 0 8px;font-size:.95rem}
+.n2prep-panel p{line-height:1.6}
+.n2prep-muted{font-size:.83rem;color:#655b4f;margin:6px 0 13px}
+.n2prep-task{display:flex;justify-content:space-between;align-items:center;gap:9px;border-top:1px solid #f1ede5;padding:12px 0}
+.n2prep-task label{display:flex;align-items:flex-start;gap:10px;min-width:0;flex:1;font-size:.91rem;line-height:1.5}
+.n2prep-task label input{width:20px;height:20px;flex-shrink:0;margin:0;accent-color:#9b7800}
+.n2prep-task label small{display:block;color:#756b5c;font-size:.78rem;margin-top:5px}
+.n2prep-link{border-radius:10px;padding:9px;border:1px solid #e4d4a6;background:#fff7df;color:#725005;white-space:nowrap;font-size:.8rem;font-weight:800;min-height:40px}
+.n2prep-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:9px}
+.n2prep-head span{font-size:.72rem;color:#80641a;font-weight:850}
+.n2prep-head h3{margin:4px 0}.n2prep-head>b{white-space:nowrap;background:#fff4cf;border-radius:9px;color:#76550c;padding:6px 10px;font-size:.78rem}
+.n2prep-grammar-line{padding:12px 0;border-top:1px solid #f0ede4}
+.n2prep-grammar-line>strong{font-size:1.08rem;color:#29231a}
+.n2prep-grammar-line>p{margin:5px 0;font-size:.89rem}
+.n2prep-grammar-line .n2prep-japanese{font-size:1.02rem;line-height:1.8}
+.n2prep-grammar-line small{display:block;color:#655e54;margin:2px 0}
+.n2prep-grammar-line .n2prep-translation{color:#716045}
+.n2prep-buttons{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:13px 0 4px}
+.n2prep-buttons button{white-space:normal;line-height:1.4;min-height:48px;padding:10px 6px;font-size:.84rem}
+.n2prep-expand{border-top:1px solid #eee7d7;margin-top:12px;padding-top:11px}
+.n2prep-expand summary{font-weight:800;color:#76540f;cursor:pointer}
+.n2prep-words{margin-top:10px}
+.n2prep-word{display:grid;grid-template-columns:31px 1fr auto;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid #f2eee7}
+.n2prep-word>span:nth-child(2){display:grid;gap:3px;min-width:0;font-size:.85rem}
+.n2prep-word strong{font-size:1.04rem}.n2prep-word small{color:#5f5b52}
+.n2prep-no{font-size:.8rem;color:#7a725e}
+.n2prep-sound{border:0;background:#fff2c4;border-radius:10px;min-width:40px;min-height:40px}
+.n2prep-kanji-line{display:grid;grid-template-columns:54px 1fr;gap:12px;padding:10px 0;border-bottom:1px solid #f2eee7}
+.n2prep-kanji-line>b{font-size:2rem;text-align:center;background:#fff5d5;border-radius:10px;padding:5px}
+.n2prep-kanji-line>span{display:grid;gap:3px;font-size:.87rem}.n2prep-kanji-line small{color:#6b6559}
+.n2prep-note{background:#fff7e7;color:#775625;border-radius:10px;font-size:.82rem;padding:11px}
+.n2prep-after{border-top:1px solid #f0ede6;display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 0;font-size:.9rem}
+.n2prep-footer button{width:100%;min-height:46px}
+@media(max-width:365px){.n2prep-task{align-items:stretch;flex-direction:column}.n2prep-link{align-self:flex-start}.n2prep-buttons{grid-template-columns:1fr}}
