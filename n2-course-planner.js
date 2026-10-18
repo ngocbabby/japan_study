@@ -139,7 +139,8 @@ function renderN2Planner(){
  '<p>'+(next?'Giáo trình dự kiến: '+esc(next.lesson.contents.slice(0,2).join(' · ')):'Chọn buổi học để gắn lịch với giáo trình')+'</p>'+
  (lastCancellation?'<small>↪ '+esc(lastCancellation.from.slice(8)+'/'+lastCancellation.from.slice(5,7))+' nghỉ → '+esc(lastCancellation.to.slice(8)+'/'+lastCancellation.to.slice(5,7))+' học tiếp</small>':'')+
  '</section>'+
- '<div class="plan2-section-head"><h3>Cần hoàn thành</h3><span class="plan2-count">'+count+' mục chưa tích</span></div>';
+ '<div class="plan2-section-head"><h3>Cần hoàn thành</h3><span class="plan2-count">'+count+' mục chưa tích</span></div>'+
+ (next?'<button type="button" class="primary-btn" id="n2prep-from-plan" style="width:100%;margin:8px 0 14px;min-height:48px">📚 Mở bàn học Buổi '+next.session+' →</button>':'');
  if(teacherTasks.length)html+='<section class="plan2-card"><h4>🧑‍🏫 Thầy đã nhắn</h4><p class="plan2-note">Thông báo Zalo 06/10; chưa xác nhận ngày kiểm tra.</p>'+teacherTasks.map(x=>task(x,'teacher')).join('')+'</section>';
  if(shubTasks.length)html+='<section class="plan2-card"><h4>📝 Bài trên SHub</h4><p class="plan2-note">Chưa có hạn nộp trong ảnh.</p>'+shubTasks.map(x=>task(x,'shub')).join('')+'</section>';
  if(next && (urgent.length||due.length))html+='<section class="plan2-card"><h4>📘 Chuẩn bị buổi '+next.session+'</h4><p class="plan2-note">Gợi ý từ KOSEI, chưa phải bài thầy xác nhận.</p>'+urgent.map(x=>task(x,'prep')).join('')+
@@ -167,6 +168,7 @@ function renderN2Planner(){
  html+='<details class="plan2-card"><summary>🔔 Cài đặt nhắc học</summary><p class="plan2-note">Chỉ nhắc lúc 20:00 khi trang đang mở, chưa hỗ trợ nhắc nền khi đóng trình duyệt.</p><button type="button" class="secondary-btn" id="planNotify">🔔 Xin quyền thông báo</button> <button type="button" class="secondary-btn" id="planNotifyTest">Thử thông báo</button><p id="planNotifyStatus" role="status"></p></details></div>';
  main.innerHTML=html;
  document.querySelector('[data-n2-root]').onclick=()=>{n2UI.view='root';renderN2()};
+ document.querySelector('#n2prep-from-plan')?.addEventListener('click',()=>{n2UI.prepSession=next.session;n2UI.view='session-prep';renderN2()});
  document.querySelector('#planChangeShow').onclick=()=>{const d=document.querySelector('#planSettings');d.open=true;d.scrollIntoView({behavior:'smooth',block:'start'})};
  document.querySelectorAll('[data-n2-plan-item]').forEach(el=>{el.onchange=()=>n2PlanMark(el.dataset.n2PlanItem,el.checked)});
  document.querySelectorAll('[data-plan-open]').forEach(el=>{el.onclick=()=>n2PlanOpen(el.dataset.planOpen)});
