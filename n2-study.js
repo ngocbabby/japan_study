@@ -19,7 +19,8 @@ const n2UI = {
   readingTranscript:'',
   audioUrl:null,
   readingShowFurigana:null,
-  readingShowTranslation:null
+  readingShowTranslation:null,
+  prepSession:null
 };
 
 function n2Data(){ return window.N2_STUDY_DATA || {vocabLessons:[],kanjiLessons:[],grammarLessons:[],readingLessons:[]}; }
@@ -51,6 +52,7 @@ function renderN2(){
   if(n2UI.view==='reading') return renderN2ReadingList();
   if(n2UI.view==='docs') return renderN2Documents();
   if(n2UI.view==='planner') return renderN2Planner();
+  if(n2UI.view==='session-prep') return renderN2SessionPrep();
   if(n2UI.view==='reading-detail') return renderN2ReadingDetail();
   n2UI.view='root';
   return renderN2Root();
@@ -76,6 +78,8 @@ function renderN2Root(){
     </section>
 
     ${planPriority?.next?`<button class="n2-plan-home-prompt" data-n2-plan-top type="button"><span class="n2-plan-pill">📌 HỌC ƯU TIÊN</span><strong>Buổi ${planPriority.next.session} · ${planPriority.next.date} · ${planPriority.next.start}</strong><small>${escapeText(planPriority.urgent[0]?.text || planPriority.due[0]?.text || 'Đã hoàn tất việc chuẩn bị. Ôn các bài chưa học.')}</small><span class="n2-plan-openhint">Mở lịch học →</span></button>`:`<button class="n2-plan-home-prompt" data-n2-plan-top type="button"><strong>📅 Ghép lịch học N2 với lộ trình KOSEI</strong><small>Chọn buổi N2 thực tế để biết trước bài ngày mai và bài tập còn thiếu.</small><span class="n2-plan-openhint">Thiết lập lịch →</span></button>`}
+
+    <button class="n2-plan-home-prompt" type="button" data-n2-prep-direct><span class="n2-plan-pill">📚 HỌC TRƯỚC LỚP</span><strong>Chuẩn bị Buổi 9 · 19/10</strong><small>38 từ · Ngữ pháp B8 · Kanji 週2-2 · Nghe 問題1-2 · BTVN Buổi 8</small><span class="n2-plan-openhint">Mở bàn học →</span></button>
 
     <div class="n2-data-status">
       <strong>Dữ liệu nguồn</strong>
@@ -106,6 +110,7 @@ function renderN2Root(){
   document.querySelector('[data-n2-docs]')?.addEventListener('click',()=>{n2UI.view='docs';n2DocUI.view='list';renderN2()});
   document.querySelector('[data-n2-planner]')?.addEventListener('click',()=>{n2UI.view='planner';renderN2()});
   document.querySelector('[data-n2-plan-top]')?.addEventListener('click',()=>{n2UI.view='planner';renderN2()});
+  document.querySelector('[data-n2-prep-direct]')?.addEventListener('click',()=>{n2UI.prepSession=9;n2UI.view='session-prep';renderN2()});
 }
 
 function n2Category(icon,name,desc,type,lessons){
@@ -1160,6 +1165,7 @@ backBtn.addEventListener('click',e=>{
   if(n2UI.view==='reading-detail'){n2StopReadingSpeech();stopN2Reading();n2UI.view='reading';renderN2();return}
   if(n2UI.view==='reading'){n2UI.view='root';renderN2();return}
   if(n2UI.view==='planner'){n2UI.view='root';renderN2();return}
+  if(n2UI.view==='session-prep'){n2UI.view='root';renderN2();return}
   if(n2UI.view==='docs'){if(n2DocUI.view!=='list'){n2DocUI.view='list';renderN2()}else{n2UI.view='root';renderN2()}return}
 },true);
 window.addEventListener('pagehide',()=>n2StopReadingSpeech());
