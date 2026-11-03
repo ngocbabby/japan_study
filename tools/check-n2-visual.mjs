@@ -29,9 +29,17 @@ try{
   await page.locator('.n2-hero [data-chapter="1"]').first().click();
   assert.equal(await page.locator(".n2-page h1").textContent(),"Chữ ký của người chưa từng lớn");
   assert.ok((await page.locator(".n2-scene").count())>=8,"chapter one short");
-  assert.ok((await page.locator(".n2-word").count())>=18,"chapter one lacks vocabulary");
+  assert.ok((await page.locator(".vi-main").count())>=8,"Vietnamese should be the primary reading language");
+  assert.equal(await page.locator(".n2-scene .jp").count(),0,"Japanese prose must not appear first by default");
+  assert.equal(await page.locator('[data-reading-lang="vi"]').getAttribute("aria-pressed"),"true","Vietnamese button not selected");
+  assert.ok((await page.locator(".n2-word").count())>=1,"Vietnamese text has no Japanese linked vocabulary");
   await page.locator(".n2-word").first().click();assert.ok(await page.locator(".n2-dict").isVisible(),"definition missing");
   await page.locator('[data-action="closedict"]').click();
+  await page.locator('[data-reading-lang="ja"]').click();
+  assert.ok((await page.locator(".n2-scene .jp").count())>=8,"Japanese study mode missing");
+  assert.ok((await page.locator(".n2-word").count())>=18,"Japanese mode must retain vocabulary links");
+  await page.locator('[data-reading-lang="vi"]').click();
+  assert.ok((await page.locator(".vi-main").count())>=8,"returning to Vietnamese mode failed");
   const reader=await page.locator(".n2-page").evaluate(el=>{const box=el.getBoundingClientRect();return {width:box.width,overflow:document.documentElement.scrollWidth-innerWidth}});
   assert.ok(reader.overflow<3,"horizontal overflow in reader");
   await page.screenshot({path:path.join(dir,"n2-"+size.label+"-chapter1.png"),fullPage:true});
@@ -48,5 +56,5 @@ try{
   await page.close();
  }
  assert.deepEqual(errors,[],"Javascript errors");
- console.log("PASS: N2 book desktop/mobile cover, reader, glossary, source lookup and menu");
+ console.log("PASS: Vietnamese-first N2 novel, optional Japanese mode, desktop/mobile glossary, source lookup and menu");
 }finally{if(browser)await browser.close();await new Promise(resolve=>srv.close(resolve))}
