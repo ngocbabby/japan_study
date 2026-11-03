@@ -1,34 +1,26 @@
-# Hải đăng của bảy vùng biển cấm — Nhật ký xuất bản N2
+# Hải đăng của bảy vùng biển cấm — Tình trạng bản thảo
 
-Cập nhật: 2026-11-03 (giờ Nhật)
+Cập nhật: 2026-11-03 (JST)
 
-## Đã có thật trong sách
+## Đã hoàn thành
 
-- Cốt truyện tổng thể **64 chương / 8 phần**: có mục lục và tuyến diễn biến, nhưng không phải 64 chương đã viết.
-- **8 chương đầu** có bản thảo văn học tiếng Việt (khoảng 5.600 từ), chia thành Tập I: *Ngọn lửa tắt trước bình minh*.
-- **97 mục từ N2 khác nhau** xuất hiện trong 99 vị trí của những đoạn văn Tập I. Mỗi từ nằm trong một cụm tiếng Việt và có nút tra chữ Nhật, cách đọc, nghĩa.
-- Mục lục hiển thị các chương 9–64 là **Dự kiến**, không tạo trang đọc giả.
-- Từ điển đủ **1.160 số mục**, bao gồm bộ lọc đã có trong truyện/chưa có trong truyện và phần đánh dấu nhớ thủ công.
-- 1.160 mục đã có kế hoạch phân bổ 64 chương, mỗi chương 18–19 mục dự kiến. **Đây chỉ là kế hoạch, không phải từ đã xuất hiện hoặc đã học.** Khi viết các chương tiếp theo có thể điều chỉnh vị trí từng mục cho hợp tình tiết.
+- 8 tập, 64 chương tiếng Việt với cốt truyện xuyên suốt, có kết thúc và chương hậu truyện sau ba năm.
+- 1.160/1.160 mã từ nguồn Mimikara N2 trong Japan Study được phân vào 64 chương (không trùng và không thiếu trong danh sách phân bổ).
+- 1.160/1.160 mã có mặt trực tiếp trong các đoạn tiếng Việt dưới dạng `⟦ID|cụm nghĩa Việt⟧`, không chỉ ở danh sách tra cứu. Đây là **kiểm tra hiện diện mã tự động**, chưa bảo đảm câu/định nghĩa đã đạt chuẩn Nhật ngữ.
+- Có bìa, mục lục, chú giải bấm tra có furigana, tra cứu 1.160 mục, đánh dấu cá nhân, các cẩm nang bảy vùng biển và trình đọc trên điện thoại.
+- Quy luật phép thuật giữ nhất quán: Ánh Sáng, Sương, Lưu Ảnh, Tinh Thạch, Đảo Nổi, Tĩnh Lặng, Bóng Tối.
 
-## Chưa hoàn thành
+## Còn phải hiệu đính / không được coi là đã kiểm chứng toàn bộ
 
-- 56 chương còn lại chưa được viết thành văn bản tiểu thuyết.
-- 1.063/1.160 mục từ chưa có trong văn xuôi tiếng Việt đã xuất bản.
-- Dữ liệu N2 đọc từ `n2-vocab-1160.js` có sẵn trong repository; **chưa đối chiếu thủ công từng mục** với PDF scan gốc 44 trang và chưa hiệu đính tiếng Nhật toàn bộ.
-- Bản thảo Tập I đã được kiểm tra mã từ và chính tả ở mức biên tập lần đầu; vẫn cần rà kỹ hơn về chất lượng văn học và nghĩa từ theo ngữ cảnh trước khi gọi là bản hoàn chỉnh.
+- Chưa đối chiếu **thủ công từng hàng** của bộ từ 1.160 với PDF Mimikara N2 dạng ảnh; các nghĩa/cách đọc hiển thị lấy từ dữ liệu hiện có trên Japan Study.
+- Chưa biên tập ngôn ngữ và sự phù hợp ngữ cảnh của tất cả 1.160 vị trí mã từ (kể cả các cụm gần nghĩa hoặc động từ dễ nhầm); những mục không chính xác cần được sửa trực tiếp trong truyện.
+- Các chương có độ dài khác nhau và có thể được tiếp tục biên tập văn chương; độ dài hay hiện diện mã từ không đồng nghĩa người đọc đã học thuộc.
 
-## Quy tắc không được phá vỡ
+## Quy tắc đánh giá
 
-1. Văn bản tiếng Việt là nội dung chính; từ Nhật gắn ngay trong câu tại chỗ phù hợp.
-2. Không hiển thị những dãy từ Nhật chưa ghép dưới từng đoạn truyện.
-3. Không đánh dấu học thuộc khi chỉ đọc xong chương; trạng thái thuộc từ do người đọc tự chọn.
-4. 64 chương được phân từ không có nghĩa 64 chương đã viết; đếm số từ dựa trên dấu mã xuất hiện trong **văn xuôi thật**.
-5. Các quy luật phép thuật được định nghĩa tại Tập I phải được tôn trọng trong tất cả các phần tiếp theo.
-
-## Đường dẫn
-
-- Đọc sách: `seven-seas-book.html`
-- Cốt truyện và phân bổ: `seven-seas-plan.js`
-- Văn bản 8 chương: `seven-seas-part1.js`
-- Kiểm kê trạng thái: `seven-seas-audit.json`
+| Tiêu chí | Trạng thái |
+|---|---|
+| Cốt truyện | 64/64 chương, đã viết đến kết thúc |
+| Có mã từ nguồn trong truyện Việt | 1160/1160 (kiểm tra tự động) |
+| Đã hiệu đính tiếng Nhật/cách đọc/ngữ cảnh so với PDF | Chưa xác nhận 100% |
+| Tiến độ học thuộc của người dùng | Người học tự đánh dấu, độc lập với tiến độ viết |
