@@ -76,11 +76,11 @@ try {
   await page.screenshot({path:path.join(output,label+"-trial-success.png"),fullPage:true});
   await page.reload();
   assert.ok((await page.locator("#orbCount").innerText()).includes("4/123"));
-  if(label==="desktop"){await page.locator('.side-panel [data-view="worlds"]').click();}
+  if(width>900){await page.locator('.side-panel [data-view="worlds"]').click();}
   else {await page.locator('.mobile-nav [data-view="worlds"]').click();}
   assert.equal(await page.locator(".realm-card").count(),6);
   await page.screenshot({path:path.join(output,label+"-worlds.png"),fullPage:true});
-  if(label==="desktop"){await page.locator('.side-panel [data-view="review"]').click();}
+  if(width>900){await page.locator('.side-panel [data-view="review"]').click();}
   else {await page.evaluate(()=>document.querySelector('.side-panel [data-view="review"]').click());}
   assert.equal(await page.locator(".review-grid").count(),1);
   await page.screenshot({path:path.join(output,label+"-review.png"),fullPage:true});
