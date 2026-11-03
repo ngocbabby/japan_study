@@ -173,7 +173,7 @@ body:after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opac
 .zero-pinned-evidence span{font-size:8px;bottom:-4px}
 .zero-hero-stamp{right:0;bottom:3px;z-index:4;border:2px solid #8e243f;background:#f2e2c4;color:#8f1e35;transform:rotate(-8deg);font:900 11px Georgia,serif}
 .zero-leaf[data-leaf-index="0"] .zero-leaf-art.scene-part-1{
- background-image:url('books/n2/vocab/zero-gallery-1.webp');
+ background-image:url('books/n2/vocab/zero-courtroom-interior.webp');
  background-size:cover;background-position:center center;
  border-color:#874c33;
 }
