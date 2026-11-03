@@ -28,6 +28,7 @@ try{
     page.on("pageerror",e=>errors.push(viewport.label+": "+String(e)));
     await page.goto(url,{waitUntil:"load"});
     await page.locator(".n3cover").waitFor();
+    await page.evaluate(()=>document.fonts.ready);
     const pic=await page.locator(".n3cover").evaluate(async img=>{
       await img.decode();
       const a=img.getBoundingClientRect(),parent=img.parentElement.getBoundingClientRect();
