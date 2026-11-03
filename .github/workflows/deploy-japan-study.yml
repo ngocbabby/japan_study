@@ -3,6 +3,8 @@ on:
   push:
     branches: ["main"]
     paths:
+      - "n2-novel*"
+      - "books/n2/vocab/**"
       - "n3-book.html"
       - "n3-book.js"
       - "n3-book.css"
