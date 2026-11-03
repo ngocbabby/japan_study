@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="420" viewBox="0 0 1440 420" role="img" aria-label="Tầng không">
+<defs>
+<linearGradient id="n" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#130f24"/><stop offset=".5" stop-color="#974352"/><stop offset="1" stop-color="#100d1c"/></linearGradient>
+<radialGradient id="a"><stop stop-color="#d8aa85" stop-opacity=".34"/><stop offset="1" stop-color="#d8aa85" stop-opacity="0"/></radialGradient>
+<linearGradient id="r" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#c49a8e"/><stop offset="1" stop-color="#282038"/></linearGradient>
+<pattern id="dust" width="72" height="61" patternUnits="userSpaceOnUse"><circle cx="11" cy="12" r="1" fill="#e1bf8b" opacity=".34"/><circle cx="51" cy="36" r=".8" fill="#eed5c2" opacity=".3"/></pattern>
+</defs>
+<rect width="1440" height="420" fill="url(#n)"/><circle cx="1030" cy="160" r="340" fill="url(#a)"/><rect width="1440" height="420" fill="url(#dust)"/>
+<g opacity=".36" stroke="#e6b878" stroke-width="2" fill="none"><path d="M0 40H1440M0 389H1440"/><path d="M16 52v327M1424 52v327"/></g>
+<!-- Gothic towers -->
+<g fill="#0b1020" stroke="#ab7880" stroke-width="2" opacity=".85">
+<path d="M0 254h130v166H0zM70 170 4 253h131zM121 214h130v206H121zM185 133l-64 82h128zM1180 221h118v199h-118zM1240 132l-59 90h120zM1290 258h150v162h-150zM1360 176l-65 83h130z"/>
+<path d="M20 296h31v65H20zm56 0h31v65H76zm78-48h33v77h-33zm56 0h32v77h-32zm981 6h31v70h-31zm57 0h31v70h-31zm73 48h33v71h-33zm58 0h33v71h-33z" fill="#c58d6b" opacity=".42"/>
+</g>
+<!-- Floating papers -->
+<g fill="#d6b6a5" stroke="#9b6c60" stroke-width="2" opacity=".8"><path d="M300 84l74 26-20 89-76-22Z"/><path d="M420 224l98-15 10 112-98 16Z"/><path d="M1244 67l75 15-17 93-76-20Z"/></g>
+<g stroke="#7b3d4e" stroke-width="3" opacity=".65"><path d="M303 111l48 17m-51-3 45 13m-44 2 39 12M440 237l60-6m-60 18 60-6m-60 18 60-6M1250 94l53 9m-58 8 50 9"/></g>
+<!-- Foreground courthouse arch -->
+<g fill="none" stroke="#e6b878" stroke-width="6" opacity=".73"><path d="M570 420V212Q570 78 715 78T860 212V420"/><path d="M595 420V212Q595 110 715 110T835 212V420"/></g>
+<path d="M636 420V280q0-76 79-76t79 76v140" fill="#070b18" opacity=".88"/>
+<!-- Mysterious witness in courthouse door -->
+<circle cx="712" cy="286" r="23" fill="#0a0b13"/><path d="M678 316q35-14 68 0l46 104H635Z" fill="#0b0d16" stroke="#a8757b" stroke-width="1"/>
+<path d="M0 418q400-80 700 0t740 0" stroke="#c59d75" stroke-width="3" fill="none" opacity=".55"/>
+<g stroke="#b83b55" stroke-width="3" fill="none" opacity=".8"><path d="M-40 308Q320 100 660 309T1500 195"/><path d="M-50 354Q400 255 700 390T1530 302"/></g>
+<g fill="#cd5664"><path d="M385 46q30-13 31 12-29 17-31-12z"/><path d="M1395 317q17-24 37-13-4 30-37 13z"/><path d="M1093 380q13-20 34-8-2 22-34 8z"/></g>
+<g opacity=".92"><circle cx="995" cy="158" r="68" fill="none" stroke="#f2c78e" stroke-width="9"/><path d="M1033 204l152 151m-31-31 27-27m-57 0 27-27" stroke="#f2c78e" stroke-width="16" stroke-linecap="square"/><text x="991" y="180" font-size="66" text-anchor="middle" fill="#e6c491">0</text></g>
+<path d="M18 30h90m1202 0h100M18 30v85m1392-85v85M18 391h90m1202 0h100M18 391v-85m1392 85v-85" fill="none" stroke="#e5bb80" stroke-width="4"/>
+<path d="M32 74q30-50 52 0m1304 0q-30-50-52 0M32 340q30 50 52 0m1304 0q-30 50-52 0" fill="none" stroke="#e7c18d" stroke-width="2"/>
+</svg>
