@@ -175,3 +175,24 @@ body:before{content:"";position:fixed;z-index:-2;inset:0;background:radial-gradi
  .realm-card h3{font-size:15px}
  .realm-content{padding:11px 10px}
 }
+/* Polished book presentation: show complete sidebar cover, not a cropped strip. */
+.side-portrait{
+  height:287px;display:flex;align-items:center;justify-content:flex-start;
+  flex-direction:column;padding:12px 10px 76px;
+  background:radial-gradient(circle at 50% 35%,#60417c69,transparent 60%),
+    linear-gradient(155deg,#090d2c,#15244a);
+}
+.side-portrait img{
+  width:auto;max-width:150px;height:100%;aspect-ratio:650/1108;
+  object-fit:contain;object-position:center center;
+  border:1px solid #cb9f68;border-radius:7px;
+  box-shadow:0 7px 19px #000a;
+  filter:none;
+}
+.side-portrait:after{
+  inset:auto 0 0;height:80px;
+  background:linear-gradient(transparent,#0c142c 56%,#0b1029);
+}
+.side-portrait>div{bottom:11px;left:9px;right:9px;text-align:center}
+.realm-art{aspect-ratio:auto;height:100%;min-height:194px}
+@media(max-width:650px){.realm-art{min-height:178px}}
