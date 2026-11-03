@@ -17,6 +17,11 @@ vm.runInNewContext(fs.readFileSync("kanji-n5-data.js","utf8"),context);
 assert.equal(context.window.JAPAN_KANJI_N5.characters.length,4);
 assert.equal(context.window.JAPAN_KANJI_N5.chapters.length,25);
 const browser=await chromium.launch({headless:true,args:["--no-sandbox"]});
+// Reject the old blurry banners: six portrait assets must be present at useful resolution.
+for(let n=1;n<=6;n++){
+ const file=path.join(root,"books","n5","kanji","art","realm"+n+"-portal.webp");
+ assert.ok(fs.statSync(file).size>75000,"Missing or low-quality portal image "+n);
+}
 const logs=[];
 // Regression: the new book must be findable via Home / Sách / N5 / Kanji.
 const shelf=await browser.newPage({viewport:{width:1280,height:850}});
@@ -31,12 +36,19 @@ assert.equal(await card.locator('a[href="kanji-n5.html"]').count(),1,"Wrong demo
 await shelf.screenshot({path:path.join(output,"library-n5-kanji.png"),fullPage:true});
 await shelf.close();
 try {
- for(const [label,width,height] of [["desktop",1440,900],["mobile",390,844]]){
+ for(const [label,width,height] of [["desktop",1440,900],["laptop",1319,861],["mobile",390,844]]){
   const page=await browser.newPage({viewport:{width,height},deviceScaleFactor:1});
   page.on("pageerror",e=>logs.push(label+": "+String(e)));
   await page.goto("http://127.0.0.1:4173/kanji-n5.html",{waitUntil:"load",timeout:45000});
   await page.locator(".hero-cover img").evaluate(img=>img.decode());
   assert.equal(await page.locator(".realm-card").count(),6);
+  assert.equal(await page.locator(".realm-art img").count(),6,"Each realm should show a full magic portal");
+  await page.locator(".realm-art img").first().scrollIntoViewIfNeeded();
+  const portal=await page.locator(".realm-art img").first().evaluate(async img=>{await img.decode();const r=img.getBoundingClientRect();return {src:img.currentSrc,width:r.width,naturalWidth:img.naturalWidth,naturalHeight:img.naturalHeight}});
+  assert.ok(portal.src.includes("realm1-portal.webp"),"Old blurry banner still used");
+  assert.ok(portal.naturalWidth>=450&&portal.naturalHeight>=530,"Portal resolution too low");
+  assert.ok(portal.width<=210,"Portal enlarged beyond sharp display size");
+  console.log("PORTAL",label,JSON.stringify(portal));
   assert.equal(await page.locator(".chapter-row").count(),25);
   const img=await page.locator(".hero-cover img").evaluate(img=>({naturalWidth:img.naturalWidth,naturalHeight:img.naturalHeight}));
   assert.ok(img.naturalWidth>500&&img.naturalHeight>800,"Missing original cover art");
