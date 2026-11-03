@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif:wght@400;500;600;700;800&display=swap");
 
 :root{color-scheme:dark;--navy:#091724;--card:#152b3b;--gold:#e6bc7b;--ink:#f8eade;--muted:#b9c3c6;--line:#415768}
 *{box-sizing:border-box}body{background:radial-gradient(ellipse at 50% -130px,#263f51,var(--navy) 65%);color:var(--ink);margin:0;font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
@@ -61,3 +62,141 @@ button{font:inherit;cursor:pointer}button:disabled{opacity:.35;cursor:default}a{
 .n3audit-row small{grid-column:2;color:#a7c3c7;line-height:1.4;font-size:11px}
 #n3audit-count{font-size:12px;color:#dbca9e;align-self:center}
 @media(max-width:540px){.n3audit-stats{gap:5px}.n3audit-stats>div{padding:8px 5px}.n3audit-stats small{font-size:10px}.n3audit-row{grid-template-columns:35px minmax(0,1fr)}}
+
+
+/* N3 NOVEL — typography and cover corrections, 2026-11-03.
+   Vietnamese diacritics require one consistently available serif font;
+   mixed Georgia/browser fallbacks produced broken accents on Windows. */
+.n3top{
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr) auto;
+  align-items:center;
+  gap:16px;
+}
+.n3top>div{min-width:0;text-align:center}
+.n3top h1{
+  font-family:"Noto Serif","Times New Roman",serif;
+  font-size:clamp(12px,1.3vw,17px);
+  letter-spacing:0;
+  line-height:1.45;
+}
+.n3top .n3mobile{justify-self:end}
+.n3frame{max-width:1240px;grid-template-columns:245px minmax(0,1fr);column-gap:24px}
+.n3hero{
+  grid-template-columns:minmax(0,210px) minmax(0,1fr);
+  align-items:center;
+  gap:clamp(18px,3vw,31px);
+  min-height:0;
+}
+.n3hero > * {min-width:0}
+.n3cover-frame{
+  width:100%;
+  max-width:210px;
+  min-width:0;
+  aspect-ratio:2/3;
+  display:block;
+  overflow:hidden;
+  border:1px solid #cfaa69;
+  border-radius:11px;
+  background:#071826;
+  box-shadow:0 15px 32px #02091570;
+}
+.n3cover{
+  display:block;
+  width:100%;
+  height:100%;
+  max-width:100%;
+  max-height:100%;
+  min-width:0;
+  object-fit:contain;
+  border:0;
+  border-radius:0;
+  box-shadow:none;
+  aspect-ratio:auto;
+}
+.n3hero h2{
+  font-family:"Noto Serif","Times New Roman",serif;
+  font-size:clamp(23px,2.4vw,32px);
+  line-height:1.33;
+  letter-spacing:0;
+  overflow-wrap:break-word;
+}
+.n3hero p{font-size:14px;line-height:1.72}
+.n3paper{
+  width:100%;
+  max-width:780px;
+  margin-inline:auto;
+  padding:clamp(23px,4.6vw,47px);
+}
+.n3paper h2{
+  font-family:"Noto Serif","Times New Roman",serif;
+  font-weight:700;
+  letter-spacing:0;
+  line-height:1.38;
+  overflow-wrap:normal;
+}
+.n3paper .sub{
+  font-family:"Noto Serif","Times New Roman",serif;
+  font-style:italic;
+  letter-spacing:0;
+  line-height:1.7;
+}
+.n3paper p{
+  font-family:"Noto Serif","Times New Roman","DejaVu Serif",serif;
+  font-size:var(--n3-font,18px);
+  font-weight:400;
+  line-height:1.84;
+  letter-spacing:0;
+  word-spacing:normal;
+  text-align:left;
+  overflow-wrap:break-word;
+  word-break:normal;
+  hyphens:none;
+  text-rendering:optimizeLegibility;
+  -webkit-font-smoothing:antialiased;
+}
+.n3paper .n3word,.n3paper ruby{
+  font-family:"Noto Sans JP","Yu Gothic",Meiryo,sans-serif;
+  white-space:nowrap;
+  line-height:1.7;
+}
+.n3paper rt{line-height:1.2}
+.n3toolbar,.n3pager{max-width:780px;margin-left:auto;margin-right:auto}
+.n3nav{top:88px}
+.n3chapter{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;letter-spacing:0}
+.n3panel h2{font-family:"Noto Serif","Times New Roman",serif;line-height:1.4}
+.n3-reading-status{
+  max-width:780px;
+  margin:0 auto 14px;
+  padding:11px 14px;
+  border:1px solid #776544;
+  border-radius:10px;
+  color:#f0dbb4;
+  font-size:12px;
+  line-height:1.65;
+  background:#1c3440;
+}
+.n3-reading-status strong{color:#ffda9c}
+@media(max-width:820px){
+  .n3frame{grid-template-columns:minmax(0,1fr)}
+  .n3hero{grid-template-columns:minmax(0,165px) minmax(0,1fr)}
+  .n3cover-frame{max-width:165px}
+  .n3top>div{text-align:left}
+}
+@media(max-width:540px){
+  .n3top{grid-template-columns:auto minmax(0,1fr) auto;gap:8px}
+  .n3top h1{font-size:12px;line-height:1.35}
+  .n3top small{font-size:10px;line-height:1.25}
+  .n3hero{grid-template-columns:minmax(0,102px) minmax(0,1fr);padding:13px;gap:12px}
+  .n3cover-frame{max-width:102px}
+  .n3hero h2{font-size:19px;line-height:1.28}
+  .n3hero p{font-size:12px;line-height:1.6}
+  .n3paper{padding:24px 18px}
+  .n3paper p{line-height:1.79}
+  .n3paper h2{font-size:26px;line-height:1.45}
+}
+@media print{
+  .n3top,.n3nav,.n3toolbar,.n3pager,.n3panel,.n3-reading-status{display:none!important}
+  .n3frame{display:block;padding:0}
+  .n3paper{box-shadow:none;border:none;color:black;background:white;max-width:none}
+}
