@@ -18,7 +18,7 @@ let n=0,out='<h2>MỤC LỤC · 40 CHƯƠNG</h2>';
 for(const part of parts){out+='<div class="n3part">PHẦN '+part.number+' · '+esc(part.title)+'</div>';
 for(const title of part.chapters){n++;const ok=all.some(c=>c.number===n);out+='<button class="n3chapter" data-goto="'+n+'" '+(ok?'':'disabled')+(state.mode==="chapter"&&state.chapter===n?' aria-current="page"':'')+'><strong>'+String(n).padStart(2,"0")+'</strong>'+esc(title)+(ok?'':' · Đang biên soạn')+'</button>'}}
 return out;}
-function cover(){return '<picture class="n3cover-frame"><source type="image/avif" srcset="books/n3/vocab/khi-mat-troi-khong-con-moc.avif?v=20261103-premium"><img class="n3cover" src="books/n3/vocab/cover.svg" alt="Bìa Khi mặt trời không còn mọc: Kanna đứng trước thành phố AURORA, mặt trời rạn nứt và những đường nét vàng kim" width="360" height="540" loading="eager" decoding="async"></picture>'}
+function cover(){return '<button type="button" class="n3-cover-open" data-cover-open aria-label="Xem bìa tiểu thuyết phóng to" title="Xem bìa đẹp ở kích thước lớn"><picture class="n3cover-frame"><source type="image/avif" srcset="books/n3/vocab/khi-mat-troi-khong-con-moc.avif?v=20261103-premium 360w, books/n3/vocab/khi-mat-troi-khong-con-moc-hq.avif?v=20261103-hq 900w" sizes="(max-width:540px) 102px, (max-width:820px) 165px, 210px"><img class="n3cover" src="books/n3/vocab/cover.svg" alt="Bìa Khi mặt trời không còn mọc: Kanna và thành phố AURORA dưới mặt trời nhân tạo rạn nứt" width="360" height="540" loading="eager" decoding="async"></picture></button>'}
 function home(){
 const n=all.length;
 let h='<section class="n3hero">'+cover()+'<div><span class="n3eyebrow">TIỂU THUYẾT TỪ VỰNG JLPT N3</span><h2>KHI MẶT TRỜI KHÔNG CÒN MỌC</h2><p>朝が来ない街 · Thành phố không có bình minh</p><p>06:00 không đến. Kanna phát hiện hệ thống mặt trời nhân tạo AURORA đã bị tắt, trong khi mọi bản tin đều nói thành phố vẫn an toàn. Vì sao dữ liệu bị khóa? Ai là người đã được sinh ra lần thứ hai?</p><p>Sci-fi · Sinh tồn · Tâm lý · Bí ẩn</p><div class="n3buttons"><button class="n3btn" data-goto="1">Đọc từ chương 1</button>'+(state.chapter>1?'<button class="n3btn secondary" data-goto="'+Math.min(state.chapter,n)+'">Đọc tiếp chương '+Math.min(state.chapter,n)+'</button>':'')+'</div></div></section>';
@@ -51,10 +51,21 @@ prev.disabled=!!current||page===0;next.disabled=!!current||page>=Math.ceil(total
 }
 inp.oninput=paint;prev.onclick=()=>{page=Math.max(0,page-1);paint()};next.onclick=()=>{page=Math.min(Math.ceil(total/perPage)-1,page+1);paint()};paint();
 }
+function showCover(){
+  const old=document.getElementById("n3CoverDialog");if(old){old.showModal();return}
+  const dialog=document.createElement("dialog");dialog.id="n3CoverDialog";dialog.className="n3-cover-dialog";dialog.setAttribute("aria-label","Bìa tiểu thuyết Khi mặt trời không còn mọc");
+  dialog.innerHTML='<button type="button" class="n3-cover-close" aria-label="Đóng bìa sách">✕ Đóng</button><img src="books/n3/vocab/khi-mat-troi-khong-con-moc-hq.avif?v=20261103-hq" width="900" height="1350" alt="Toàn bộ bìa tiểu thuyết Khi mặt trời không còn mọc, minh họa đêm xanh vàng kim">';
+  document.body.appendChild(dialog);
+  dialog.querySelector(".n3-cover-close").onclick=()=>dialog.close();
+  dialog.onclick=e=>{if(e.target===dialog)dialog.close()};
+  dialog.addEventListener("close",()=>dialog.remove(),{once:true});
+  dialog.showModal();
+}
 function render(){
 root.innerHTML='<header class="n3top"><a href="./index.html">← Japan Study</a><div><h1>KHI MẶT TRỜI KHÔNG CÒN MỌC</h1><small>朝が来ない街 · Tiểu thuyết N3</small></div><button class="n3mobile" id="n3menu">☰ Chương</button></header>'+
 '<div class="n3frame"><aside class="n3nav'+(state.open?' open':'')+'" id="n3nav">'+nav()+'</aside><main class="n3main">'+(state.mode==="home"?home():state.mode==="words"?wordList():state.mode==="coverage"?coverage():chapter())+'</main></div>';
 root.querySelector("#n3menu").onclick=()=>{state.open=!state.open;root.querySelector("#n3nav").classList.toggle("open",state.open)};
+root.querySelectorAll("[data-cover-open]").forEach(x=>x.onclick=showCover);
 root.querySelectorAll("[data-goto]:not([disabled])").forEach(x=>x.onclick=()=>{state.open=false;open(Number(x.dataset.goto))});
 root.querySelectorAll("[data-mode]").forEach(x=>x.onclick=()=>{state.mode=x.dataset.mode;state.open=false;render();top()});
 root.querySelectorAll("[data-font]").forEach(x=>x.onclick=()=>{state.font=Math.max(14,Math.min(27,state.font+Number(x.dataset.font)));remember();root.querySelector("#n3-paper")?.style.setProperty("--n3-font",state.font+"px")});
