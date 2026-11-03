@@ -117,7 +117,7 @@ function booksCategory(){
        '<p>明日を売る人々 · Dark fantasy, bí ẩn, tâm lý và đấu trí: Tsumugi lần theo hợp đồng bán tương lai của 48.000 người.</p>'+
        '<div class="books-stat-line"><span>64/64 chương Nhật–Việt có bản thảo</span><span>1.160/1.160 mã từ trong bản thảo</span><span>Đã phân đủ 1.160 mục</span></div>'+
        '<div class="books-row-actions"><a class="books-primary" href="n2-novel.html">📖 Đọc tiểu thuyết N2</a></div>'+
-       '<p class="books-pdf-hint" style="margin-top:10px">Đã có bản thảo Nhật–Việt cho 64 chương và đủ mã 1.160 từ. Vẫn phải hiệu đính ngữ pháp, độ tự nhiên và đối chiếu PDF trước khi gọi là sách hoàn chỉnh.</p></div></article>';
+       '<p class="books-pdf-hint" style="margin-top:10px">Đọc truyện tiếng Việt trước, có từ N2 bấm tra nghĩa; bật bản tiếng Nhật khi muốn luyện đọc. Phần ghép tự nhiên toàn bộ 1.160 từ vào câu Việt và hiệu đính Nhật ngữ vẫn chưa hoàn tất.</p></div></article>';
   }else if(booksUI.level==="N3" && booksUI.category==="vocab"){
     h+='<article class="books-panel books-book-card">'+
        '<picture class="books-cover-picture"><source type="image/avif" srcset="books/n3/vocab/khi-mat-troi-khong-con-moc.avif?v=20261103-premium 360w, books/n3/vocab/khi-mat-troi-khong-con-moc-hq.avif?v=20261103-hq 900w" sizes="(max-width:560px) 102px, 120px"><img class="books-cover-art" src="books/n3/vocab/khi-mat-troi-khong-con-moc.webp?v=20261103-fallback" width="360" height="540" alt="Bìa tiểu thuyết Khi mặt trời không còn mọc: nữ kỹ sư Kanna và thành phố AURORA dưới mặt trời nhân tạo" loading="lazy" decoding="async"></picture>'+
