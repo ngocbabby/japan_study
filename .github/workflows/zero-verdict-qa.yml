@@ -1,0 +1,51 @@
+name: Zero Verdict N2 Novel Quality Checks
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "zero-verdict*"
+      - "books/n2/vocab/ban-an-so-khong.svg"
+      - "tools/check-zero-verdict*"
+      - ".github/workflows/zero-verdict-qa.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  integrity:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Syntax-check all 8 volumes and reader
+        run: |
+          for n in 1 2 3 4 5 6 7 8; do node --check "zero-verdict-part${n}.js"; done
+          node --check zero-verdict-book.js
+          node --check zero-verdict-plan.js
+          node --check books.js
+      - name: Validate actual novel and every N2 source ID
+        run: node tools/check-zero-verdict.mjs
+  visual:
+    needs: integrity
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install browser
+        run: |
+          npm install --no-save --ignore-scripts playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Test desktop/mobile reader, chapter 64 and dictionary
+        run: node tools/check-zero-verdict-visual.mjs
+      - name: Save QA screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: zero-verdict-n2-reader-qa
+          path: zero-verdict-qa/*.png
+          if-no-files-found: warn
