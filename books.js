@@ -74,7 +74,7 @@ function booksShelf(){
   h+='<section><h2 class="books-heading">Chọn trình độ</h2><p class="books-caption">N5 → N1 · Mỗi cấp có đủ ba ngăn sách.</p></section><div class="books-grid">';
   booksLevels.forEach(function(level){
     const ready=level==="N5" || level==="N4" || level==="N3" || level==="N2";
-    h+='<button type="button" class="books-level" data-books-level="'+level+'"><span class="books-level-head"><strong>'+level+'</strong><span class="count">'+(ready?'1 cuốn sách':'Chưa có sách')+'</span></span><span>Từ vựng · Kanji · Ngữ pháp <small style="float:right">›</small></span></button>';
+    h+='<button type="button" class="books-level" data-books-level="'+level+'"><span class="books-level-head"><strong>'+level+'</strong><span class="count">'+(level==='N5'?'1 sách · 1 bản mẫu':ready?'Có sách':'Chưa có sách')+'</span></span><span>Từ vựng · Kanji · Ngữ pháp <small style="float:right">›</small></span></button>';
   });
   h+='</div>';
   return h;
@@ -83,7 +83,7 @@ function booksLevel(){
  let h='<section class="books-panel books-intro"><span class="books-pill">TỦ SÁCH '+booksUI.level+'</span><h2 class="books-heading">'+booksUI.level+' · Chọn ngăn sách</h2><p class="books-caption">Đây là khu vực đọc sách, độc lập với phần học Mất gốc và N2 đang sử dụng.</p></section>';
  h+='<section class="books-categories">';
  booksTypes.forEach(function(t){
-   let count=(booksUI.level==="N5"||booksUI.level==="N4"||booksUI.level==="N3"||booksUI.level==="N2")&&t.key==="vocab"?'1 cuốn đã thêm':'Chưa có sách';
+   let count=(booksUI.level==="N5"||booksUI.level==="N4"||booksUI.level==="N3"||booksUI.level==="N2")&&t.key==="vocab"?'1 cuốn đã thêm':(booksUI.level==="N5"&&t.key==="kanji")?'Bản chương 1 đã có':'Chưa có sách';
    h+='<button type="button" class="books-category" data-books-cat="'+t.key+'"><span class="symbol">'+t.icon+'</span><span><strong>'+booksEsc(t.name)+'</strong><p>'+booksEsc(t.desc)+' · '+count+'</p></span><span class="chev">›</span></button>';
  });
  return h+'</section>';
@@ -91,7 +91,15 @@ function booksLevel(){
 function booksCategory(){
   const typ=booksTypes.find(x=>x.key===booksUI.category);
   let h='<section><p class="section-kicker">'+booksUI.level+' / '+booksEsc(typ.name)+'</p><h2 class="books-heading">Ngăn '+booksEsc(typ.name)+'</h2><p class="books-caption">Các cuốn sách được xếp theo cấp độ và chủ đề.</p></section>';
-  if(booksUI.level==="N5" && booksUI.category==="vocab"){
+  if(booksUI.level==="N5" && booksUI.category==="kanji"){
+    h+='<article class="books-panel books-book-card">'+
+       '<img class="books-cover-art kanji-n5-book-thumb" src="books/n5/kanji/art/cover.webp" width="650" height="1108" loading="lazy" decoding="async" alt="Bìa Mật Điển Lục Giới: Yuna bên ma pháp thư và vương quốc ánh sao">'+
+       '<div><h3>Mật Điển Lục Giới — 六界の秘典</h3>'+
+       '<p>Sách thần bí tương tác: Yuna đi qua sáu thế giới, mở phong ấn Kanji bằng truyện, giải mã, câu đố và ôn tập cách quãng.</p>'+
+       '<div class="books-stat-line"><span>6 thế giới</span><span>25 bài theo PDF</span><span>123 Kanji khác nhau</span><span>Chương 1: 4 chữ đã làm</span></div>'+
+       '<div class="books-row-actions"><a class="books-primary" href="kanji-n5.html" target="_blank" rel="noopener noreferrer">✦ Mở Mật Điển Lục Giới ↗</a></div>'+
+       '<p class="books-pdf-hint" style="margin-top:10px">Bản mẫu nghệ thuật có thể chơi: chương 1 (大・小・新・古) đã có truyện, cách đọc, vẽ thử và 7 thử thách. Các chương 2–25 vẫn đang được biên soạn, chưa tính đã học.</p></div></article>';
+  }else if(booksUI.level==="N5" && booksUI.category==="vocab"){
     h+='<article class="books-panel books-book-card">'+booksCover()+
        '<div><h3>Thành phố không được quên</h3>'+
        '<p>Cuộc phiêu lưu kỳ ảo của An và Mực, lồng ghép toàn bộ từ vựng N5 theo 26 chương.</p>'+
