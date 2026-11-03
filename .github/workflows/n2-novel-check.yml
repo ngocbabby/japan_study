@@ -1,0 +1,29 @@
+name: N2 Novel Integrity
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "n2-novel*"
+      - "n2-vocab-1160.js"
+      - "tools/check-n2-novel.mjs"
+      - ".github/workflows/n2-novel-check.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  check-book:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Check N2 JavaScript syntax
+        run: |
+          node --check n2-novel-plan.js
+          node --check n2-novel-part1.js
+          node --check n2-novel.js
+          node --check books.js
+      - name: Verify vocabulary IDs, publication and in-story coverage
+        run: node tools/check-n2-novel.mjs
