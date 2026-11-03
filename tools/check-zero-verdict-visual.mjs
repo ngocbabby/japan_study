@@ -35,13 +35,18 @@ try{
   assert.equal(await page.locator('.zero-leaf').count(),4,'each chapter should have four illustrated leaves');
   assert.equal(await page.locator('.zero-leaf.is-current').count(),1,'only one leaf should be active by default');
   assert.equal(await page.locator('.zero-paragraphs p:visible').count(),2,'exactly two paragraphs on current leaf');
-  assert.ok((await page.locator('.zero-leaf-art.hero').evaluate(el=>getComputedStyle(el).backgroundImage)).includes('zero-gallery-1.webp'),'chapter painting not loaded');
+  assert.ok((await page.locator('.zero-leaf-art.hero').evaluate(el=>getComputedStyle(el).backgroundImage)).includes('zero-courtroom-interior.webp'),'chapter painting not loaded');
   assert.ok(await page.locator('.zero-dossier-terms button').first().isVisible() || device.name==='mobile','casefile sidebar is missing');
   if(device.name!=='mobile'){assert.ok(await page.locator('.zero-jacket-image img').isVisible(),'full-size jacket column missing on desktop');const j=await page.locator('.zero-jacket-image img').evaluate(async img=>{await img.decode();return [img.naturalWidth,img.naturalHeight]});assert.ok(j[0]>=540&&j[1]>=864,'sidebar art failed to load')}
 
   assert.ok(await page.locator('.zero-pinned-evidence').count()===1,'opening evidence photograph missing');
   const painted=await page.locator('.zero-leaf-art.hero').evaluate(el=>({url:getComputedStyle(el).backgroundImage,height:el.getBoundingClientRect().height}));
-  assert.ok(painted.url.includes('zero-gallery-1.webp')&&painted.height>110,'part I painting absent');
+  assert.ok(painted.url.includes('zero-courtroom-interior.webp')&&painted.height>110,'part I painting absent');
+  assert.ok(await page.locator('.zero-toc-group').count()===8,'eight collapsible story parts should be displayed');
+  assert.ok(await page.locator('.zero-investigation-card').count()===1,'pinned case dossier missing');
+  const allChapterAssets=['zero-red-lily.svg','zero-paper-aged.svg','zero-courtroom-interior.webp'];
+  for(const name of allChapterAssets){const res=await page.request.get(new URL('books/n2/vocab/'+name,url).href);assert.equal(res.status(),200,'decorative reference asset not published: '+name);}
+  assert.ok((await page.evaluate('document.documentElement.scrollWidth-innerWidth'))<3,'reference edition overflow');
   for(const p of [2,3,4,5,6,7,8]){
     const response=await page.request.get(new URL('books/n2/vocab/zero-gallery-'+p+'.webp',url).href);
     assert.equal(response.status(),200,'missing illustrated gallery image '+p);
