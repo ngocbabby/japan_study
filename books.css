@@ -100,3 +100,12 @@
   .books-reader-pdf{height:75dvh;min-height:420px;}
   .books-reader-commands{justify-content:flex-start;}
 }
+
+
+.n4-book-thumb{width:100%;aspect-ratio:2/3;display:flex;flex-direction:column;align-items:center;justify-content:space-between;text-align:center;padding:10px 5px;background:radial-gradient(circle at 63% 21%,#ca9152 0 11%,transparent 13%),linear-gradient(160deg,#0d2536,#273d4b 60%,#492726);border:2px solid #bd9b60;border-radius:9px;box-shadow:0 9px 24px #15293555;color:#f5d08d;font-family:Georgia,serif}
+.n4-book-sky{font-size:11px;letter-spacing:2px}
+.n4-book-moon{height:10px;width:70%;border-bottom:1px solid #cda265}
+.n4-book-title{font-size:clamp(15px,2.1vw,22px);font-weight:800;line-height:1.15;text-shadow:0 2px 12px #dfb57670}
+.n4-book-track{font-size:36px;filter:sepia(.65)}
+.n4-book-footer{font-size:8px;letter-spacing:.05em}
+@media(max-width:560px){.n4-book-title{font-size:14px}.n4-book-thumb{padding:8px 3px}.n4-book-track{font-size:25px}}
