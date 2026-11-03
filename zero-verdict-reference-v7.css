@@ -428,3 +428,23 @@ body:after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opac
  .zero-leaf:after{right:15px;bottom:34px;width:38px;height:38px;font-size:17px}
  .zero-leaf-art.hero .zero-scenery-vignette:before{width:14px;height:67px;top:-21px}
 }
+
+/* Final visual QA: remove excess dead vertical space; keep all copy readable. */
+@media(min-width:711px){
+ .zero-leaf{min-height:610px}
+ .zero-leaf-art.hero{height:clamp(133px,10vw,162px)}
+ .zero-leaf-art{margin-bottom:13px}
+ .zero-chapter-heading{margin-bottom:13px}
+ .zero-chapter-heading h2{margin-top:5px;margin-bottom:8px}
+ .zero-chapter-heading .zero-tagline{padding-bottom:10px}
+ .zero-dossier-terms{max-height:192px}
+ .zero-investigation-paper{min-height:175px;margin:11px 3px 8px;padding-top:15px;padding-bottom:12px}
+ .zero-investigation-photo{min-height:124px}
+ .zero-investigation-details p{font-size:9px;margin-bottom:6px;padding-bottom:4px}
+ .zero-dossier-progress .zero-progress-ring{width:99px;height:99px;margin:8px auto}
+ .zero-dossier-progress .zero-progress-ring>div{width:72px;height:72px}
+ .zero-dossier-progress .zero-progress-ring b{font-size:22px}
+}
+.zero-leaf{
+ clip-path:polygon(0 0,100% 0,100% 98.8%,98.2% 99.3%,96.7% 98.8%,94.3% 99.4%,91% 98.9%,88% 99.4%,84% 99%,81% 99.6%,76% 99.1%,72% 99.4%,66% 99%,61% 99.5%,55% 99.1%,49% 99.6%,43% 99%,37% 99.4%,31% 99%,26% 99.5%,20% 99%,15% 99.4%,10% 99.1%,6% 99.4%,2% 98.9%,0 99.1%);
+}
