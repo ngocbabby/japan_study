@@ -84,5 +84,7 @@ if(b.dataset.action==='reveal-review'){state.reviewShown=true;render();return}
 if(b.dataset.grade!==undefined){gradeReview(Number(b.dataset.grade)===1);return}
 });
 window.addEventListener('keydown',ev=>{if(state.view==='trial'&&state.answer===null&&['1','2','3','4'].includes(ev.key)){const q=state.quiz[state.step];if(q)recordAnswer(q.options[Number(ev.key)-1])}});
-const frag=decodeURIComponent(location.hash.replace(/^#/,''));const m=frag.match(/^ch-(\d+)-(story|codex|trial|review|chapters)$/);if(m){state.chapter=Math.min(25,Math.max(1,Number(m[1])));state.realm=getCh().realm;state.view=m[2];if(state.view==='trial')startQuiz()}else if(['home','worlds','review'].includes(frag)){state.view=frag}render();
+function applyHash(){const frag=decodeURIComponent(location.hash.replace(/^#/,''));const m=frag.match(/^ch-(\d+)-(story|codex|trial|review|chapters)$/);if(m){const id=Math.min(25,Math.max(1,Number(m[1])));if(state.chapter!==id){state.chapter=id;state.glyph=0;state.quiz=[];}state.realm=getCh().realm;state.view=m[2];if(state.view==='trial'&&!state.quiz.length)startQuiz();}else if(['home','worlds','review'].includes(frag)){state.view=frag;}else if(['story','codex','trial'].includes(frag)){state.view=frag;if(frag==='trial'&&!state.quiz.length)startQuiz();}render();}
+window.addEventListener('hashchange',applyHash);
+applyHash();
 })();
