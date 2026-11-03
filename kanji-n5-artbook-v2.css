@@ -7,3 +7,6 @@
 .art-border img{position:relative;inset:auto;width:auto;max-width:100%;height:auto;max-height:min(690px,90%);object-fit:contain;object-position:center;filter:none;border-radius:7px;box-shadow:0 0 46px #dba1a441}
 .art-vignette{background:linear-gradient(180deg,#10152d28,transparent 30%,#050d22a6)}
 @media(max-width:700px){.art-border img{max-width:100%;max-height:365px}}
+
+/* Mobile page edge: do not let ornamental frame create a horizontal scroll. */
+@media(max-width:700px){.reading-shell:after{left:0;right:0}.layout{overflow-x:clip}}
