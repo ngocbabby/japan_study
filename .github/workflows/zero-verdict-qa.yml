@@ -6,6 +6,7 @@ on:
       - "zero-verdict*"
       - "books/n2/vocab/ban-an-so-khong.svg"
       - "books/n2/vocab/ban-an-so-khong-deluxe.svg"
+      - "books/n2/vocab/zero-*.webp"
       - "books/n2/vocab/zero-scene-*.svg"
       - "zero-verdict-deluxe.css"
       - "tools/check-zero-verdict*"
