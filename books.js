@@ -118,6 +118,13 @@ function booksCategory(){
        '<div class="books-stat-line"><span>64/64 chương Nhật–Việt có bản thảo</span><span>1.160/1.160 mã từ trong bản thảo</span><span>Đã phân đủ 1.160 mục</span></div>'+
        '<div class="books-row-actions"><a class="books-primary" href="n2-novel.html">📖 Đọc tiểu thuyết N2</a></div>'+
        '<p class="books-pdf-hint" style="margin-top:10px">Đọc truyện tiếng Việt trước, có từ N2 bấm tra nghĩa; bật bản tiếng Nhật khi muốn luyện đọc. Phần ghép tự nhiên toàn bộ 1.160 từ vào câu Việt và hiệu đính Nhật ngữ vẫn chưa hoàn tất.</p></div></article>';
+    h+='<article class="books-panel books-book-card">'+
+       '<img class="books-cover-art" style="width:120px;height:180px;max-width:100%;object-fit:contain;border-radius:8px" src="books/n2/vocab/hai-dang-bay-vung-bien-cam.webp" width="450" height="675" alt="Bìa Hải đăng của bảy vùng biển cấm, truyện phiêu lưu kỳ ảo N2" loading="lazy" decoding="async">'+
+       '<div><h3>Hải đăng của bảy vùng biển cấm</h3>'+
+       '<p>七つの禁海の灯台 · Hoa tiêu Selene bị vu oan, buộc phải lên đường cùng hoàng tử Leon để tìm ra bí mật của bảy hải đăng.</p>'+
+       '<div class="books-stat-line"><span>Tập I · 8/64 chương có văn bản</span><span>97/1.160 mục N2 trong truyện Việt</span><span>56 chương còn dự kiến</span></div>'+
+       '<div class="books-row-actions"><a class="books-primary" href="seven-seas-book.html">📖 Đọc tiểu thuyết Hải đăng</a></div>'+
+       '<p class="books-pdf-hint" style="margin-top:10px">Truyện tiếng Việt là chính, từ Nhật được lồng vào câu và nhấn để tra. Đã lên cốt truyện 64 chương, chưa coi các chương dự kiến là đã viết.</p></div></article>';
   }else if(booksUI.level==="N3" && booksUI.category==="vocab"){
     h+='<article class="books-panel books-book-card">'+
        '<picture class="books-cover-picture"><source type="image/avif" srcset="books/n3/vocab/khi-mat-troi-khong-con-moc.avif?v=20261103-premium 360w, books/n3/vocab/khi-mat-troi-khong-con-moc-hq.avif?v=20261103-hq 900w" sizes="(max-width:560px) 102px, 120px"><img class="books-cover-art" src="books/n3/vocab/khi-mat-troi-khong-con-moc.webp?v=20261103-fallback" width="360" height="540" alt="Bìa tiểu thuyết Khi mặt trời không còn mọc: nữ kỹ sư Kanna và thành phố AURORA dưới mặt trời nhân tạo" loading="lazy" decoding="async"></picture>'+
