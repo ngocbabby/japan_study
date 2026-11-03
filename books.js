@@ -134,7 +134,7 @@ function booksCategory(){
        '<div class="books-row-actions"><a class="books-primary" href="seven-seas-book.html">📖 Đọc tiểu thuyết Hải đăng</a></div>'+
        '<p class="books-pdf-hint" style="margin-top:10px">Truyện tiếng Việt là chính, từ Nhật được lồng vào câu và nhấn để tra. Đã có truyện Việt 64 chương và đủ 1.160 mã N2 trong văn bản; vẫn cần hiệu đính tiếng Nhật, nghĩa và ngữ cảnh trước khi gọi là bản học từ cuối.</p></div></article>';
     h+='<article class="books-panel books-book-card">'+
-       '<img class="books-cover-art" style="width:120px;height:180px;max-width:100%;object-fit:contain;border-radius:8px" src="books/n2/vocab/ban-an-so-khong-deluxe.svg" width="600" height="900" alt="Bìa Bản án số không: chiếc cân công lý, đồng hồ 00:00, mười hai người" loading="lazy" decoding="async">'+
+       '<img class="books-cover-art" style="width:120px;height:180px;max-width:100%;object-fit:contain;border-radius:8px" src="books/n2/vocab/zero-cover-cinematic.webp" width="600" height="900" alt="Bìa Bản án số không: chiếc cân công lý, đồng hồ 00:00, mười hai người" loading="lazy" decoding="async">'+
        '<div><h3>Bản án số không</h3>'+
        '<p>ゼロ番の判決 · Nữ luật sư Haru bào chữa cho Kaito, người tự thú giết mười hai người vẫn còn sống. Mỗi chứng cứ mới kéo theo một sự cố thực và mở ra bí mật tầng 0.</p>'+
        '<div class="books-stat-line"><span>Đã viết 64/64 chương</span><span>1.160/1.160 mã N2 trong truyện Việt</span><span>8 phần · Trinh thám pháp lý</span></div>'+
