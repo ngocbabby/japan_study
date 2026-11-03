@@ -1,0 +1,51 @@
+name: Build Zero Verdict Illustrated Gallery
+on:
+  push:
+    branches: [main]
+    paths:
+      - "tools/zero-gallery-builder.py"
+      - ".github/workflows/zero-gallery-generate.yml"
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install Pillow
+        run: python -m pip install Pillow==11.3.0
+      - name: Generate all 8 illustrated casefile scenes
+        run: python tools/zero-gallery-builder.py
+      - name: Verify dimensions and files
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from PIL import Image
+          root = Path("books/n2/vocab")
+          files = [root/f"zero-gallery-{n}.webp" for n in range(1,9)]
+          files.append(root/"zero-cover-crisp.webp")
+          for file in files:
+              assert file.exists() and file.stat().st_size > 10000, f"Missing artwork: {file}"
+              with Image.open(file) as im:
+                  assert im.width >= 540 and im.height >= 350, f"Artwork too small: {file}"
+              print(file, file.stat().st_size)
+          PY
+      - name: Commit actual WebP artworks to main
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add books/n2/vocab/zero-gallery-*.webp books/n2/vocab/zero-cover-crisp.webp
+          if git diff --cached --quiet; then
+            echo "Artwork already current"
+          else
+            git commit -m "art(zero-verdict): publish eight cinematic chapter scenes and crisp portrait cover"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
