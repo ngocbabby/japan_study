@@ -1,0 +1,18 @@
+name: Seven Seas N2 Live Website Check
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "tools/check-seven-seas-live.sh"
+      - ".github/workflows/seven-seas-live-check.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  public:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify published N2 reader, book art, vocabulary and chapters
+        run: bash tools/check-seven-seas-live.sh
