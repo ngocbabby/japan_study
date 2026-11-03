@@ -16,9 +16,56 @@ const persist=()=>{try{localStorage.setItem(CKEY,JSON.stringify({chapter:state.c
 const top=()=>window.scrollTo({top:0,behavior:'smooth'});
 const percent=(n,d)=>d?Math.round(n/d*100):0;
 const fmt=n=>Number(n).toLocaleString('vi-VN');
-function mark(id){const w=words.get(id);if(!w)return '';
- return '<button class="n2-word" data-word="'+id+'" aria-label="Tra từ '+esc(w.jp)+' (mục '+id+')"><ruby>'+esc(w.jp)+'<rt>'+esc(w.kana)+'</rt></ruby></button>'}
-function annotated(raw){return esc(raw).replace(/⟦(\d+)⟧/g,(m,id)=>mark(Number(id)))}
+function mark(id,surface,reading){const w=words.get(id);if(!w)return '';
+ return '<button class="n2-word" data-word="'+id+'" aria-label="Tra từ '+esc(w.jp)+' (mục '+id+')"><ruby>'+esc(surface||w.jp)+'<rt>'+esc(reading||w.kana)+'</rt></ruby></button>'}
+function conjugateSurface(lemma,next){
+  if(!lemma||!next)return null;
+  const end=lemma.slice(-1),body=lemma.slice(0,-1);
+  const e=(suffix,spell,skip=suffix.length)=>next.startsWith(suffix)?{text:spell,skip}:null;
+  // When the author has included the same stem twice, remove the repeated part.
+  for(const tail of ['わせ','せ','め','れ']){
+    if(end==='る'&&lemma.endsWith(tail+'る')&&next.startsWith(tail)){
+      const rest=next.slice(tail.length);
+      if(rest.startsWith('た')||rest.startsWith('て')||rest.startsWith('る')||rest.startsWith('し')||!rest.length)
+        return {text:body+(rest.startsWith('る')?'':rest.startsWith('し')?'':rest.slice(0,1)),skip:tail.length+(rest?1:0)};
+    }
+  }
+  if(end==='う'){
+    for(const x of ['った','って','えば','い','う','わない']){const q=e(x,x==='う'?lemma:body+x);if(q)return q}
+  }
+  if(end==='く'){for(const x of ['いた','いて','く']){const q=e(x,x==='く'?lemma:body+x);if(q)return q}}
+  if(end==='ぐ'){for(const x of ['いだ','いで','ぐ']){const q=e(x,x==='ぐ'?lemma:body+x);if(q)return q}}
+  if(end==='す'){for(const x of ['した','して','す']){const q=e(x,x==='す'?lemma:body+x);if(q)return q}}
+  if('むぶぬ'.includes(end)){for(const x of ['んだ','んで']){const q=e(x,body+x);if(q)return q}}
+  if(end==='つ'){for(const x of ['った','って']){const q=e(x,body+x);if(q)return q}}
+  if(end==='る'){
+    for(const x of ['ました','ます','ない','た','て','り','れた','れ','る','そう','し']){
+      const q=e(x,x==='る'?lemma:body+x);if(q)return q
+    }
+  }
+  if(end==='い'&&lemma.endsWith('しい')&&next.startsWith('しい'))return {text:lemma,skip:2};
+  if(end==='な'&&next.startsWith('な'))return {text:lemma,skip:1};
+  return null;
+}
+function annotated(raw){
+  const re=/⟦(\d+)⟧/g;let out='',cursor=0;let m;
+  while((m=re.exec(raw))){
+    const id=Number(m[1]),w=words.get(id);if(!w)continue;
+    let before=raw.slice(cursor,m.index);
+    // Drop accidental duplicate kanji/kana prefixes: 引き + 引き返す -> 引き返す.
+    let overlap=0;for(let k=Math.min(3,before.length,w.jp.length);k>=1;k--){
+      if(before.endsWith(w.jp.slice(0,k))){overlap=k;break}
+    }
+    if(overlap)before=before.slice(0,-overlap);
+    out+=esc(before);
+    const after=raw.slice(re.lastIndex);
+    const inf=conjugateSurface(w.jp,after);
+    const kanaInf=inf?conjugateSurface(w.kana,after):null;
+    out+=mark(id,inf?.text||w.jp,kanaInf?.text||w.kana);
+    cursor=re.lastIndex+(inf?.skip||0);
+  }
+  return out+esc(raw.slice(cursor))
+}
 function nav(){let o='<h2>MỤC LỤC · 64 CHƯƠNG</h2>';for(const part of parts){o+='<div class="n2-part-head">PHẦN '+part.number+' · '+esc(part.title)+'</div>';for(const ch of chapters.filter(c=>c.part===part.number)){const ready=published.has(ch.number);o+='<button class="n2-chapter'+(state.mode==='chapter'&&state.chapter===ch.number?' active':'')+(ready?'':' pending')+'" data-chapter="'+ch.number+'" '+(state.mode==='chapter'&&state.chapter===ch.number?'aria-current="page"':'')+'><b>'+String(ch.number).padStart(2,'0')+'</b><span>'+esc(ch.title)+'</span>'+(ready?'':'<span class="padlock" title="Đang biên soạn">○</span>')+'</button>'}}return o}
 function header(){return '<header class="n2-head"><a href="./index.html">← Japan Study</a><div class="brand"><span>✧</span> NHỮNG NGÀY MAI BỊ RAO BÁN<small>明日を売る人々 · Tiểu thuyết luyện đọc N2</small></div><div class="n2-head-controls"><button class="n2-mobile" data-action="menu">☰ Chương</button><button data-mode="home">Bìa sách</button><button data-mode="index">1.160 từ</button></div></header>'}
 function cover(){return '<div class="n2-cover"><img src="books/n2/vocab/ngay-mai-bi-rao-ban.webp?v=n2book1" width="354" height="531" alt="Bìa Những ngày mai bị rao bán: Tsumugi giữ khế ước vàng kim tại thành phố đêm huyền ảo" decoding="async" loading="eager"></div>'}
