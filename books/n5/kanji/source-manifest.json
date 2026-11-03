@@ -49,7 +49,10 @@
           "pdf_page": 4
         }
       ],
-      "preview": false
+      "preview": true,
+      "story_available": true,
+      "quiz_available": true,
+      "artwork_status": "dedicated"
     },
     {
       "id": 2,
@@ -90,7 +93,10 @@
           "pdf_page": 5
         }
       ],
-      "preview": false
+      "preview": true,
+      "story_available": true,
+      "quiz_available": true,
+      "artwork_status": "shared_realm"
     },
     {
       "id": 3,
@@ -147,7 +153,10 @@
           "pdf_page": 6
         }
       ],
-      "preview": false
+      "preview": true,
+      "story_available": true,
+      "quiz_available": true,
+      "artwork_status": "shared_realm"
     },
     {
       "id": 4,
@@ -228,7 +237,10 @@
           "pdf_page": 8
         }
       ],
-      "preview": false
+      "preview": true,
+      "story_available": true,
+      "quiz_available": true,
+      "artwork_status": "shared_realm"
     },
     {
       "id": 5,
@@ -277,7 +289,10 @@
           "pdf_page": 9
         }
       ],
-      "preview": false
+      "preview": true,
+      "story_available": true,
+      "quiz_available": true,
+      "artwork_status": "shared_realm"
     },
     {
       "id": 6,
@@ -326,7 +341,10 @@
           "pdf_page": 10
         }
       ],
-      "preview": false
+      "preview": true,
+      "story_available": true,
+      "quiz_available": true,
+      "artwork_status": "shared_realm"
     },
     {
       "id": 7,
@@ -375,7 +393,10 @@
           "pdf_page": 11
         }
       ],
-      "preview": false
+      "preview": true,
+      "story_available": true,
+      "quiz_available": true,
+      "artwork_status": "shared_realm"
     },
     {
       "id": 8,
@@ -424,7 +445,10 @@
           "pdf_page": 12
         }
       ],
-      "preview": false
+      "preview": true,
+      "story_available": true,
+      "quiz_available": true,
+      "artwork_status": "shared_realm"
     },
     {
       "id": 9,
@@ -481,7 +505,10 @@
           "pdf_page": 13
         }
       ],
-      "preview": false
+      "preview": true,
+      "story_available": true,
+      "quiz_available": true,
+      "artwork_status": "shared_realm"
     },
     {
       "id": 10,
@@ -546,7 +573,10 @@
           "pdf_page": 15
         }
       ],
-      "preview": false
+      "preview": true,
+      "story_available": true,
+      "quiz_available": true,
+      "artwork_status": "shared_realm"
     },
     {
       "id": 11,
@@ -595,7 +625,10 @@
           "pdf_page": 16
         }
       ],
-      "preview": false
+      "preview": true,
+      "story_available": true,
+      "quiz_available": true,
+      "artwork_status": "shared_realm"
     },
     {
       "id": 12,
@@ -636,7 +669,10 @@
           "pdf_page": 17
         }
       ],
-      "preview": false
+      "preview": true,
+      "story_available": true,
+      "quiz_available": true,
+      "artwork_status": "shared_realm"
     },
     {
       "id": 13,
@@ -685,7 +721,10 @@
           "pdf_page": 18
         }
       ],
-      "preview": false
+      "preview": true,
+      "story_available": true,
+      "quiz_available": true,
+      "artwork_status": "shared_realm"
     },
     {
       "id": 14,
@@ -750,7 +789,10 @@
           "pdf_page": 19
         }
       ],
-      "preview": false
+      "preview": true,
+      "story_available": true,
+      "quiz_available": true,
+      "artwork_status": "shared_realm"
     },
     {
       "id": 15,
@@ -815,7 +857,10 @@
           "pdf_page": 21
         }
       ],
-      "preview": false
+      "preview": true,
+      "story_available": true,
+      "quiz_available": true,
+      "artwork_status": "shared_realm"
     },
     {
       "id": 16,
@@ -872,7 +917,10 @@
           "pdf_page": 22
         }
       ],
-      "preview": false
+      "preview": true,
+      "story_available": true,
+      "quiz_available": true,
+      "artwork_status": "shared_realm"
     },
     {
       "id": 17,
@@ -929,7 +977,10 @@
           "pdf_page": 23
         }
       ],
-      "preview": false
+      "preview": true,
+      "story_available": true,
+      "quiz_available": true,
+      "artwork_status": "shared_realm"
     },
     {
       "id": 18,
@@ -1018,7 +1069,10 @@
           "pdf_page": 26
         }
       ],
-      "preview": false
+      "preview": true,
+      "story_available": true,
+      "quiz_available": true,
+      "artwork_status": "shared_realm"
     },
     {
       "id": 19,
@@ -1059,7 +1113,10 @@
           "pdf_page": 27
         }
       ],
-      "preview": false
+      "preview": true,
+      "story_available": true,
+      "quiz_available": true,
+      "artwork_status": "shared_realm"
     },
     {
       "id": 20,
@@ -1100,7 +1157,10 @@
           "pdf_page": 28
         }
       ],
-      "preview": false
+      "preview": true,
+      "story_available": true,
+      "quiz_available": true,
+      "artwork_status": "shared_realm"
     },
     {
       "id": 21,
@@ -1149,7 +1209,10 @@
           "pdf_page": 29
         }
       ],
-      "preview": false
+      "preview": true,
+      "story_available": true,
+      "quiz_available": true,
+      "artwork_status": "shared_realm"
     },
     {
       "id": 22,
@@ -1190,7 +1253,10 @@
           "pdf_page": 29
         }
       ],
-      "preview": false
+      "preview": true,
+      "story_available": true,
+      "quiz_available": true,
+      "artwork_status": "shared_realm"
     },
     {
       "id": 23,
@@ -1231,7 +1297,10 @@
           "pdf_page": 30
         }
       ],
-      "preview": false
+      "preview": true,
+      "story_available": true,
+      "quiz_available": true,
+      "artwork_status": "shared_realm"
     },
     {
       "id": 24,
@@ -1272,7 +1341,10 @@
           "pdf_page": 31
         }
       ],
-      "preview": false
+      "preview": true,
+      "story_available": true,
+      "quiz_available": true,
+      "artwork_status": "shared_realm"
     },
     {
       "id": 25,
@@ -1313,7 +1385,18 @@
           "pdf_page": 32
         }
       ],
-      "preview": false
+      "preview": true,
+      "story_available": true,
+      "quiz_available": true,
+      "artwork_status": "shared_realm"
     }
-  ]
+  ],
+  "release": {
+    "scope": "25 chapters open",
+    "story": "25 original connected chapters",
+    "lexicon": "123 unique Kanji, 135 source rows",
+    "audio": "Browser text-to-speech",
+    "source": "On/Kun and examples from 32-page source PDF",
+    "artwork": "Chapter 1 has own image, others share six realm artworks"
+  }
 }
