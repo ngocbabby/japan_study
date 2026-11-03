@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="1080" viewBox="0 0 720 1080" role="img" aria-label="Bìa gothic Bản án số không: nữ luật sư, công lý và đồng hồ số không dưới tòa án bí ẩn">
+<defs>
+<linearGradient id="night" x1="0" x2=".8" y1="0" y2="1"><stop stop-color="#070a17"/><stop offset=".52" stop-color="#250e21"/><stop offset="1" stop-color="#0c0914"/></linearGradient>
+<radialGradient id="moon"><stop stop-color="#fff4d2"/><stop offset=".28" stop-color="#deb38d"/><stop offset=".53" stop-color="#a65555"/><stop offset="1" stop-color="#7b263b" stop-opacity="0"/></radialGradient>
+<linearGradient id="gold" x1="0" y1="0" x2=".9" y2=".9"><stop stop-color="#fbe8b8"/><stop offset=".24" stop-color="#b68347"/><stop offset=".52" stop-color="#f2d492"/><stop offset=".74" stop-color="#78502c"/><stop offset="1" stop-color="#f4d69d"/></linearGradient>
+<linearGradient id="stone" x1="0" x2=".3" y1="0" y2="1"><stop stop-color="#aca0a1"/><stop offset=".35" stop-color="#4a4355"/><stop offset=".85" stop-color="#171727"/></linearGradient>
+<linearGradient id="robe" x1="0" x2=".9" y1="0" y2="1"><stop stop-color="#472239"/><stop offset=".3" stop-color="#1f1b2e"/><stop offset=".7" stop-color="#0a0d1b"/><stop offset="1" stop-color="#15121f"/></linearGradient>
+<linearGradient id="shimmer" x1="0" y1="0" x2=".2" y2="1"><stop stop-color="#fff8d3" stop-opacity=".7"/><stop offset="1" stop-color="#bd6576" stop-opacity=".03"/></linearGradient>
+<pattern id="dust" width="52" height="62" patternUnits="userSpaceOnUse"><circle cx="8" cy="13" r=".8" fill="#eac893" opacity=".38"/><circle cx="38" cy="39" r=".7" fill="#eebf91" opacity=".26"/></pattern>
+<pattern id="marble" width="120" height="90" patternUnits="userSpaceOnUse"><path d="M10 85q30-35 53-12t48-31" stroke="#c5a383" fill="none" stroke-width="1" opacity=".13"/></pattern>
+<filter id="goldglow"><feGaussianBlur stdDeviation="2" result="g"/><feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<filter id="soft"><feGaussianBlur stdDeviation="7"/></filter>
+</defs>
+<rect width="720" height="1080" fill="url(#night)"/>
+<rect width="720" height="1080" fill="url(#dust)"/>
+<path d="M5 0H715V1080H5Z" fill="url(#marble)" opacity=".7"/>
+<!-- Hidden moon, antique astronomical dial -->
+<circle cx="460" cy="284" r="252" fill="url(#moon)" opacity=".9"/>
+<circle cx="460" cy="284" r="172" fill="#100e20" opacity=".24" stroke="#ebbb80" stroke-width="4"/>
+<circle cx="460" cy="284" r="149" fill="none" stroke="#deb079" stroke-width="2" opacity=".82"/>
+<circle cx="460" cy="284" r="132" fill="none" stroke="#e5b789" stroke-width="1" stroke-dasharray="2 11" opacity=".74"/>
+<g stroke="#f5d5a1" stroke-width="2" opacity=".62"><path d="M460 119v22m0 290v18M293 284h20m293 0h20M346 169l14 14m200 200 16 16M576 169l-16 16M360 383l-14 14"/></g>
+<g fill="#e0bd8e" font-size="25" font-family="Georgia,serif" text-anchor="middle" opacity=".78"><text x="460" y="163">XII</text><text x="609" y="293">III</text><text x="460" y="425">VI</text><text x="317" y="293">IX</text></g>
+<path d="M460 284L460 189M460 284L529 344" stroke="#f3c893" stroke-width="6" stroke-linecap="round"/>
+<circle cx="460" cy="284" r="10" fill="#ffebbd"/>
+<!-- Cursed courthouse on a hill: high relief illustration -->
+<path d="M0 555L80 528 165 542 278 472 389 503 496 485 603 523 720 492V756H0Z" fill="#0c1121"/>
+<g opacity=".92">
+<path d="M50 509L357 397 666 505 649 524H64Z" fill="#5f5260" stroke="#d5b083" stroke-width="4"/>
+<path d="M60 506L357 421 655 506Z" fill="#242233" stroke="#a98261"/>
+<path d="M326 451l34-19 35 19-35-10z" fill="#d8b082"/>
+<path d="M68 531H648V558H68Z" fill="#342d3e" stroke="#c39a6d" stroke-width="3"/>
+<path d="M100 561h52v210h-52zm94 0h52v210h-52zm94 0h52v210h-52zm94 0h52v210h-52zm94 0h52v210h-52zm94 0h52v210h-52z" fill="url(#stone)" stroke="#b99a82" stroke-width="2"/>
+<path d="M110 572h32m-32 20h32m-32 150h32m61-170h32m-32 20h32m-32 150h32m63-170h32m-32 20h32m-32 150h32m62-170h32m-32 20h32m-32 150h32m61-170h32m-32 20h32m-32 150h32m61-170h32m-32 20h32m-32 150h32" stroke="#f9dea7" opacity=".44"/>
+<path d="M80 750H640V778H80Z" fill="#433346" stroke="#c9a479" stroke-width="3"/>
+<path d="M110 778h500v38H110z" fill="#161527"/>
+</g>
+<!-- Lady Justice -->
+<g transform="translate(113 286)">
+<path d="M90 0c-23 18-26 44-20 68l-22 23 19 9-17 37 41 19 42-19-21-38 16-10-22-24C113 35 115 12 90 0" fill="#a9a2a9" stroke="#e0c2a0" stroke-width="2"/>
+<path d="M81 33q10-15 20 0v19q-10 14-20 0Z" fill="#d9b6a6"/>
+<path d="M70 60q18 5 39 0l-6 16q-13 8-25 0Z" fill="#251321"/>
+<path d="M78 76L56 104 29 178l-29 21 8 14 43-18 37-56 6 31-42 190h103l-41-189 8-31 37 56 39 15 8-15-30-22-29-71-25-27Z" fill="url(#stone)" stroke="#d7bbb0" stroke-width="2"/>
+<path d="M73 95l26 224M101 102l-15 204" stroke="#fff2de" stroke-width="3" opacity=".25"/>
+<path d="M33 167L15 23M15 23l-61 16M15 23l73 16" stroke="#e6c38f" stroke-width="3" fill="none"/>
+<path d="M-46 39l-26 55h52Z M88 39L60 94h55Z" fill="none" stroke="#f9dca3" stroke-width="3"/>
+<path d="M-78 92q32 17 64 0M57 92q32 17 64 0" stroke="#d6a16e" fill="none" stroke-width="3"/>
+<circle cx="15" cy="23" r="8" fill="#f3d9a5"/>
+<path d="M115 66L146-74" stroke="#f4dfbb" stroke-width="6"/>
+<path d="M145-74l12-13" stroke="#dfb785" stroke-width="10"/>
+</g>
+<!-- Dense red threads of evidence -->
+<g stroke="#ba3a52" fill="none" opacity=".75"><path d="M-30 667Q168 520 304 708T754 608" stroke-width="3"/><path d="M0 729Q205 648 361 787T736 691" stroke-width="1.6"/><path d="M-20 852Q181 747 386 852T743 792" stroke-width="2"/></g>
+<g fill="#ef6875" opacity=".76"><path d="M37 710q20-14 25 11-27 16-25-11z"/><path d="M612 614q27-17 37 12-33 19-37-12z"/><path d="M534 755q12-15 26-6-2 23-26 6z"/></g>
+<!-- Lawyer in foreground (silhouette) -->
+<g transform="translate(350 506)">
+<path d="M-40 72q-12-33-8-53 5-37 40-45 38 4 40 43-1 38-9 56Z" fill="#151322" stroke="#b37479" stroke-width="3"/>
+<path d="M-33 36q-24-23-8-48Q-15-47 12-33q30 15 25 49-12-16-20-24-12 19-50 44Z" fill="#090e1a" stroke="#9d4b63" stroke-width="2"/>
+<path d="M-25 72l-62 39-69 141 67 74-30 93 94 47 141-18-37-131 66-100-82-120-64-25Z" fill="url(#robe)" stroke="#b66d77" stroke-width="3"/>
+<path d="M-23 74L-3 120 21 74 39 94 4 161-45 107Z" fill="#d6bab3"/>
+<path d="M-7 119L4 161l-13 126-24-126Z" fill="#522038"/>
+<path d="M-68 142l-16 176M83 146l-19 180M-10 194L5 426" stroke="#dc8a81" opacity=".35" stroke-width="4"/>
+</g>
+<!-- Low velvet band and foil type -->
+<rect x="27" y="733" width="666" height="263" rx="4" fill="#130e1e" fill-opacity=".94"/>
+<rect x="43" y="747" width="634" height="236" fill="none" stroke="#d4a06e" stroke-width="1" opacity=".56"/>
+<path d="M114 778h148m196 0h148M114 940h148m196 0h148" stroke="#c59a68" stroke-width="1.5"/>
+<path d="M350 766l10 12-10 12-10-12Z M350 927l10 12-10 12-10-12Z" fill="none" stroke="#f1cb91" stroke-width="1.5"/>
+<text x="360" y="823" font-family="Georgia,'Times New Roman',serif" font-size="66" fill="#5d3928" text-anchor="middle" font-weight="bold" letter-spacing="4" stroke="#140e17" stroke-width="6">BẢN ÁN</text>
+<text x="360" y="820" font-family="'Noto Serif',Georgia,serif" font-size="64" fill="url(#gold)" text-anchor="middle" font-weight="bold" letter-spacing="3" filter="url(#goldglow)">BẢN ÁN</text>
+<text x="360" y="893" font-family="'Noto Serif',Georgia,serif" font-size="60" fill="url(#gold)" text-anchor="middle" font-weight="bold" letter-spacing="2">SỐ KHÔNG</text>
+<text x="360" y="921" font-family="serif" font-size="19" text-anchor="middle" fill="#e7c7ae" letter-spacing="4">ゼロ番の判決</text>
+<text x="360" y="979" font-family="Georgia,serif" font-size="14" text-anchor="middle" fill="#d6b792" letter-spacing="2">TWELVE CONFESSIONS · ZERO VERDICT</text>
+<!-- Foil bookbinding frame and seal -->
+<g stroke="url(#gold)" fill="none"><rect x="18" y="18" width="684" height="1044" rx="13" stroke-width="4"/><rect x="28" y="28" width="664" height="1024" rx="10" stroke-width="1.5"/><path d="M36 133V45h87M684 133V45h-87M36 952v87h87M684 952v87h-87" stroke-width="4"/></g>
+<g fill="none" stroke="#f4c38a" stroke-width="2.5" opacity=".85">
+<path d="M44 91q21-46 44-23t-23 41q-6-24 22-28M676 91q-21-46-44-23t23 41q6-24-22-28"/>
+<path d="M44 991q21 46 44 23t-23-41q-6 24 22 28M676 991q-21 46-44 23t23-41q6 24-22 28"/>
+</g>
+<circle cx="360" cy="1030" r="24" fill="#672233" stroke="url(#gold)" stroke-width="3"/>
+<circle cx="360" cy="1030" r="17" fill="none" stroke="#e9b580"/>
+<text x="360" y="1038" fill="#f4d79c" font-family="Georgia,serif" font-size="25" text-anchor="middle">0</text>
+</svg>
