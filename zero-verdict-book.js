@@ -51,6 +51,18 @@ return '<div class="zero-reader-head"><div class="zero-reader-eyebrow">⌁ DOSSI
 '<div class="zero-next"><button data-chapter="'+(ch.number-1)+'" '+(ch.number===1?'disabled':'')+'>← Chương trước</button><button data-action="readDone">'+(state.progress.has(ch.number)?'✓ Đã đánh dấu đọc':'Đánh dấu đã đọc')+'</button>'+(chapters.has(ch.number+1)?'<button class="zero-primary" data-chapter="'+(ch.number+1)+'">Chương sau →</button>':'<button class="zero-secondary" data-view="home">Về mục lục</button>')+'</div>'+
 '<details class="zero-glossary"><summary>✦ Sổ tay từ vựng chương '+ch.number+' · '+ids.length+' mục</summary><p>Nhấn vào chữ Nhật để đọc furigana và nghĩa. Việc xem từ không tự đánh dấu đã thuộc.</p><div class="zero-wordgrid">'+ids.map(id=>{const w=words.get(id);return '<button data-word="'+id+'">#'+id+' · '+esc(w.jp)+' <small>'+esc(w.vi)+'</small></button>'}).join('')+'</div></details>';
 }
+function jacket(){
+if(state.view!=='chapter')return '';
+const n=state.chapter, part=meta.parts[plan.chapters[n-1].part-1];
+return '<aside class="zero-jacket-column" aria-label="Bìa tiểu thuyết và thông tin sách">'+
+'<div class="zero-jacket-frame"><div class="zero-jacket-image"><img src="'+cover+'" alt="Bìa Bản án số không" width="260" height="414" decoding="async"></div>'+
+'<div class="zero-jacket-info"><div class="zero-jacket-arc">✦ ZE·RO·VER·DICT ✦</div>'+
+'<h2>Bản án số không</h2><p class="zero-jacket-jp">ゼロ番の判決</p>'+
+'<div class="zero-jacket-genre">TRINH THÁM <span>✦</span> PHÁP LÝ <span>✦</span> BÍ ẨN</div>'+
+'<div class="zero-jacket-facts"><span>⚖ <strong>64 chương</strong> / 8 phần</span><span>⌑ <strong>1.160 mục từ</strong> JLPT N2</span><span>◷ <strong>00:00</strong> · Bí mật của ZERO</span></div>'+
+'<blockquote>“Liệu có thể kết tội một người vì những tội ác chưa xảy ra?”</blockquote>'+
+'<div class="zero-jacket-deco" aria-hidden="true"><span>✧</span><span>⚖</span><span>✧</span></div>'+
+'<button class="zero-jacket-first" data-chapter="1">Mở vụ án từ đầu →</button></div></div></aside>';}
 function dossier(){if(state.view!=='chapter')return '';const ch=chapters.get(state.chapter);if(!ch)return '';
 const selected=ch.paragraphs.slice(state.flow?0:state.leaf*2,state.flow?ch.paragraphs.length:state.leaf*2+2);
 const shown=new Set(selected.flatMap(p=>[...p.matchAll(/⟦(\d+)\|[^⟧]+⟧/g)].map(m=>Number(m[1]))));
@@ -66,7 +78,7 @@ function dictionary(id){const w=words.get(id);if(!w)return '';const current=used
 function render(preserve=false){const y=window.scrollY;
 root.innerHTML='<header class="zero-top"><a href="./index.html">← <span>Japan Study</span></a><div class="zero-brand-lockup"><span class="zero-brand-symbol">⚖</span><div><strong>BẢN ÁN SỐ KHÔNG</strong><small>ゼロ番の判決 · TIỂU THUYẾT TỪ VỰNG N2</small></div></div><button class="zero-menu" data-action="menu" aria-label="Mở mục lục" aria-expanded="'+state.menu+'">☰ Chương</button></header>'+
 '<div class="zero-breadcrumb">JAPAN STUDY <span>✦</span> SÁCH <span>✦</span> N2 / TỪ VỰNG <span>✦</span> <b>ZERO VERDICT</b></div>'+
-'<div class="zero-layout'+(state.view==='chapter'?' is-reading':'')+'"><aside class="zero-sidebar '+(state.menu?'open':'')+'"><div class="zero-spine-card"><img src="'+cover+'" width="70" height="105" alt="Bìa Bản án số không"><div><strong>BẢN ÁN SỐ KHÔNG</strong><span>64 CHƯƠNG · 8 PHẦN</span><span>1.160 MỤC JLPT N2</span></div></div><nav aria-label="Mục lục tiểu thuyết">'+toc()+'</nav><div class="zero-side-links"><button data-view="home">⌂ Bìa sách</button><button data-view="world">⚖ Hồ sơ vụ án</button><button data-view="vocab">⌕ Từ điển 1.160</button></div></aside><main class="zero-main">'+(state.view==='chapter'?chapter():state.view==='world'?world():state.view==='vocab'?vocab():home())+'</main>'+dossier()+'</div>'+
+'<div class="zero-layout'+(state.view==='chapter'?' is-reading':'')+'">'+jacket()+'<aside class="zero-sidebar '+(state.menu?'open':'')+'"><div class="zero-spine-card"><img src="'+cover+'" width="70" height="105" alt="Bìa Bản án số không"><div><strong>BẢN ÁN SỐ KHÔNG</strong><span>64 CHƯƠNG · 8 PHẦN</span><span>1.160 MỤC JLPT N2</span></div></div><nav aria-label="Mục lục tiểu thuyết">'+toc()+'</nav><div class="zero-side-links"><button data-view="home">⌂ Bìa sách</button><button data-view="world">⚖ Hồ sơ vụ án</button><button data-view="vocab">⌕ Từ điển 1.160</button></div></aside><main class="zero-main">'+(state.view==='chapter'?chapter():state.view==='world'?world():state.view==='vocab'?vocab():home())+'</main>'+dossier()+'</div>'+
 '<footer class="zero-footer">JAPAN STUDY · BẢN THẢO 64 CHƯƠNG / 1.160 MÃ N2. Cần hiệu đính thủ công cách dùng và đối chiếu nguồn PDF.</footer>'+(state.modal?dictionary(state.modal):'');
  if(preserve){window.scrollTo(0,y)}else window.scrollTo({top:0,behavior:'auto'});
 }
