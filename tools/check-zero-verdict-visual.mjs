@@ -22,7 +22,7 @@ try{
   await page.goto(url,{waitUntil:'load'});
   await page.locator('.zero-cover').waitFor();
   const cover=await page.locator('.zero-cover').evaluate(async img=>{await img.decode();const r=img.getBoundingClientRect();return {w:img.naturalWidth,h:img.naturalHeight,rectW:r.width,rectH:r.height,overflow:document.documentElement.scrollWidth-innerWidth}});
-  assert.ok(cover.w>=180&&cover.h>=290,'illustrated real cover missing');
+  assert.ok(cover.w>=540&&cover.h>=864,'high-DPI illustrated real cover missing');
   assert.ok(Math.abs(cover.rectH/cover.rectW-cover.h/cover.w)<.05,'cover distorted');
   assert.ok(cover.overflow<3,'home scroll overflow');
   assert.ok((await page.locator('.zero-hero').innerText()).includes('Bản án số không'));
@@ -35,11 +35,19 @@ try{
   assert.equal(await page.locator('.zero-leaf').count(),4,'each chapter should have four illustrated leaves');
   assert.equal(await page.locator('.zero-leaf.is-current').count(),1,'only one leaf should be active by default');
   assert.equal(await page.locator('.zero-paragraphs p:visible').count(),2,'exactly two paragraphs on current leaf');
-  assert.ok((await page.locator('.zero-leaf-art.hero').evaluate(el=>getComputedStyle(el).backgroundImage)).includes('zero-courtroom-interior.webp'),'chapter painting not loaded');
+  assert.ok((await page.locator('.zero-leaf-art.hero').evaluate(el=>getComputedStyle(el).backgroundImage)).includes('zero-gallery-1.webp'),'chapter painting not loaded');
   assert.ok(await page.locator('.zero-dossier-terms button').first().isVisible() || device.name==='mobile','casefile sidebar is missing');
-  if(device.name!=='mobile'){assert.ok(await page.locator('.zero-jacket-image img').isVisible(),'full-size jacket column missing on desktop');const j=await page.locator('.zero-jacket-image img').evaluate(async img=>{await img.decode();return [img.naturalWidth,img.naturalHeight]});assert.ok(j[0]>=180&&j[1]>=290,'sidebar art failed to load')}
+  if(device.name!=='mobile'){assert.ok(await page.locator('.zero-jacket-image img').isVisible(),'full-size jacket column missing on desktop');const j=await page.locator('.zero-jacket-image img').evaluate(async img=>{await img.decode();return [img.naturalWidth,img.naturalHeight]});assert.ok(j[0]>=540&&j[1]>=864,'sidebar art failed to load')}
 
   assert.ok(await page.locator('.zero-pinned-evidence').count()===1,'opening evidence photograph missing');
+  const painted=await page.locator('.zero-leaf-art.hero').evaluate(el=>({url:getComputedStyle(el).backgroundImage,height:el.getBoundingClientRect().height}));
+  assert.ok(painted.url.includes('zero-gallery-1.webp')&&painted.height>110,'part I painting absent');
+  for(const p of [2,3,4,5,6,7,8]){
+    const response=await page.request.get(new URL('books/n2/vocab/zero-gallery-'+p+'.webp',url).href);
+    assert.equal(response.status(),200,'missing illustrated gallery image '+p);
+    const bytes=await response.body();
+    assert.ok(bytes.length>20000,'low-quality illustrated part '+p);
+  }
   await page.screenshot({path:path.join(out,device.name+'-chapter1-opening-viewport.png'),fullPage:false});
   await page.locator('.zero-jp').first().click();
   assert.ok(await page.locator('.zero-dictionary').isVisible(),'Japanese glossary modal missing');
