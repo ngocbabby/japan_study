@@ -115,9 +115,9 @@ function booksCategory(){
        '<img class="books-cover-art" src="books/n3/vocab/cover.svg" width="707" height="1024" alt="Bìa Khi mặt trời không còn mọc, thành phố AURORA, mặt trời nhân tạo" loading="lazy">'+
        '<div><h3>Khi mặt trời không còn mọc</h3>'+
        '<p>朝が来ない街 · Kanna và bí ẩn thành phố AURORA, sci-fi sinh tồn tâm lý.</p>'+
-       '<div class="books-stat-line"><span>5 phần · 40 chương dự kiến</span><span>Đọc trực tiếp trên website</span></div>'+
+       '<div class="books-stat-line"><span>40 chương đã viết</span><span>69/880 mục từ đã đối chiếu</span></div>'+
        '<div class="books-row-actions"><a class="books-primary" href="n3-book.html">📖 Đọc tiểu thuyết N3</a></div>'+
-       '<p class="books-pdf-hint" style="margin-top:10px">Đang cập nhật nội dung; từ vựng được kiểm tra theo tài liệu Mimikara N3.</p></div></article>';
+       '<p class="books-pdf-hint" style="margin-top:10px">Cốt truyện 40 chương đã hoàn thiện. Đang kiểm tra tiếp từ vựng theo bản scan Mimikara N3.</p></div></article>';
   }else{
     h+='<div class="books-panel books-empty"><div class="symbol">📖</div><strong>Ngăn này đang trống</strong><p>Đã tạo sẵn '+booksUI.level+' / '+booksEsc(typ.name)+'. Khi có tài liệu, sách sẽ xuất hiện tại đây.</p></div>';
   }
