@@ -196,3 +196,15 @@ body:before{content:"";position:fixed;z-index:-2;inset:0;background:radial-gradi
 .side-portrait>div{bottom:11px;left:9px;right:9px;text-align:center}
 .realm-art{aspect-ratio:auto;height:100%;min-height:194px}
 @media(max-width:650px){.realm-art{min-height:178px}}
+
+
+/* Chapter illustration: render the real master crop, never the old upscaled collage thumbnail. */
+.story-art img{
+  display:block;width:100%;height:100%;
+  object-fit:cover;object-position:51% 50%;
+  image-rendering:auto;
+  filter:none;
+}
+.story-art:after{background:linear-gradient(180deg,transparent 67%,rgba(5,13,35,.63))}
+.story-art span{font-size:12px;letter-spacing:.025em;text-shadow:0 2px 6px #000,0 0 9px #0009}
+@media(min-width:651px){.story-art{min-height:740px}}
