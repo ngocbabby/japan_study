@@ -103,7 +103,7 @@ function stationSvg(){
 function cover(){
   // Use the approved illustrated cover artwork rather than the old placeholder SVG.
   return '<section class="cover-page cover-page--approved" aria-label="Bìa tiểu thuyết Hồ Sơ Ga Cuối">'+
-    '<img class="cover-art" src="books/n4/vocab/ho-so-ga-cuoi-n4-cover.avif" width="600" height="900" alt="Hồ Sơ Ga Cuối — cô gái cầm hồ sơ giữa sân ga Kyoto mưa đêm, đoàn tàu và đồng hồ, bìa minh họa màu xanh đêm và vàng đồng" decoding="async" fetchpriority="high">'+
+    '<img class="cover-art" src="books/n4/vocab/ho-so-ga-cuoi-n4-cover-hq.avif" width="600" height="900" alt="Hồ Sơ Ga Cuối — cô gái cầm hồ sơ giữa sân ga Kyoto mưa đêm, đoàn tàu và đồng hồ, bìa minh họa màu xanh đêm và vàng đồng" decoding="async" fetchpriority="high">'+
     '</section>';
 }
 function intro(){
