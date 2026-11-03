@@ -11,7 +11,12 @@ try {
   const page = await browser.newPage({ viewport: {width: 1060, height: 1250}, deviceScaleFactor:1 });
   page.on("pageerror",err=>{console.error("Page error:",err);process.exitCode=1;});
   await page.goto(pathToFileURL(input).href, {waitUntil:"domcontentloaded", timeout:60000});
-  await page.waitForFunction(()=>window.N4_BOOK_READY===true, { timeout:30000 });
+  await page.waitForFunction(()=>window.N4_BOOK_READY===true, undefined, { timeout:30000 });
+  // Wait for the illustrated cover bytes before exporting to avoid a blank first page.
+  await page.waitForFunction(()=>{
+    const art=document.querySelector('.cover-page--approved .cover-art');
+    return !!art && art.complete && art.naturalWidth>=400;
+  }, undefined, { timeout:60000 });
   const status=await page.evaluate(()=>({
     chapterCount:document.querySelectorAll(".chapter").length,
     wordCount:document.querySelectorAll(".word").length,
