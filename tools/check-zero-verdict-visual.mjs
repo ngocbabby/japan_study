@@ -39,6 +39,8 @@ try{
   assert.ok(await page.locator('.zero-dossier-terms button').first().isVisible() || device.name==='mobile','casefile sidebar is missing');
   if(device.name!=='mobile'){assert.ok(await page.locator('.zero-jacket-image img').isVisible(),'full-size jacket column missing on desktop');const j=await page.locator('.zero-jacket-image img').evaluate(async img=>{await img.decode();return [img.naturalWidth,img.naturalHeight]});assert.ok(j[0]>=180&&j[1]>=290,'sidebar art failed to load')}
 
+  assert.ok(await page.locator('.zero-pinned-evidence').count()===1,'opening evidence photograph missing');
+  await page.screenshot({path:path.join(out,device.name+'-chapter1-opening-viewport.png'),fullPage:false});
   await page.locator('.zero-jp').first().click();
   assert.ok(await page.locator('.zero-dictionary').isVisible(),'Japanese glossary modal missing');
   assert.equal(await page.locator('.zero-dictionary h2').innerText(),'人生');
