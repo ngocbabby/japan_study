@@ -12,7 +12,7 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const asset=s=>'books/n5/kanji/art/'+s+'.webp';
 const knownCount=()=>Object.keys(saved.known||{}).filter(k=>saved.known[k]).length;
 const persist=()=>{try{localStorage.setItem(KEY,JSON.stringify(saved))}catch{}};
-const scrollTop=()=>{window.scrollTo({top:0,behavior:'smooth'})};
+const scrollTop=()=>{window.scrollTo(0,0)};
 function pronounce(text){if(saved.muted){toast('Đã tắt phát âm. Bấm biểu tượng ♫ ở góc phải để bật lại.');return}
  if(!('speechSynthesis' in window)){toast('Trình duyệt này chưa hỗ trợ đọc tiếng Nhật.');return}
  window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='ja-JP';u.rate=.78;u.pitch=1.04;window.speechSynthesis.speak(u);
@@ -35,7 +35,7 @@ ${heading('Nghi thức học thông minh','Từng bước đi đều có ý ngh�
 ${heading('Lộ trình 25 chương','Hiện chỉ chương 01 có nội dung và thử thách')}${chapterList(true)}
 <div class="notice" style="margin-top:17px"><strong>Đã đối chiếu bản gốc:</strong> PDF Kanji N5 có 32 trang, 135 lượt liệt kê trong 25 bài, tương ứng 123 chữ Kanji khác nhau (12 lượt lặp). Tài liệu và cách đọc của chương 1 bám trang 4; truyện, hình và mẹo ghi nhớ là sáng tác mới. Không đánh dấu các bài chưa làm là đã học.</div>
 `}
-function chapterList(short=false){let rows=chapters;return `<div class="chapter-list">${rows.map(x=>`<button class="chapter-row ${x.available?'':'locked'}" ${x.available?'data-view="story"':'disabled title="Chưa phát hành"'}><span>0${x.id<10?x.id:x.id}</span><div style="flex:1"><b>${x.id===1?'Cánh cửa của bốn chữ ấn':'Giải mã bài '+x.lesson+' · Giới '+x.realm}</b><div class="small">${esc(x.characters.join(' · '))} · ${x.count} chữ theo tài liệu</div></div><span class="small">${x.available?'MỞ →':'🔒'}</span></button>`).join('')}</div>`}
+function chapterList(short=false){let rows=chapters;return `<div class="chapter-list">${rows.map(x=>`<button class="chapter-row ${x.available?'':'locked'}" ${x.available?'data-view="story"':'disabled title="Chưa phát hành"'}><span>${String(x.id).padStart(2,'0')}</span><div style="flex:1"><b>${x.id===1?'Cánh cửa của bốn chữ ấn':'Giải mã bài '+x.lesson+' · Giới '+x.realm}</b><div class="small">${esc(x.characters.join(' · '))} · ${x.count} chữ theo tài liệu</div></div><span class="small">${x.available?'MỞ →':'🔒'}</span></button>`).join('')}</div>`}
 function worlds(){return `<div class="chapter-banner"><img src="${asset('grimoire')}" alt="Cuốn ma pháp thư lơ lửng trong đại thư viện huyền bí" width="930" height="800"><div class="chapter-banner-text"><div class="eyebrow">BẢN ĐỒ SÁU THẾ GIỚI</div><h1>Lục giới đang chờ<br>người giải phong ấn</h1><p>Mỗi giới tương ứng một chuyên đề trong file Kanji N5. Phần lớn cánh cổng vẫn ngủ yên — chỉ Điện Gương Sơ Khai đã có chương học hoàn chỉnh.</p></div></div>
 ${heading('Bản đồ phong ấn','Nhấn vào Điện Gương để bắt đầu')}${realmCards()}
 ${heading('25 cánh cổng ký tự','Toàn bộ phân theo thứ tự nguồn PDF')}${chapterList()}
