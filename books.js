@@ -112,7 +112,7 @@ function booksCategory(){
        '</div></article>';
   }else if(booksUI.level==="N3" && booksUI.category==="vocab"){
     h+='<article class="books-panel books-book-card">'+
-       '<img class="books-cover-art" src="books/n3/vocab/cover.svg" width="707" height="1024" alt="Bìa Khi mặt trời không còn mọc, thành phố AURORA, mặt trời nhân tạo" loading="lazy">'+
+       '<picture class="books-cover-picture"><source type="image/avif" srcset="books/n3/vocab/khi-mat-troi-khong-con-moc.avif?v=20261103-premium"><img class="books-cover-art" src="books/n3/vocab/cover.svg" width="360" height="540" alt="Bìa tiểu thuyết Khi mặt trời không còn mọc: nữ kỹ sư Kanna và thành phố AURORA dưới mặt trời nhân tạo" loading="lazy" decoding="async"></picture>'+
        '<div><h3>Khi mặt trời không còn mọc</h3>'+
        '<p>朝が来ない街 · Kanna và bí ẩn thành phố AURORA, sci-fi sinh tồn tâm lý.</p>'+
        '<div class="books-stat-line"><span>40 chương đã viết</span><span>69/879 mục từ đã đối chiếu</span></div>'+
