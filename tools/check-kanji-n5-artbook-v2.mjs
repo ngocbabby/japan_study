@@ -21,6 +21,11 @@ try {
    assert.equal(await page.locator("#glyphBig").innerText(),"古");
    await page.locator("#glyphModal .modal-close").click();
    await page.locator("#nextChapter").click();
+   assert.equal(await page.locator("#chapterTitle").innerText(),"Cánh cửa của bốn chữ ấn");
+   assert.match(await page.locator("#pageNumber").innerText(),/TRANG 2\/3/);
+   await page.locator("#nextChapter").click();
+   assert.match(await page.locator("#pageNumber").innerText(),/TRANG 3\/3/);
+   await page.locator("#nextChapter").click();
    assert.equal(await page.locator("#chapterTitle").innerText(),"Ngọn tháp cao và chiếc chuông im lặng");
    await page.screenshot({path:dir+"/"+label+"-chapter2.png",fullPage:true});
    await page.locator("#startChallenge").click();
