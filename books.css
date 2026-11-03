@@ -142,3 +142,11 @@
   border-radius:0;
   box-shadow:none;
 }
+
+
+/* Mật Điển Lục Giới: preserve the original illustrated Kanji N5 grimoire cover. */
+.books-book-card .kanji-n5-book-thumb{
+  display:block;width:100%;height:auto;aspect-ratio:2/3;object-fit:contain;
+  background:#10162c;border:1px solid #d4a56b;border-radius:9px;
+  box-shadow:0 12px 26px #0f123f55;
+}
