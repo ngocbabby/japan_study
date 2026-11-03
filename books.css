@@ -81,3 +81,22 @@
   .books-reader-nav{gap:5px}
   .books-reader-nav button{padding:10px 7px;font-size:12px}
 }
+
+/* N5 original-edition PDF: preserve the actual cover and page layouts. */
+.books-cover-art{
+  display:block;width:100%;height:auto;aspect-ratio:2/3;object-fit:cover;
+  border-radius:9px;border:1px solid #bd9a57;
+  box-shadow:0 9px 24px rgba(18,34,46,.25);
+}
+.books-row-actions a.books-secondary,.books-reader-commands a{
+  display:inline-flex;justify-content:center;align-items:center;
+  text-align:center;text-decoration:none;line-height:1.5;
+}
+.books-reader-pdf-panel{padding:8px;background:#fff;}
+.books-reader-pdf{display:block;width:100%;height:75vh;min-height:550px;border:0;border-radius:8px;}
+.books-pdf-hint a{color:#17627c;font-weight:750;text-decoration:underline;}
+@media (max-width:560px){
+  .books-reader-pdf-panel{padding:4px;}
+  .books-reader-pdf{height:75dvh;min-height:420px;}
+  .books-reader-commands{justify-content:flex-start;}
+}
