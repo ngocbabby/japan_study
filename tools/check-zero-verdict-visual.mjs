@@ -16,7 +16,7 @@ await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
 const url='http://127.0.0.1:'+server.address().port+'/zero-verdict-book.html';let browser;
 try{
  browser=await chromium.launch({headless:true,args:['--no-sandbox','--disable-dev-shm-usage']});
- for(const device of [{name:'desktop',width:1440,height:900},{name:'mobile',width:390,height:844}]){
+ for(const device of [{name:'wide',width:1748,height:900},{name:'desktop',width:1440,height:900},{name:'mobile',width:390,height:844}]){
   const page=await browser.newPage({viewport:{width:device.width,height:device.height},deviceScaleFactor:1});
   const errors=[];page.on('pageerror',e=>errors.push(String(e)));
   await page.goto(url,{waitUntil:'load'});
@@ -37,7 +37,7 @@ try{
   assert.equal(await page.locator('.zero-paragraphs p:visible').count(),2,'exactly two paragraphs on current leaf');
   assert.ok((await page.locator('.zero-leaf-art.hero').evaluate(el=>getComputedStyle(el).backgroundImage)).includes('zero-courtroom-interior.webp'),'chapter painting not loaded');
   assert.ok(await page.locator('.zero-dossier-terms button').first().isVisible() || device.name==='mobile','casefile sidebar is missing');
-  if(device.name==='desktop')assert.ok(await page.locator('.zero-jacket-image img').isVisible(),'full-size jacket column missing on desktop');
+  if(device.name!=='mobile'){assert.ok(await page.locator('.zero-jacket-image img').isVisible(),'full-size jacket column missing on desktop');const j=await page.locator('.zero-jacket-image img').evaluate(async img=>{await img.decode();return [img.naturalWidth,img.naturalHeight]});assert.ok(j[0]>=180&&j[1]>=290,'sidebar art failed to load')}
 
   await page.locator('.zero-jp').first().click();
   assert.ok(await page.locator('.zero-dictionary').isVisible(),'Japanese glossary modal missing');
@@ -53,6 +53,7 @@ try{
   assert.ok((await page.evaluate('document.documentElement.scrollWidth-innerWidth'))<3,'chapter has horizontal overflow');
 
   await page.screenshot({path:path.join(out,device.name+'-chapter1.png'),fullPage:true});
+  await page.screenshot({path:path.join(out,device.name+'-chapter1-viewport.png'),fullPage:false});
   await page.goto(url+'?qa=final#chapter-64',{waitUntil:'load'});
   assert.equal(await page.locator('.zero-paper h2').innerText(),'Khi đồng hồ chỉ 00:01');
   assert.ok((await page.locator('.zero-paragraphs p').count())>=8);
