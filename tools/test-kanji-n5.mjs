@@ -16,6 +16,12 @@ const context={window:{}};
 vm.runInNewContext(fs.readFileSync("kanji-n5-data.js","utf8"),context);
 assert.equal(context.window.JAPAN_KANJI_N5.characters.length,4);
 assert.equal(context.window.JAPAN_KANJI_N5.chapters.length,25);
+for(const chapter of context.window.JAPAN_KANJI_N5.chapters.filter(x=>x.available)){
+ assert.ok(chapter.art,"Published chapter "+chapter.id+" is missing original illustration");
+ const artFile=path.join(root,"books","n5","kanji","art",chapter.art+".webp");
+ assert.ok(fs.existsSync(artFile),"Missing source art for published chapter "+chapter.id);
+ assert.ok(fs.statSync(artFile).size>180000,"Published chapter art too compressed or low-quality: "+chapter.id);
+}
 const browser=await chromium.launch({headless:true,args:["--no-sandbox"]});
 // Reject the old blurry banners: six portrait assets must be present at useful resolution.
 for(let n=1;n<=6;n++){
@@ -57,6 +63,14 @@ try {
   await page.screenshot({path:path.join(output,label+"-home.png"),fullPage:true});
   await page.locator('.hero button[data-view="story"]').click();
   assert.equal(await page.locator(".story-spread").count(),1);
+  const storyImage=await page.locator(".story-art img").evaluate(async img=>{
+    await img.decode();const r=img.getBoundingClientRect();
+    return {src:img.currentSrc,naturalWidth:img.naturalWidth,naturalHeight:img.naturalHeight,cssWidth:r.width,cssHeight:r.height};
+  });
+  assert.ok(storyImage.src.includes("story-hd.webp"),"Blurry old chapter picture still used");
+  assert.ok(storyImage.naturalWidth>=700&&storyImage.naturalHeight>=700,"Chapter art lacks native detail");
+  assert.ok(storyImage.naturalHeight>=Math.min(storyImage.cssHeight,800)*0.85,"Chapter art is being grossly upscaled");
+  console.log("STORY ART",label,JSON.stringify(storyImage));
   assert.ok((await page.locator(".story-inline-kanji").count())>=4,"Story should link Kanji");
   await page.screenshot({path:path.join(output,label+"-story.png"),fullPage:true});
   await page.locator('button[data-kanji="古"]').first().click();
