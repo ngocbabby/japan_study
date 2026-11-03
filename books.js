@@ -73,7 +73,7 @@ function booksShelf(){
   let h='<section class="books-panel books-intro"><span class="books-pill">THƯ VIỆN NHẬT NGỮ</span><h2 class="books-heading">📚 Sách của tui</h2><p class="books-caption">Một tủ sách cho mọi cấp JLPT. Chọn cấp độ để mở Từ vựng, Kanji hoặc Ngữ pháp.</p></section>';
   h+='<section><h2 class="books-heading">Chọn trình độ</h2><p class="books-caption">N5 → N1 · Mỗi cấp có đủ ba ngăn sách.</p></section><div class="books-grid">';
   booksLevels.forEach(function(level){
-    const ready=level==="N5" || level==="N4" || level==="N3";
+    const ready=level==="N5" || level==="N4" || level==="N3" || level==="N2";
     h+='<button type="button" class="books-level" data-books-level="'+level+'"><span class="books-level-head"><strong>'+level+'</strong><span class="count">'+(ready?'1 cuốn sách':'Chưa có sách')+'</span></span><span>Từ vựng · Kanji · Ngữ pháp <small style="float:right">›</small></span></button>';
   });
   h+='</div>';
@@ -83,7 +83,7 @@ function booksLevel(){
  let h='<section class="books-panel books-intro"><span class="books-pill">TỦ SÁCH '+booksUI.level+'</span><h2 class="books-heading">'+booksUI.level+' · Chọn ngăn sách</h2><p class="books-caption">Đây là khu vực đọc sách, độc lập với phần học Mất gốc và N2 đang sử dụng.</p></section>';
  h+='<section class="books-categories">';
  booksTypes.forEach(function(t){
-   let count=(booksUI.level==="N5"||booksUI.level==="N4"||booksUI.level==="N3")&&t.key==="vocab"?'1 cuốn đã thêm':'Chưa có sách';
+   let count=(booksUI.level==="N5"||booksUI.level==="N4"||booksUI.level==="N3"||booksUI.level==="N2")&&t.key==="vocab"?'1 cuốn đã thêm':'Chưa có sách';
    h+='<button type="button" class="books-category" data-books-cat="'+t.key+'"><span class="symbol">'+t.icon+'</span><span><strong>'+booksEsc(t.name)+'</strong><p>'+booksEsc(t.desc)+' · '+count+'</p></span><span class="chev">›</span></button>';
  });
  return h+'</section>';
@@ -110,6 +110,14 @@ function booksCategory(){
        '<a class="books-secondary" href="books/n4/vocab/ho-so-ga-cuoi-n4.pdf" target="_blank" rel="noopener noreferrer">Mở PDF N4 ↗</a></div>'+
        '<p class="books-pdf-hint" style="margin-top:10px">Đọc truyện trực tiếp trên website hoặc mở bản PDF khổ sách. Giữ nguyên 623 mục và 34 ngày từ tệp N4.</p>'+
        '</div></article>';
+  }else if(booksUI.level==="N2" && booksUI.category==="vocab"){
+    h+='<article class="books-panel books-book-card">'+
+       '<img class="books-cover-art" style="width:120px;height:180px;max-width:100%;object-fit:contain;border-radius:8px;" src="books/n2/vocab/ngay-mai-bi-rao-ban.webp" width="354" height="531" alt="Bìa Những ngày mai bị rao bán — Tsumugi và khế ước vàng kim giữa thành phố huyền ảo" loading="lazy">'+
+       '<div><h3>Những ngày mai bị rao bán</h3>'+
+       '<p>明日を売る人々 · Dark fantasy, bí ẩn, tâm lý và đấu trí: Tsumugi lần theo hợp đồng bán tương lai của 48.000 người.</p>'+
+       '<div class="books-stat-line"><span>8/64 chương Nhật–Việt đã viết</span><span>145/1.160 mục từ trong truyện</span><span>Đã phân đủ 1.160 mục</span></div>'+
+       '<div class="books-row-actions"><a class="books-primary" href="n2-novel.html">📖 Đọc tiểu thuyết N2</a></div>'+
+       '<p class="books-pdf-hint" style="margin-top:10px">Phần I đã có nội dung; chương 9–64 đang biên soạn. Danh sách 1.160 mục có thể tra cứu, nhưng chỉ 145 mục đã được lồng vào truyện.</p></div></article>';
   }else if(booksUI.level==="N3" && booksUI.category==="vocab"){
     h+='<article class="books-panel books-book-card">'+
        '<picture class="books-cover-picture"><source type="image/avif" srcset="books/n3/vocab/khi-mat-troi-khong-con-moc.avif?v=20261103-premium 360w, books/n3/vocab/khi-mat-troi-khong-con-moc-hq.avif?v=20261103-hq 900w" sizes="(max-width:560px) 102px, 120px"><img class="books-cover-art" src="books/n3/vocab/khi-mat-troi-khong-con-moc.webp?v=20261103-fallback" width="360" height="540" alt="Bìa tiểu thuyết Khi mặt trời không còn mọc: nữ kỹ sư Kanna và thành phố AURORA dưới mặt trời nhân tạo" loading="lazy" decoding="async"></picture>'+
