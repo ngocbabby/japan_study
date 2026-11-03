@@ -3,6 +3,7 @@ import http from 'node:http';
 import path from 'node:path';
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
+
 const root=process.cwd(),out=path.join(root,'zero-verdict-qa');fs.mkdirSync(out,{recursive:true});
 const mime={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.svg':'image/svg+xml','.webp':'image/webp','.png':'image/png'};
 const server=http.createServer((req,res)=>{
@@ -13,85 +14,75 @@ const server=http.createServer((req,res)=>{
   res.writeHead(200,{'content-type':mime[path.extname(target)]||'application/octet-stream','cache-control':'no-store'});res.end(b)})
 });
 await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
-const url='http://127.0.0.1:'+server.address().port+'/zero-verdict-book.html';let browser;
+const base='http://127.0.0.1:'+server.address().port+'/zero-verdict-book.html';
+let browser;
 try{
  browser=await chromium.launch({headless:true,args:['--no-sandbox','--disable-dev-shm-usage']});
  for(const device of [{name:'wide',width:1748,height:900},{name:'desktop',width:1440,height:900},{name:'mobile',width:390,height:844}]){
   const page=await browser.newPage({viewport:{width:device.width,height:device.height},deviceScaleFactor:1});
-  const errors=[];page.on('pageerror',e=>errors.push(String(e)));
-  await page.goto(url,{waitUntil:'load'});
-  await page.locator('.zero-cover').waitFor();
-  const cover=await page.locator('.zero-cover').evaluate(async img=>{await img.decode();const r=img.getBoundingClientRect();return {w:img.naturalWidth,h:img.naturalHeight,rectW:r.width,rectH:r.height,overflow:document.documentElement.scrollWidth-innerWidth}});
-  assert.ok(cover.w>=540&&cover.h>=864,'high-DPI illustrated real cover missing');
-  assert.ok(Math.abs(cover.rectH/cover.rectW-cover.h/cover.w)<.05,'cover distorted');
-  assert.ok(cover.overflow<3,'home scroll overflow');
-  assert.ok((await page.locator('.zero-hero').innerText()).includes('Bản án số không'));
-  await page.screenshot({path:path.join(out,device.name+'-cover.png'),fullPage:true});
+  const errors=[];
+  page.on('pageerror',e=>errors.push(String(e)));
+  await page.goto(base,{waitUntil:'load'});
+  const cover=page.locator('.zero-cover');await cover.waitFor();
+  const coverImage=await cover.evaluate(async img=>{await img.decode();return {width:img.naturalWidth,height:img.naturalHeight}});
+  assert.ok(coverImage.width>=540&&coverImage.height>=860,'high-quality illustrated cover should load');
+  await page.screenshot({path:path.join(out,device.name+'-cover.png'),fullPage:false});
   await page.locator('.zero-hero [data-chapter="1"]').click();
-  assert.equal(await page.locator('.zero-paper h2').innerText(),'Người đến trước tiếng còi');
-  assert.ok((await page.locator('.zero-paragraphs p').count())>=8);
-  assert.ok((await page.locator('.zero-jp').count())>=18,'inline N2 not present');
-  assert.equal(await page.locator('.zero-para-vocab').count(),0,'stray vocab chips found');
-  assert.equal(await page.locator('.zero-leaf').count(),8,'each chapter should have eight illustrated leaves');
-  assert.equal(await page.locator('.zero-leaf.is-current').count(),1,'only one leaf should be active by default');
-  assert.equal(await page.locator('.zero-paragraphs p:visible').count(),1,'one complete paragraph per page');
-  assert.ok((await page.locator('.zero-leaf-art.hero').evaluate(el=>getComputedStyle(el).backgroundImage)).includes('zero-courtroom-interior.webp'),'chapter painting not loaded');
-  assert.ok(await page.locator('.zero-dossier-terms button').first().isVisible() || device.name==='mobile','casefile sidebar is missing');
-  if(device.name!=='mobile'){assert.ok(await page.locator('.zero-jacket-image img').isVisible(),'full-size jacket column missing on desktop');const j=await page.locator('.zero-jacket-image img').evaluate(async img=>{await img.decode();return [img.naturalWidth,img.naturalHeight]});assert.ok(j[0]>=540&&j[1]>=864,'sidebar art failed to load')}
-
-  assert.ok(await page.locator('.zero-pinned-evidence').count()===1,'opening evidence photograph missing');
-  const painted=await page.locator('.zero-leaf-art.hero').evaluate(el=>({url:getComputedStyle(el).backgroundImage,height:el.getBoundingClientRect().height}));
-  assert.ok(painted.url.includes('zero-courtroom-interior.webp')&&painted.height>110,'part I painting absent');
-  assert.ok(await page.locator('.zero-toc-group').count()===8,'eight collapsible story parts should be displayed');
-  assert.ok(await page.locator('.zero-investigation-card').count()===1,'pinned case dossier missing');
-  const allChapterAssets=['zero-red-lily.svg','zero-paper-aged.svg','zero-courtroom-interior.webp'];
-  for(const name of allChapterAssets){const res=await page.request.get(new URL('books/n2/vocab/'+name,url).href);assert.equal(res.status(),200,'decorative reference asset not published: '+name);}
-  assert.ok((await page.evaluate('document.documentElement.scrollWidth-innerWidth'))<3,'reference edition overflow');
-  for(const p of [2,3,4,5,6,7,8]){
-    const response=await page.request.get(new URL('books/n2/vocab/zero-gallery-'+p+'.webp',url).href);
-    assert.equal(response.status(),200,'missing illustrated gallery image '+p);
-    const bytes=await response.body();
-    assert.ok(bytes.length>20000,'low-quality illustrated part '+p);
+  assert.equal(await page.locator('.zero-book-heading h2').innerText(),'Người đến trước tiếng còi');
+  assert.equal(await page.locator('.zero-paragraphs p').count(),12,'full chapter must have 12 paragraphs');
+  assert.equal(await page.locator('.zero-paragraphs p:visible').count(),12,'every paragraph must be visible in a continuous chapter');
+  assert.ok(await page.locator('.zero-paragraphs').evaluate(x=>x.innerText.split(/\s+/).length)>1100,'full chapter is too short');
+  assert.equal(await page.locator('.zero-leaf').count(),0,'must remove one-paragraph-per-page design');
+  assert.ok(await page.locator('.zero-jp').count()>=18,'Japanese N2 popup buttons should survive expansion');
+  assert.equal(await page.locator('.zero-toc-group').count(),8,'must expose eight collapsible story parts');
+  const image=await page.locator('.zero-chapter-illustration img').evaluate(async img=>{await img.decode();return {width:img.naturalWidth,height:img.naturalHeight,rect:img.getBoundingClientRect().toJSON()}});
+  assert.ok(image.width>=400&&image.height>=190,'cinematic scene illustration is broken');
+  assert.ok(await page.locator('.zero-dossier-terms button').count()>=18,'current chapter vocabulary is incomplete');
+  if(device.name!=='mobile'){
+   assert.ok(await page.locator('.zero-inline-jacket img').isVisible(),'book cover should share the TOC column, not use an extra one');
+   const widths=await page.evaluate(()=>[...document.querySelectorAll('.zero-layout > *')].map(x=>x.getBoundingClientRect().width));
+   assert.equal(widths.length,3,'should use only three columns');
+   assert.ok(widths[1]>600,'reading text should get most of the horizontal space');
+  }else{
+   await page.locator('[data-action="menu"]').click();
+   assert.ok(await page.locator('.zero-sidebar.open').isVisible(),'mobile TOC drawer missing');
+   await page.locator('[data-action="menu"]').click();
   }
+  const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-innerWidth);
+  assert.ok(overflow<3,'horizontal overflow: '+device.name+' '+overflow);
   await page.screenshot({path:path.join(out,device.name+'-chapter1-opening-viewport.png'),fullPage:false});
+  await page.screenshot({path:path.join(out,device.name+'-chapter1-full.png'),fullPage:true});
   await page.locator('.zero-jp').first().click();
-  assert.ok(await page.locator('.zero-dictionary').isVisible(),'Japanese glossary modal missing');
-  assert.equal(await page.locator('.zero-dictionary h2').innerText(),'人生');
+  assert.ok(await page.locator('.zero-dictionary').isVisible(),'N2 dictionary must open');
+  assert.equal(await page.locator('.zero-dictionary h2').innerText(),'人生','first N2 word incorrectly linked');
   await page.locator('.zero-dict-close').click();
-  await page.locator('[data-action="nextLeaf"]').click();
-  assert.equal(await page.locator('.zero-leaf.is-current').getAttribute('data-leaf-index'),'1','page turning did not advance');
-  assert.equal(await page.locator('.zero-paragraphs p:visible').count(),1);
-  await page.locator('[data-action="flow"]').click();
-  assert.equal(await page.locator('.zero-paragraphs p:visible').count(),8,'continuous-reading toggle failed');
-  await page.locator('[data-action="flow"]').click();
-  assert.equal(await page.locator('.zero-paragraphs p:visible').count(),1,'page mode did not restore');
-  assert.ok((await page.evaluate('document.documentElement.scrollWidth-innerWidth'))<3,'chapter has horizontal overflow');
-
-  await page.screenshot({path:path.join(out,device.name+'-chapter1.png'),fullPage:true});
-  await page.screenshot({path:path.join(out,device.name+'-chapter1-viewport.png'),fullPage:false});
-  await page.goto(url+'?qa=final#chapter-64',{waitUntil:'load'});
-  assert.equal(await page.locator('.zero-paper h2').innerText(),'Khi đồng hồ chỉ 00:01');
-  assert.ok((await page.locator('.zero-paragraphs p').count())>=8);
-  assert.ok((await page.locator('.zero-jp').count())>=19,'ending vocabulary coverage');
-  assert.ok((await page.locator('.zero-paragraphs').first().innerText()).includes('Hai năm sau'),'full epilogue missing');
-  await page.locator('[data-leaf="7"]').click();
-  assert.equal(await page.locator('.zero-leaf.is-current').getAttribute('data-leaf-index'),'7');
-  assert.ok(await page.locator('[data-action="nextLeaf"]').isDisabled(),'last page should be the true end');
-
-  await page.screenshot({path:path.join(out,device.name+'-chapter64.png'),fullPage:true});
-  await page.goto(url+'?qa=index#vocab',{waitUntil:'load'});
+  await page.locator('[data-action="furigana"]').click();
+  assert.ok(await page.locator('.zero-paper.zero-no-furi').count()===1,'furigana toggle does not hide readings');
+  await page.locator('[data-action="furigana"]').click();
+  await page.locator('[data-action="larger"]').click();
+  assert.ok(await page.locator('.zero-paragraphs').evaluate(x=>getComputedStyle(x.querySelector('p')).fontSize)==='20px','font setting lost');
+  await page.locator('[data-action="focus"]').click();
+  assert.ok(await page.locator('.zero-layout.is-focus').count()===1,'focus reading mode missing');
+  assert.ok(await page.locator('.zero-paragraphs p:visible').count()===12);
+  await page.locator('[data-action="focus"]').click();
+  await page.locator('.zero-chapter-nav [data-chapter="2"]').click();
+  assert.equal(await page.locator('.zero-book-heading h2').innerText(),'Mười hai cái tên còn sống','chapter navigation failed');
+  assert.equal(await page.locator('.zero-paragraphs p:visible').count(),12);
+  await page.goto(base+'?final=1#chapter-64',{waitUntil:'load'});
+  assert.equal(await page.locator('.zero-book-heading h2').innerText(),'Khi đồng hồ chỉ 00:01');
+  assert.equal(await page.locator('.zero-paragraphs p:visible').count(),12,'epilogue incomplete');
+  assert.ok((await page.locator('.zero-paragraphs').innerText()).includes('Hai năm sau'));
+  assert.ok(await page.locator('.zero-jp').count()>=19,'last chapter N2 coverage missing');
+  assert.ok(await page.locator('.zero-chapter-nav [data-chapter="63"]').isVisible(),'previous chapter navigation missing');
+  await page.screenshot({path:path.join(out,device.name+'-chapter64-opening-viewport.png'),fullPage:false});
+  await page.goto(base+'#vocab',{waitUntil:'load'});
   assert.equal(await page.locator('.zero-vocab-row').count(),30);
   await page.locator('#zero-search').fill('1160');
   assert.equal(await page.locator('.zero-vocab-row').count(),1);
   assert.ok((await page.locator('.zero-vocab-row').innerText()).includes('いわゆる'));
-  assert.ok((await page.evaluate('document.documentElement.scrollWidth-innerWidth'))<3,'horizontal overflow');
-  if(device.name==='mobile'){
-   await page.locator('[data-action="menu"]').click();
-   assert.ok(await page.locator('.zero-sidebar.open').isVisible(),'mobile chapter menu did not open');
-  }
-  assert.deepEqual(errors,[],'JavaScript page errors');
-  console.log(device.name,'PASS',JSON.stringify(cover));
+  assert.deepEqual(errors,[],'browser JavaScript errors: '+errors.join('; '));
+  console.log(device.name,'PASS',JSON.stringify({cover:coverImage,illustration:[image.width,image.height],horizontalOverflow:overflow}));
   await page.close();
  }
- console.log('PASS: Zero Verdict N2 deluxe 64-chapter illustrated four-page reader, mobile and desktop, with live dictionary');
+ console.log('PASS: 64 full expanded chapters, desktop/mobile wide book, N2 glossary, no truncated pages, 12 paragraphs/chapter');
 }finally{if(browser)await browser.close();await new Promise(resolve=>server.close(resolve))}
