@@ -22,8 +22,8 @@ try{
   await page.goto(url,{waitUntil:'load'});
   await page.locator('.zero-cover').waitFor();
   const cover=await page.locator('.zero-cover').evaluate(async img=>{await img.decode();const r=img.getBoundingClientRect();return {w:img.naturalWidth,h:img.naturalHeight,rectW:r.width,rectH:r.height,overflow:document.documentElement.scrollWidth-innerWidth}});
-  assert.ok(cover.w>=500&&cover.h>=800,'courtroom book cover missing');
-  assert.ok(Math.abs(cover.rectH/cover.rectW-1.5)<.05,'cover distorted');
+  assert.ok(cover.w>=180&&cover.h>=290,'illustrated real cover missing');
+  assert.ok(Math.abs(cover.rectH/cover.rectW-cover.h/cover.w)<.05,'cover distorted');
   assert.ok(cover.overflow<3,'home scroll overflow');
   assert.ok((await page.locator('.zero-hero').innerText()).includes('Bản án số không'));
   await page.screenshot({path:path.join(out,device.name+'-cover.png'),fullPage:true});
@@ -35,8 +35,9 @@ try{
   assert.equal(await page.locator('.zero-leaf').count(),4,'each chapter should have four illustrated leaves');
   assert.equal(await page.locator('.zero-leaf.is-current').count(),1,'only one leaf should be active by default');
   assert.equal(await page.locator('.zero-paragraphs p:visible').count(),2,'exactly two paragraphs on current leaf');
-  assert.ok((await page.locator('.zero-leaf-art.hero').evaluate(el=>getComputedStyle(el).backgroundImage)).includes('zero-scene-1.svg'),'chapter painting not loaded');
+  assert.ok((await page.locator('.zero-leaf-art.hero').evaluate(el=>getComputedStyle(el).backgroundImage)).includes('zero-courtroom-interior.webp'),'chapter painting not loaded');
   assert.ok(await page.locator('.zero-dossier-terms button').first().isVisible() || device.name==='mobile','casefile sidebar is missing');
+  if(device.name==='desktop')assert.ok(await page.locator('.zero-jacket-image img').isVisible(),'full-size jacket column missing on desktop');
 
   await page.locator('.zero-jp').first().click();
   assert.ok(await page.locator('.zero-dictionary').isVisible(),'Japanese glossary modal missing');
