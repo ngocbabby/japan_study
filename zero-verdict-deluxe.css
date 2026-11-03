@@ -643,3 +643,22 @@ button:focus-visible,a:focus-visible{outline:3px solid #ffda93;outline-offset:3p
  .zero-hero{background:linear-gradient(120deg,#150d1eeb,#361b29ef),url('books/n2/vocab/zero-courthouse-rain.webp') center/cover}
 }
 @media print{.zero-pinned-evidence,.zero-hero-stamp{display:none!important}}
+
+/* Cinematic chapter gallery v6: 8 real illustrated files generated from the concept artwork. */
+.zero-leaf-art{
+ background-size:cover;
+ background-position:center 49%;
+ image-rendering:auto;
+ filter:none!important;
+}
+.zero-leaf-art.scene-part-1,.zero-leaf-art.scene-part-4,.zero-leaf-art.scene-part-7{background-position:center 45%}
+.zero-leaf-art.scene-part-2,.zero-leaf-art.scene-part-5,.zero-leaf-art.scene-part-8{background-position:center 58%}
+.zero-leaf-art.scene-part-3,.zero-leaf-art.scene-part-6{background-position:center 51%}
+.zero-leaf[data-leaf-index="1"] .zero-leaf-art{height:147px;background-position:60% center}
+.zero-leaf[data-leaf-index="2"] .zero-leaf-art{height:144px;background-position:78% center;border-radius:15px 2px 15px 2px}
+.zero-leaf[data-leaf-index="3"] .zero-leaf-art{height:148px;background-position:35% center}
+.zero-leaf[data-leaf-index="2"] .zero-leaf-art:before{border-color:#e9c491}
+.zero-leaf[data-leaf-index="3"] .zero-leaf-art:before{border-style:dashed;opacity:.77}
+.zero-cover,.zero-jacket-image img,.zero-spine-card img{filter:none!important;image-rendering:auto}
+.zero-pinned-evidence img{filter:grayscale(.52) contrast(1.1) sepia(.08)}
+@media(max-width:710px){.zero-leaf[data-leaf-index="1"] .zero-leaf-art,.zero-leaf[data-leaf-index="2"] .zero-leaf-art,.zero-leaf[data-leaf-index="3"] .zero-leaf-art{height:106px}}
