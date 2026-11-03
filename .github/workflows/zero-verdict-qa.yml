@@ -30,6 +30,8 @@ jobs:
         run: |
           for n in 1 2 3 4 5 6 7 8; do node --check "zero-verdict-part${n}.js"; done
           node --check zero-verdict-book.js
+          node --check zero-verdict-reader-v10.js
+          for n in 1 2 3 4 5 6 7 8; do node --check "zero-verdict-expanded-${n}.js"; done
           node --check zero-verdict-plan.js
           node --check books.js
       - name: Validate actual novel and every N2 source ID
@@ -47,7 +49,7 @@ jobs:
         run: |
           npm install --no-save --ignore-scripts playwright@1.56.1
           npx playwright install --with-deps chromium
-      - name: Test desktop/mobile reader, chapter 64 and dictionary
+      - name: Test continuous 80k-word novel across desktop/mobile and dictionary
         run: node tools/check-zero-verdict-visual.mjs
       - name: Save QA screenshots
         if: always()
