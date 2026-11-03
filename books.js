@@ -125,6 +125,13 @@ function booksCategory(){
        '<div class="books-stat-line"><span>Đã viết 64/64 chương</span><span>1.160/1.160 mã N2 trong truyện Việt</span><span>8 phần có nội dung đầy đủ</span></div>'+
        '<div class="books-row-actions"><a class="books-primary" href="seven-seas-book.html">📖 Đọc tiểu thuyết Hải đăng</a></div>'+
        '<p class="books-pdf-hint" style="margin-top:10px">Truyện tiếng Việt là chính, từ Nhật được lồng vào câu và nhấn để tra. Đã có truyện Việt 64 chương và đủ 1.160 mã N2 trong văn bản; vẫn cần hiệu đính tiếng Nhật, nghĩa và ngữ cảnh trước khi gọi là bản học từ cuối.</p></div></article>';
+    h+='<article class="books-panel books-book-card">'+
+       '<img class="books-cover-art" style="width:120px;height:180px;max-width:100%;object-fit:contain;border-radius:8px" src="books/n2/vocab/ban-an-so-khong.svg" width="600" height="900" alt="Bìa Bản án số không: chiếc cân công lý, đồng hồ 00:00, mười hai người" loading="lazy" decoding="async">'+
+       '<div><h3>Bản án số không</h3>'+
+       '<p>ゼロ番の判決 · Nữ luật sư Haru bào chữa cho Kaito, người tự thú giết mười hai người vẫn còn sống. Mỗi chứng cứ mới kéo theo một sự cố thực và mở ra bí mật tầng 0.</p>'+
+       '<div class="books-stat-line"><span>Đã viết 64/64 chương</span><span>1.160/1.160 mã N2 trong truyện Việt</span><span>8 phần · Trinh thám pháp lý</span></div>'+
+       '<div class="books-row-actions"><a class="books-primary" href="zero-verdict-book.html">📖 Đọc Bản án số không</a></div>'+
+       '<p class="books-pdf-hint" style="margin-top:10px">Truyện tiếng Việt có từ Nhật bấm tra và furigana, không chèn thẻ từ rời giữa đoạn. Đủ mã nguồn theo kiểm đếm tự động; vẫn cần đối chiếu nghĩa và cách dùng với PDF gốc.</p></div></article>';
   }else if(booksUI.level==="N3" && booksUI.category==="vocab"){
     h+='<article class="books-panel books-book-card">'+
        '<picture class="books-cover-picture"><source type="image/avif" srcset="books/n3/vocab/khi-mat-troi-khong-con-moc.avif?v=20261103-premium 360w, books/n3/vocab/khi-mat-troi-khong-con-moc-hq.avif?v=20261103-hq 900w" sizes="(max-width:560px) 102px, 120px"><img class="books-cover-art" src="books/n3/vocab/khi-mat-troi-khong-con-moc.webp?v=20261103-fallback" width="360" height="540" alt="Bìa tiểu thuyết Khi mặt trời không còn mọc: nữ kỹ sư Kanna và thành phố AURORA dưới mặt trời nhân tạo" loading="lazy" decoding="async"></picture>'+
