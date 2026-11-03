@@ -7,7 +7,8 @@ const all=data?.chapters||[],parts=data?.parts||[],vocab=new Map((data?.vocab||[
 const sourceRanges=[[1,34],[35,69],[70,104],[105,140],[141,175],[176,211],[212,247],[248,281],[282,317],[318,352],[353,387],[388,423],[424,456],[457,492],[493,525],[526,557],[558,589],[590,623],[624,656],[657,691],[692,725],[726,758],[759,792],[793,824],[825,858],[859,880]];
 const sourcePage=(id)=>2+sourceRanges.findIndex(([a,b])=>id>=a&&id<=b);
 const usedIds=new Set(all.flatMap(c=>(c.paragraphs||[]).flatMap(t=>[...t.matchAll(/⟦(\d+)⟧/g)].map(m=>Number(m[1])))));
-const sourceCount=880,validatedCount=vocab.size,coveredCount=[...usedIds].filter(id=>vocab.has(id)).length;
+const sourceIds=Array.from({length:880},(_,i)=>i+1).filter(id=>id!==818);
+const sourceCount=sourceIds.length,validatedCount=vocab.size,coveredCount=[...usedIds].filter(id=>vocab.has(id)).length;
 
 const remember=()=>{try{localStorage.setItem(key,JSON.stringify({chapter:state.chapter,font:state.font}))}catch{}};
 const top=()=>window.scrollTo({top:0,behavior:"smooth"});
@@ -34,7 +35,7 @@ return '<div class="n3toolbar"><span>PHẦN '+Math.ceil(c.number/8)+' · CHƯƠN
 '<section class="n3panel"><h2>Từ đã xuất hiện trong chương</h2><div class="n3words">'+(c.vocabIds||[]).map(id=>{const w=vocab.get(id);return w?'<button data-word="'+id+'"><b>'+esc(w.jp)+'（'+esc(w.kana)+'）</b><small>'+esc(w.meaning)+'</small></button>':''}).join('')+'</div></section>'}
 function wordList(){let h='<section class="n3panel"><h2>Mimikara N3 — phần đã đối chiếu</h2><p>Dữ liệu gốc đánh số 1–880, nhưng các trang ảnh có nhiều từ bị OCR nhận nhầm. Chỉ những từ đã đối chiếu từ PDF được đưa vào đây.</p><button class="n3btn secondary" data-mode="home">← Về sách</button><div class="n3words" style="margin-top:15px">';h+=(data.vocab||[]).map(w=>'<button data-word="'+w.id+'"><b>#'+w.id+' '+esc(w.jp)+'（'+esc(w.kana)+'）</b><small>'+esc(w.meaning)+'</small></button>').join('');return h+'</div></section><div id="n3meaning"></div>'}
 function coverage(){
-let h='<section class="n3panel"><h2>Kiểm kê 880 mục Mimikara N3</h2><p>Đây là danh mục theo <strong>thứ tự và trang của PDF gốc</strong>, KHÔNG phải danh sách 880 mục đã học xong. Mục có chữ Nhật chỉ hiện khi đã được xác minh. Những mục chưa kiểm tra được đánh dấu rõ ràng để tránh học sai.</p><div class="n3buttons"><button data-mode="home" class="n3btn secondary">← Trở lại sách</button><button data-mode="words" class="n3btn secondary">69 từ đã kiểm tra</button></div><div class="n3audit-stats"><div><b>'+coveredCount+'/'+sourceCount+'</b><small>Đã xuất hiện trong truyện</small></div><div><b>'+validatedCount+'/'+sourceCount+'</b><small>Đã đối chiếu nguồn</small></div><div><b>'+(sourceCount-validatedCount)+'</b><small>Chưa xác minh</small></div></div><label class="n3audit-label">Tìm mục số (1–880) <input id="n3audit-query" type="number" min="1" max="880" placeholder="VD: 70"></label><div id="n3audit-rows" class="n3audit-rows"></div><div class="n3buttons"><button class="n3btn secondary" id="n3audit-prev">← Trang trước</button><span id="n3audit-count"></span><button class="n3btn secondary" id="n3audit-next">Trang sau →</button></div></section>';
+let h='<section class="n3panel"><h2>Kiểm kê 880 mục Mimikara N3</h2><p>Đây là danh mục theo <strong>thứ tự và trang của PDF gốc</strong>. PDF đánh số đến 880 nhưng bỏ số 818, nên thực tế có 879 hàng. Đây KHÔNG phải danh sách từ đã học xong. Mục có chữ Nhật chỉ hiện khi đã được xác minh. Những mục chưa kiểm tra được đánh dấu rõ ràng để tránh học sai.</p><div class="n3buttons"><button data-mode="home" class="n3btn secondary">← Trở lại sách</button><button data-mode="words" class="n3btn secondary">69 từ đã kiểm tra</button></div><div class="n3audit-stats"><div><b>'+coveredCount+'/'+sourceCount+'</b><small>Đã xuất hiện trong truyện</small></div><div><b>'+validatedCount+'/'+sourceCount+'</b><small>Đã đối chiếu nguồn</small></div><div><b>'+(sourceCount-validatedCount)+'</b><small>Chưa xác minh</small></div></div><label class="n3audit-label">Tìm số mục trong PDF (1–880, không có #818) <input id="n3audit-query" type="number" min="1" max="880" placeholder="VD: 70"></label><div id="n3audit-rows" class="n3audit-rows"></div><div class="n3buttons"><button class="n3btn secondary" id="n3audit-prev">← Trang trước</button><span id="n3audit-count"></span><button class="n3btn secondary" id="n3audit-next">Trang sau →</button></div></section>';
 return h;
 }
 function bindCoverage(){
@@ -42,9 +43,9 @@ let page=0;const perPage=30,total=sourceCount;
 const rows=root.querySelector("#n3audit-rows"),count=root.querySelector("#n3audit-count"),inp=root.querySelector("#n3audit-query"),prev=root.querySelector("#n3audit-prev"),next=root.querySelector("#n3audit-next");
 if(!rows)return;
 function paint(){
-const current=Number(inp.value),ids=Number.isInteger(current)&&current>=1&&current<=880?[current]:Array.from({length:Math.min(perPage,total-page*perPage)},(_,i)=>page*perPage+i+1);
+const current=Number(inp.value),ids=Number.isInteger(current)&&current>=1&&current<=880?[current]:sourceIds.slice(page*perPage,(page+1)*perPage);
 rows.innerHTML=ids.map(id=>{let w=vocab.get(id),used=usedIds.has(id);
-return '<div class="n3audit-row"><b>#'+id+'</b><span>'+ (w?esc(w.jp)+'（'+esc(w.kana)+'） — '+esc(w.meaning):'Chưa đối chiếu chữ Nhật / cách đọc / nghĩa')+'</span><small>PDF trang '+sourcePage(id)+' · '+(w?(used?'Đã đối chiếu và có trong truyện':'Đã đối chiếu, chưa có trong truyện'):'CHƯA XÁC MINH')+'</small></div>'}).join("");
+return '<div class="n3audit-row"><b>#'+id+'</b><span>'+ (id===818?'PDF gốc KHÔNG có mục #818':w?esc(w.jp)+'（'+esc(w.kana)+'） — '+esc(w.meaning):'Chưa đối chiếu chữ Nhật / cách đọc / nghĩa')+'</span><small>PDF trang '+sourcePage(id)+' · '+(id===818?'SỐ BỊ BỎ QUA TRONG NGUỒN':w?(used?'Đã đối chiếu và có trong truyện':'Đã đối chiếu, chưa có trong truyện'):'CHƯA XÁC MINH')+'</small></div>'}).join("");
 count.textContent=current?'Mục #'+current:'Trang '+(page+1)+' / '+Math.ceil(total/perPage);
 prev.disabled=!!current||page===0;next.disabled=!!current||page>=Math.ceil(total/perPage)-1;
 }
