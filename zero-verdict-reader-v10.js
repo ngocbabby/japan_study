@@ -37,7 +37,7 @@ function chapter(){const ch=chapters.get(state.chapter);if(!ch)return home();
  '<article class="zero-paper zero-complete-chapter'+(state.furigana?'':' zero-no-furi')+'" style="--zero-reading:'+state.font+'px">'+
  '<div class="zero-paper-border" aria-hidden="true"></div>'+
  '<header class="zero-book-heading"><div class="zero-chapter-small">✦ CHƯƠNG '+String(ch.number).padStart(2,'0')+' ✦</div><h2>'+esc(ch.title)+'</h2><div class="zero-heading-flourish">❦ <span>⚖</span> ❦</div><p>'+esc(ch.tagline||part.summary)+'</p></header>'+
- '<figure class="zero-chapter-illustration"><img src="'+scene+'" loading="eager" decoding="async" alt="Minh họa bầu không khí trinh thám của phần '+partNo+'"><figcaption><b>CASE '+String(ch.number).padStart(2,'0')+'</b><span>PHẦN '+part.roman+' · ZERO VERDICT</span></figcaption></figure>'+
+ '<figure class="zero-chapter-illustration" style="background-image:url(&quot;'+scene+'&quot;)"><img src="'+scene+'" loading="eager" decoding="async" alt="Minh họa bầu không khí trinh thám của phần '+partNo+'"><figcaption><b>CASE '+String(ch.number).padStart(2,'0')+'</b><span>PHẦN '+part.roman+' · ZERO VERDICT</span></figcaption></figure>'+
  '<div class="zero-manuscript"><div class="zero-paragraphs">'+pp+'</div></div>'+
  '<div class="zero-end-mark">❦　— HẾT CHƯƠNG '+String(ch.number).padStart(2,'0')+' —　❦</div>'+
  '<div class="zero-book-page-footer"><span>JAPAN STUDY · TIỂU THUYẾT N2</span><strong>'+ch.number+' / 64</strong><span>ZERO VERDICT</span></div>'+
