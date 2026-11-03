@@ -115,9 +115,9 @@ function booksCategory(){
        '<img class="books-cover-art" style="width:120px;height:180px;max-width:100%;object-fit:contain;border-radius:8px;" src="books/n2/vocab/ngay-mai-bi-rao-ban.webp" width="354" height="531" alt="Bìa Những ngày mai bị rao bán — Tsumugi và khế ước vàng kim giữa thành phố huyền ảo" loading="lazy">'+
        '<div><h3>Những ngày mai bị rao bán</h3>'+
        '<p>明日を売る人々 · Dark fantasy, bí ẩn, tâm lý và đấu trí: Tsumugi lần theo hợp đồng bán tương lai của 48.000 người.</p>'+
-       '<div class="books-stat-line"><span>32/64 chương Nhật–Việt đã viết</span><span>580/1.160 mục từ trong truyện</span><span>Đã phân đủ 1.160 mục</span></div>'+
+       '<div class="books-stat-line"><span>64/64 chương Nhật–Việt có bản thảo</span><span>1.160/1.160 mã từ trong bản thảo</span><span>Đã phân đủ 1.160 mục</span></div>'+
        '<div class="books-row-actions"><a class="books-primary" href="n2-novel.html">📖 Đọc tiểu thuyết N2</a></div>'+
-       '<p class="books-pdf-hint" style="margin-top:10px">Bốn phần đầu đã có nội dung; chương 33–64 đang biên soạn. 580 mục trong truyện; 580 mục còn phân chương.</p></div></article>';
+       '<p class="books-pdf-hint" style="margin-top:10px">Đã có bản thảo Nhật–Việt cho 64 chương và đủ mã 1.160 từ. Vẫn phải hiệu đính ngữ pháp, độ tự nhiên và đối chiếu PDF trước khi gọi là sách hoàn chỉnh.</p></div></article>';
   }else if(booksUI.level==="N3" && booksUI.category==="vocab"){
     h+='<article class="books-panel books-book-card">'+
        '<picture class="books-cover-picture"><source type="image/avif" srcset="books/n3/vocab/khi-mat-troi-khong-con-moc.avif?v=20261103-premium 360w, books/n3/vocab/khi-mat-troi-khong-con-moc-hq.avif?v=20261103-hq 900w" sizes="(max-width:560px) 102px, 120px"><img class="books-cover-art" src="books/n3/vocab/khi-mat-troi-khong-con-moc.webp?v=20261103-fallback" width="360" height="540" alt="Bìa tiểu thuyết Khi mặt trời không còn mọc: nữ kỹ sư Kanna và thành phố AURORA dưới mặt trời nhân tạo" loading="lazy" decoding="async"></picture>'+
