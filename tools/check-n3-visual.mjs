@@ -50,7 +50,7 @@ try{
     assert.equal(zoom.naturalHeight,1350,"high-res cover incorrect dimensions");
     await page.screenshot({path:path.join(out,"n3-"+viewport.label+"-cover-zoom.png"),fullPage:false});
     await page.locator('.n3-cover-close').click();
-    await page.locator('[data-goto="1"]').first().click();
+    await page.locator('.n3hero [data-goto="1"]').click();
     const info=await page.locator(".n3paper").evaluate(p=>{
       const r=p.getBoundingClientRect(),s=getComputedStyle(p.querySelector("p")),text=p.querySelector("p").innerText;
       return {paperWidth:r.width,font:s.fontFamily,lineHeight:s.lineHeight,firstLine:text.slice(0,130),overflow:document.documentElement.scrollWidth-window.innerWidth};
