@@ -12,7 +12,7 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const asset=s=>'books/n5/kanji/art/'+s+'.webp';
 const knownCount=()=>Object.keys(saved.known||{}).filter(k=>saved.known[k]).length;
 const persist=()=>{try{localStorage.setItem(KEY,JSON.stringify(saved))}catch{}};
-const scrollTop=()=>{window.scrollTo(0,0)};
+const scrollTop=()=>{window.scrollTo({top:0,left:0,behavior:'instant'})};
 function pronounce(text){if(saved.muted){toast('Đã tắt phát âm. Bấm biểu tượng ♫ ở góc phải để bật lại.');return}
  if(!('speechSynthesis' in window)){toast('Trình duyệt này chưa hỗ trợ đọc tiếng Nhật.');return}
  window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='ja-JP';u.rate=.78;u.pitch=1.04;window.speechSynthesis.speak(u);
