@@ -2,7 +2,7 @@
 /* Japan Study — Sách. Không thay thế các chức năng ôn tập đã có. */
 const booksUI = {
   view: "shelf", level: "N5", category: "vocab", page: 1,
-  font: 17, readerMode: "text", pdfUrl: null, pdfName: ""
+  font: 17, readerMode: "pdf", pdfUrl: null, pdfName: ""
 };
 const booksLevels = ["N5","N4","N3","N2","N1"];
 const booksTypes = [
@@ -67,11 +67,7 @@ function booksCitySvg(){
   '</g><g fill="#fff0b8" opacity=".8"><circle cx="120" cy="80" r="5"/><circle cx="97" cy="92" r="2"/><circle cx="140" cy="92" r="2"/></g></svg>';
 }
 function booksCover(){
- return '<div class="books-cover" aria-label="Bìa trang trí Thành phố không được quên">'+
-   '<span class="moon"></span>'+booksCitySvg()+
-   '<div class="cover-title">THÀNH PHỐ<br>KHÔNG ĐƯỢC<br>QUÊN</div>'+
-   '<div class="cover-subtitle">TIỂU THUYẾT TRÍ NHỚ N5</div>'+
-   '<div class="cover-glyph">I</div></div>';
+  return '<img class="books-cover-art" src="books/n5/vocab/cover.jpg" width="1024" height="1536" alt="Bìa gốc Thành phố không được quên - thành phố huyền ảo ánh vàng dưới trời sao" loading="lazy" decoding="async">';
 }
 function booksShelf(){
   let h='<section class="books-panel books-intro"><span class="books-pill">THƯ VIỆN NHẬT NGỮ</span><h2 class="books-heading">📚 Sách của tui</h2><p class="books-caption">Một tủ sách cho mọi cấp JLPT. Chọn cấp độ để mở Từ vựng, Kanji hoặc Ngữ pháp.</p></section>';
@@ -93,21 +89,21 @@ function booksLevel(){
  return h+'</section>';
 }
 function booksCategory(){
- let typ=booksTypes.find(x=>x.key===booksUI.category);
- let h='<section><p class="section-kicker">'+booksUI.level+' / '+booksEsc(typ.name)+'</p><h2 class="books-heading">Ngăn '+booksEsc(typ.name)+'</h2><p class="books-caption">Các sách được sắp theo cấp độ và chủ đề.</p></section>';
- if(booksUI.level==="N5"&&booksUI.category==="vocab"){
-   const b=booksBook(); const last=Number(localStorage.getItem("japanStudyBookN5LastPage"))||1;
-   h+='<article class="books-panel books-book-card">'+booksCover()+
-     '<div><h3>Thành phố không được quên</h3><p>Truyện phiêu lưu của An và mèo Mực. Từ vựng N5 được lồng vào 26 chương của một hành trình kỳ ảo.</p>'+
-     '<div class="books-stat-line"><span>📖 94 trang</span><span>26 chương</span><span>545 mục từ</span></div>'+
-     '<div class="books-row-actions"><button class="books-primary" data-books-read type="button">Đọc sách ›</button><button class="books-secondary" data-books-pdf type="button">Mở PDF có bìa</button></div>'+
-     '<p class="books-pdf-hint" style="margin-top:10px">Đọc online ngay, không cần tải file. Nếu chọn PDF, có thể nạp bản PDF có bìa đã lưu vào thiết bị một lần.</p>'+
-     (last>1?'<p class="books-pdf-hint">📍 Đã đọc tới trang '+Math.min(last,b.totalPages)+'.</p>':'')+
-     '</div></article>';
- }else{
-   h+='<div class="books-panel books-empty"><div class="symbol">📖</div><strong>Ngăn này đang trống</strong><p>Đã tạo sẵn '+booksUI.level+' / '+booksEsc(typ.name)+'. Khi có tài liệu, sách sẽ xuất hiện tại đây.</p></div>';
- }
- return h;
+  const typ=booksTypes.find(x=>x.key===booksUI.category);
+  let h='<section><p class="section-kicker">'+booksUI.level+' / '+booksEsc(typ.name)+'</p><h2 class="books-heading">Ngăn '+booksEsc(typ.name)+'</h2><p class="books-caption">Các cuốn sách được xếp theo cấp độ và chủ đề.</p></section>';
+  if(booksUI.level==="N5" && booksUI.category==="vocab"){
+    h+='<article class="books-panel books-book-card">'+booksCover()+
+       '<div><h3>Thành phố không được quên</h3>'+
+       '<p>Cuộc phiêu lưu kỳ ảo của An và Mực, lồng ghép toàn bộ từ vựng N5 theo 26 chương.</p>'+
+       '<div class="books-stat-line"><span>94 trang</span><span>26 chương</span><span>545 mục từ</span></div>'+
+       '<div class="books-row-actions"><button class="books-primary" data-books-read type="button">📖 Đọc sách</button>'+
+       '<a class="books-secondary" href="books/n5/vocab/thanh-pho-khong-duoc-quen-n5.pdf" target="_blank" rel="noopener noreferrer">Mở PDF ↗</a></div>'+
+       '<p class="books-pdf-hint" style="margin-top:10px">Đọc trực tiếp bản PDF gốc có bìa, giữ nguyên phông chữ và dàn trang. Không cần chọn tệp từ thiết bị.</p>'+
+       '</div></article>';
+  }else{
+    h+='<div class="books-panel books-empty"><div class="symbol">📖</div><strong>Ngăn này đang trống</strong><p>Đã tạo sẵn '+booksUI.level+' / '+booksEsc(typ.name)+'. Khi có tài liệu, sách sẽ xuất hiện tại đây.</p></div>';
+  }
+  return h;
 }
 function booksSetPage(page){
   const b=booksBook();
@@ -143,61 +139,38 @@ function booksFormatPage(raw,page){
  }).join("");
 }
 function booksReader(){
- const b=booksBook();
- const cp=booksUI.page, total=b.totalPages||94;
- const chapter=booksChapterForPage(cp);
- const label=chapter?'Chương '+chapter.num+': '+(booksChapterTitles[chapter.num-1]||chapter.title):"Lời mở";
- const progress=Math.round(cp/total*100);
- let h='<section class="books-reader-shell"><div class="books-reader-tools"><span class="books-reader-meta">📖 '+booksEsc(label)+'</span><div class="books-reader-commands">'+
-  '<button type="button" data-books-font="-1" aria-label="Giảm cỡ chữ">A−</button>'+
-  '<button type="button" data-books-font="1" aria-label="Tăng cỡ chữ">A+</button>'+
-  '<button type="button" data-books-mode="'+(booksUI.readerMode==="pdf"?"text":"pdf")+'">'+(booksUI.readerMode==="pdf"?"Bản chữ":"Bản PDF")+'</button>'+
-  '</div></div>';
- if(booksUI.readerMode==="pdf"){
-   if(booksUI.pdfUrl){
-     h+='<div class="books-panel"><div class="books-pdf-buttons"><button class="books-secondary" type="button" data-books-pick>Thay file PDF</button><button class="books-secondary" type="button" data-books-mode="text">Đọc bản chữ</button></div><p class="books-pdf-hint">Bản PDF lưu trong trình duyệt của bà, không tải lên máy chủ.</p><iframe class="books-pdf-frame" title="Sách PDF N5" src="'+booksEsc(booksUI.pdfUrl)+'#view=FitH" loading="lazy"></iframe></div>';
-   }else{
-     h+='<div class="books-panel books-empty"><div class="symbol">📄</div><strong>Mở cuốn PDF có bìa đã tải về</strong><p>Bà chọn cuốn “Thành phố không được quên” đã tải trong ChatGPT. Trình duyệt có thể lưu để mở lần sau trên cùng thiết bị.</p><p style="margin-top:13px"><button type="button" class="books-primary" data-books-pick>Chọn PDF trên thiết bị</button></p><p style="margin-top:13px"><button type="button" class="books-secondary" data-books-mode="text">Đọc bản chữ đã có sẵn</button></p></div>';
-   }
- }else{
-   let content=cp===1?booksCover():booksFormatPage(b.pages[cp-1]||"",cp);
-   h+='<div class="books-reader-paper" style="--book-reading-font:'+booksUI.font+'px"><div class="book-text">'+
-   (cp===1?'<div style="max-width:360px;margin:0 auto">'+content+'</div>':content)+'</div></div>';
-   h+='<label class="books-pdf-hint" for="books-chapter-select">Chuyển nhanh đến chương</label>'+
-   '<select id="books-chapter-select" class="books-jump"><option value="1">Bìa sách</option><option value="2">Lời mở đầu</option>'+
-   b.chapters.map(function(ch){return '<option value="'+ch.page+'"'+(chapter&&ch.num===chapter.num?' selected':'')+'>Chương '+ch.num+' · '+booksEsc(booksChapterTitles[ch.num-1]||ch.title)+'</option>';}).join('')+'</select>';
-   h+='<div class="books-progress"><div style="width:'+progress+'%"></div></div>';
-   h+='<div class="books-reader-nav"><button data-books-prev type="button"'+(cp===1?' disabled':'')+'>← Trang trước</button><span>Trang '+cp+' / '+total+'</span><button data-books-next type="button"'+(cp===total?' disabled':'')+'>Trang sau →</button></div>';
-   h+='<div class="books-page-indicator">Tiến độ đọc được lưu tự động trên thiết bị này.</div>';
- }
- return h+'</section>';
+  const url="books/n5/vocab/thanh-pho-khong-duoc-quen-n5.pdf";
+  return '<section class="books-reader-shell">'+
+    '<div class="books-reader-tools">'+
+      '<span class="books-reader-meta">📖 Thành phố không được quên · N5 · 94 trang</span>'+
+      '<div class="books-reader-commands">'+
+        '<a class="books-primary" href="'+url+'" target="_blank" rel="noopener noreferrer">Mở toàn màn hình ↗</a>'+
+        '<a class="books-secondary" href="'+url+'" download="Thanh-pho-khong-duoc-quen-N5.pdf">Tải PDF ↓</a>'+
+      '</div>'+
+    '</div>'+
+    '<div class="books-panel books-reader-pdf-panel">'+
+      '<iframe class="books-pdf-frame books-reader-pdf" src="'+url+'#view=FitH" title="Thành phố không được quên - toàn bộ 94 trang PDF có bìa gốc" loading="lazy"></iframe>'+
+    '</div>'+
+    '<p class="books-pdf-hint">Nếu điện thoại không hiển thị trang trong khung, bấm <a href="'+url+'" target="_blank" rel="noopener noreferrer">Mở toàn màn hình</a> để đọc bằng trình PDF trên máy.</p>'+
+  '</section>';
 }
 function renderBooks(){
- if(typeof main==="undefined")return;
- const typ=booksTypes.find(t=>t.key===booksUI.category);
- const names={shelf:"Tủ sách",level:"Sách "+booksUI.level,category:booksUI.level+" · "+typ.name,reader:"Đọc sách N5"};
- title.textContent=names[booksUI.view]||"Sách";
- setNav("");
- let body=booksCrumbs();
- if(booksUI.view==="shelf")body+=booksShelf();
- if(booksUI.view==="level")body+=booksLevel();
- if(booksUI.view==="category")body+=booksCategory();
- if(booksUI.view==="reader")body+=booksReader();
- body+='<input id="books-pdf-input" type="file" accept="application/pdf,.pdf" hidden>';
- main.innerHTML='<div class="books-page">'+body+'</div>';
- main.querySelectorAll("[data-books-view]").forEach(btn=>btn.onclick=function(){booksSetView(btn.dataset.booksView)});
- main.querySelectorAll("[data-books-level]").forEach(btn=>btn.onclick=function(){booksUI.level=btn.dataset.booksLevel;booksSetView("level")});
- main.querySelectorAll("[data-books-cat]").forEach(btn=>btn.onclick=function(){booksUI.category=btn.dataset.booksCat;booksSetView("category")});
- const read=main.querySelector("[data-books-read]");
- if(read)read.onclick=function(){booksUI.readerMode="text";booksUI.page=Math.max(1,Math.min(94,Number(localStorage.getItem("japanStudyBookN5LastPage"))||1));booksSetView("reader");};
- main.querySelectorAll("[data-books-mode]").forEach(btn=>btn.onclick=function(){booksUI.readerMode=btn.dataset.booksMode;booksSetView("reader");if(booksUI.readerMode==="pdf"&&!booksUI.pdfUrl)booksRestorePdf()});
- main.querySelectorAll("[data-books-pdf]").forEach(btn=>btn.onclick=function(){booksUI.readerMode="pdf";booksSetView("reader");booksRestorePdf()});
- main.querySelectorAll("[data-books-prev]").forEach(btn=>btn.onclick=function(){booksSetPage(booksUI.page-1)});
- main.querySelectorAll("[data-books-next]").forEach(btn=>btn.onclick=function(){booksSetPage(booksUI.page+1)});
- main.querySelectorAll("[data-books-font]").forEach(btn=>btn.onclick=function(){booksUI.font=Math.max(14,Math.min(27,booksUI.font+Number(btn.dataset.booksFont)));renderBooks()});
- const choose=main.querySelector("#books-chapter-select");if(choose)choose.onchange=function(){booksSetPage(Number(choose.value))};
- main.querySelectorAll("[data-books-pick]").forEach(btn=>btn.onclick=function(){main.querySelector("#books-pdf-input").click()});
- const input=main.querySelector("#books-pdf-input"); if(input)input.onchange=function(e){booksHandlePdf(e.target.files&&e.target.files[0])};
+  if(typeof main==="undefined")return;
+  const typ=booksTypes.find(t=>t.key===booksUI.category);
+  const names={shelf:"Tủ sách",level:"Sách "+booksUI.level,category:booksUI.level+" · "+typ.name,reader:"Đọc sách N5"};
+  title.textContent=names[booksUI.view]||"Sách";
+  setNav("");
+  let body=booksCrumbs();
+  if(booksUI.view==="shelf")body+=booksShelf();
+  if(booksUI.view==="level")body+=booksLevel();
+  if(booksUI.view==="category")body+=booksCategory();
+  if(booksUI.view==="reader")body+=booksReader();
+  main.innerHTML='<div class="books-page">'+body+'</div>';
+  main.querySelectorAll("[data-books-view]").forEach(btn=>btn.onclick=function(){booksSetView(btn.dataset.booksView)});
+  main.querySelectorAll("[data-books-level]").forEach(btn=>btn.onclick=function(){booksUI.level=btn.dataset.booksLevel;booksSetView("level")});
+  main.querySelectorAll("[data-books-cat]").forEach(btn=>btn.onclick=function(){booksUI.category=btn.dataset.booksCat;booksSetView("category")});
+  const read=main.querySelector("[data-books-read]");
+  if(read)read.onclick=function(){booksUI.readerMode="pdf";booksSetView("reader")};
 }
 function booksDb(){
  return new Promise(function(resolve,reject){
