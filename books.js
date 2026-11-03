@@ -102,7 +102,7 @@ function booksCategory(){
        '</div></article>';
   }else if(booksUI.level==="N4" && booksUI.category==="vocab"){
     h+='<article class="books-panel books-book-card">'+
-       '<div class="n4-book-thumb" aria-label="Bìa Hồ sơ ga cuối"><span class="n4-book-sky">✦　✧　✦</span><span class="n4-book-moon"></span><span class="n4-book-title">HỒ SƠ<br>GA CUỐI</span><span class="n4-book-track">🚉</span><span class="n4-book-footer">TRINH THÁM · JLPT N4</span></div>'+
+       '<div class="n4-book-thumb n4-book-thumb-photo"><img src="books/n4/vocab/ho-so-ga-cuoi-n4-cover.avif" width="600" height="900" loading="lazy" alt="Bìa minh họa Hồ Sơ Ga Cuối — cô gái cầm hồ sơ tại sân ga đêm mưa"></div>'+
        '<div><h3>Hồ sơ ga cuối</h3>'+
        '<p>Tiểu thuyết trinh thám hiện đại tại Nhật: Mai cùng Haru điều tra vụ mất tích của Yuna và một nhà ga bị xóa khỏi bản đồ.</p>'+
        '<div class="books-stat-line"><span>7 phần</span><span>34 chương</span><span>623 mục từ N4</span></div>'+
