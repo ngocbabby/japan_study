@@ -107,8 +107,8 @@ function booksCategory(){
        '<p>Tiểu thuyết trinh thám hiện đại tại Nhật: Mai cùng Haru điều tra vụ mất tích của Yuna và một nhà ga bị xóa khỏi bản đồ.</p>'+
        '<div class="books-stat-line"><span>7 phần</span><span>34 chương</span><span>623 mục từ N4</span></div>'+
        '<div class="books-row-actions"><a class="books-primary" href="n4-book.html" target="_blank" rel="noopener noreferrer">📖 Đọc truyện N4 ↗</a>'+
-       '<a class="books-secondary" href="n4-book.html" target="_blank" rel="noopener noreferrer" title="Trên trang sách, chọn Lưu PDF">In / lưu PDF ↗</a></div>'+
-       '<p class="books-pdf-hint" style="margin-top:10px">Sách đọc trực tiếp trên website, có mục lục và nút lưu ra PDF. Giữ nguyên 623 mục và 34 ngày từ tệp N4.</p>'+
+       '<a class="books-secondary" href="books/n4/vocab/ho-so-ga-cuoi-n4.pdf" target="_blank" rel="noopener noreferrer">Mở PDF N4 ↗</a></div>'+
+       '<p class="books-pdf-hint" style="margin-top:10px">Đọc truyện trực tiếp trên website hoặc mở bản PDF khổ sách. Giữ nguyên 623 mục và 34 ngày từ tệp N4.</p>'+
        '</div></article>';
   }else{
     h+='<div class="books-panel books-empty"><div class="symbol">📖</div><strong>Ngăn này đang trống</strong><p>Đã tạo sẵn '+booksUI.level+' / '+booksEsc(typ.name)+'. Khi có tài liệu, sách sẽ xuất hiện tại đây.</p></div>';
