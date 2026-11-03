@@ -1,0 +1,51 @@
+name: Seven Seas N2 Novel Quality Checks
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "seven-seas*"
+      - "books/n2/vocab/hai-dang-bay-vung-bien-cam.webp"
+      - "tools/check-seven-seas*"
+      - ".github/workflows/seven-seas-qa.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  integrity:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Syntax-check novel files
+        run: |
+          node --check seven-seas-plan.js
+          node --check seven-seas-part1.js
+          node --check seven-seas-book.js
+          node --check books.js
+      - name: Ensure full source assignment and real story coverage
+        run: node tools/check-seven-seas.mjs
+  visual:
+    needs: integrity
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install Chromium for desktop and mobile book test
+        run: |
+          npm install --no-save --ignore-scripts playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Test book cover, reading pages, inline N2 vocabulary and word lookup
+        run: node tools/check-seven-seas-visual.mjs
+      - name: Archive screenshot proofs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: seven-seas-n2-visual-qa
+          path: seven-seas-qa/*.png
+          if-no-files-found: warn
