@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 BASE="https://ngocbabby.github.io/japan_study"
-files=("index.html" "books.js" "seven-seas-book.html" "seven-seas-book.css" "seven-seas-book.js" "seven-seas-part1.js" "seven-seas-plan.js" "n2-vocab-1160.js" "books/n2/vocab/hai-dang-bay-vung-bien-cam.webp")
+files=("index.html" "books.js" "seven-seas-book.html" "seven-seas-book.css" "seven-seas-book.js" "seven-seas-part1.js" "seven-seas-part2.js" "seven-seas-part3.js" "seven-seas-part4.js" "seven-seas-part5.js" "seven-seas-part6.js" "seven-seas-part7.js" "seven-seas-part8.js" "seven-seas-plan.js" "n2-vocab-1160.js" "books/n2/vocab/hai-dang-bay-vung-bien-cam.webp")
 for file in "${files[@]}"; do
  code=000
  for attempt in 1 2 3 4 5 6; do
@@ -12,7 +12,7 @@ for file in "${files[@]}"; do
  echo "$file HTTP $code"
  [[ "$code" == 200 ]] || exit 1
 done
-grep -q 'seven-seas-part1.js' /tmp/sea-seven-seas-book.html
+grep -q 'seven-seas-part8.js' /tmp/sea-seven-seas-book.html
 grep -q 'hai-dang-bay-vung-bien-cam.webp' /tmp/sea-seven-seas-book.js
 grep -q 'seven-seas-book.html' /tmp/sea-books.js
 [[ "$(wc -c </tmp/sea-books_n2_vocab_hai-dang-bay-vung-bien-cam.webp)" -gt 30000 ]]
