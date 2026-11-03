@@ -1,0 +1,19 @@
+name: N3 Public Site Smoke Test
+on:
+  push:
+    paths:
+      - "n3-book.html"
+      - "n3-book.js"
+      - "n3-story-*.js"
+      - "n3-source-ledger.json"
+      - "tools/check-n3-live.sh"
+      - ".github/workflows/n3-live-check.yml"
+  workflow_dispatch:
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Probe published assets
+        run: bash tools/check-n3-live.sh
