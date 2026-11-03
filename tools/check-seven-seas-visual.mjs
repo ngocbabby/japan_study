@@ -39,11 +39,11 @@ try{
   assert.equal(await page.locator('.sea-dictionary h2').textContent(),'観測');
   await page.locator('.sea-dict-close').click();
   await page.screenshot({path:path.join(dir,device.label+'-chapter1.png'),fullPage:true});
-  await page.goto(base+'#chapter-8',{waitUntil:'load'});
+  await page.goto(base+'?qa=chapter8#chapter-8',{waitUntil:'load'});
   assert.equal(await page.locator('.sea-paper h2').textContent(),'Vùng biển không có trên hải đồ');
   assert.equal(await page.locator('.sea-paragraphs p').count(),9);
   await page.screenshot({path:path.join(dir,device.label+'-chapter8.png'),fullPage:true});
-  await page.goto(base+'#vocab',{waitUntil:'load'});
+  await page.goto(base+'?qa=vocab#vocab',{waitUntil:'load'});
   assert.equal(await page.locator('.sea-vocab-row').count(),30);
   await page.locator('#sea-search').fill('44');
   assert.equal(await page.locator('.sea-vocab-row').count(),1);
