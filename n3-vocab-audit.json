@@ -23,7 +23,7 @@
   ],
   "method": "PDF scan có 879 hàng thực tế, đánh số 1–880 nhưng thiếu mục 818; 69 mục đầu đã kiểm tra, 810 còn lại OCR chưa được đối chiếu và không được coi là đã học.",
   "bookChapterCount": 40,
-  "bookVocabularyReferenceStatus": "67 mục khác nhau xuất hiện trong tiểu thuyết 40 chương; chỉ dùng từ nằm trong 69 mục đã xác minh.",
+  "bookVocabularyReferenceStatus": "69 mục đã đối chiếu trực tiếp từ PDF, cả 69 hiện có trong truyện sau khi bổ sung chương 6. Còn 810 hàng chưa kiểm tra nên chưa thể khẳng định đầy đủ N3.",
   "qualityChecks": [
     "40 chương và 5 phần đã được ghi thành dữ liệu đọc trên website",
     "Thứ tự chương 1–40 được kiểm tra",
