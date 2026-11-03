@@ -36,6 +36,7 @@ const leaves=[];for(let i=0;i<leafCount;i++){const first=i*2,items=ch.paragraphs
 '<section class="zero-leaf'+(state.flow||i===leaf?' is-current':'')+'" data-leaf-index="'+i+'">'+
 '<div class="zero-leaf-top"><span>HỒ SƠ SỐ '+String(ch.number).padStart(2,'0')+'</span><span>'+esc(part.title)+' · '+(i+1)+' / '+leafCount+'</span></div>'+
 '<div class="zero-leaf-art scene-part-'+partNo+(i===0?' hero':'')+'" style="--case-scene:url(&quot;'+scene+'&quot;)"><div class="zero-scenery-vignette" aria-hidden="true"></div>'+
+(i===0?'<div class="zero-pinned-evidence" aria-hidden="true"><img src="books/n2/vocab/'+(partNo%2?'zero-courthouse-rain.webp':'zero-courtroom-interior.webp')+'" alt=""><span>CONFIDENTIAL</span></div><span class="zero-hero-stamp" aria-hidden="true">CASE 00</span>':'')+
 '<div class="zero-leaf-art-copy"><span class="zero-ink-label">CASE FILE · '+String(ch.number).padStart(2,'0')+'</span>'+
 (i===0?'<span class="zero-roman-part">PHẦN '+esc(part.roman)+'</span>':'<span class="zero-roman-part">CHƯƠNG '+String(ch.number).padStart(2,'0')+' · TRANG '+String(i+1).padStart(2,'0')+'</span>')+'</div></div>'+
 (i===0?'<div class="zero-chapter-heading"><div class="zero-ornament">✦ <span>◆</span> ✦</div><span class="zero-chapter-seal">CHƯƠNG '+String(ch.number).padStart(2,'0')+'</span><h2>'+esc(ch.title)+'</h2><div class="zero-tagline">'+esc(ch.tagline||part.summary)+'</div></div>':
