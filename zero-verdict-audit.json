@@ -6,455 +6,519 @@
   "sourceEntries": 1160,
   "vocabLinkedInVietnameseProse": 1160,
   "mentions": 1161,
-  "totalVietnameseApproxWords": 42461,
+  "totalVietnameseApproxWords": 80304,
   "chapters": [
     {
       "number": 1,
       "title": "Người đến trước tiếng còi",
-      "paragraphs": 8,
-      "wordCount": 683,
-      "assigned": 18
+      "paragraphs": 12,
+      "wordCount": 1274,
+      "assigned": 18,
+      "editorialExpandedParagraphs": 4
     },
     {
       "number": 2,
       "title": "Mười hai cái tên còn sống",
-      "paragraphs": 8,
-      "wordCount": 667,
-      "assigned": 18
+      "paragraphs": 12,
+      "wordCount": 1258,
+      "assigned": 18,
+      "editorialExpandedParagraphs": 4
     },
     {
       "number": 3,
       "title": "Luật sư của một tội lỗi chưa xảy ra",
-      "paragraphs": 8,
-      "wordCount": 643,
-      "assigned": 18
+      "paragraphs": 12,
+      "wordCount": 1222,
+      "assigned": 18,
+      "editorialExpandedParagraphs": 4
     },
     {
       "number": 4,
       "title": "Bản cam kết không được mở",
-      "paragraphs": 8,
-      "wordCount": 635,
-      "assigned": 18
+      "paragraphs": 12,
+      "wordCount": 1208,
+      "assigned": 18,
+      "editorialExpandedParagraphs": 4
     },
     {
       "number": 5,
       "title": "Nhân chứng thứ mười ba",
-      "paragraphs": 8,
-      "wordCount": 608,
-      "assigned": 18
+      "paragraphs": 12,
+      "wordCount": 1145,
+      "assigned": 18,
+      "editorialExpandedParagraphs": 4
     },
     {
       "number": 6,
       "title": "Người đầu tiên biến mất",
-      "paragraphs": 8,
-      "wordCount": 598,
-      "assigned": 18
+      "paragraphs": 12,
+      "wordCount": 1159,
+      "assigned": 18,
+      "editorialExpandedParagraphs": 4
     },
     {
       "number": 7,
       "title": "Thang máy dừng ở tầng không",
-      "paragraphs": 8,
-      "wordCount": 615,
-      "assigned": 18
+      "paragraphs": 12,
+      "wordCount": 1189,
+      "assigned": 18,
+      "editorialExpandedParagraphs": 4
     },
     {
       "number": 8,
       "title": "Lệnh giữ người chưa có tội",
-      "paragraphs": 8,
-      "wordCount": 670,
-      "assigned": 19
+      "paragraphs": 12,
+      "wordCount": 1234,
+      "assigned": 19,
+      "editorialExpandedParagraphs": 4
     },
     {
       "number": 9,
       "title": "Bảo hiểm cho một ngày mai",
-      "paragraphs": 8,
-      "wordCount": 660,
-      "assigned": 18
+      "paragraphs": 12,
+      "wordCount": 1252,
+      "assigned": 18,
+      "editorialExpandedParagraphs": 4
     },
     {
       "number": 10,
       "title": "Đám cưới dưới camera",
-      "paragraphs": 8,
-      "wordCount": 660,
-      "assigned": 18
+      "paragraphs": 12,
+      "wordCount": 1239,
+      "assigned": 18,
+      "editorialExpandedParagraphs": 4
     },
     {
       "number": 11,
       "title": "Vật chứng có dấu răng",
-      "paragraphs": 8,
-      "wordCount": 636,
-      "assigned": 18
+      "paragraphs": 12,
+      "wordCount": 1206,
+      "assigned": 18,
+      "editorialExpandedParagraphs": 4
     },
     {
       "number": 12,
       "title": "Hồ sơ giám định ngược",
-      "paragraphs": 8,
-      "wordCount": 632,
-      "assigned": 18
+      "paragraphs": 12,
+      "wordCount": 1228,
+      "assigned": 18,
+      "editorialExpandedParagraphs": 4
     },
     {
       "number": 13,
       "title": "Bản sao bán đấu giá",
-      "paragraphs": 8,
-      "wordCount": 634,
-      "assigned": 18
+      "paragraphs": 12,
+      "wordCount": 1230,
+      "assigned": 18,
+      "editorialExpandedParagraphs": 4
     },
     {
       "number": 14,
       "title": "Kẻ sửa chữ ký",
-      "paragraphs": 8,
-      "wordCount": 615,
-      "assigned": 18
+      "paragraphs": 12,
+      "wordCount": 1196,
+      "assigned": 18,
+      "editorialExpandedParagraphs": 4
     },
     {
       "number": 15,
       "title": "Hợp đồng mua sự im lặng",
-      "paragraphs": 8,
-      "wordCount": 659,
-      "assigned": 18
+      "paragraphs": 12,
+      "wordCount": 1249,
+      "assigned": 18,
+      "editorialExpandedParagraphs": 4
     },
     {
       "number": 16,
       "title": "Giây thứ không trên màn hình",
-      "paragraphs": 8,
-      "wordCount": 668,
-      "assigned": 19
+      "paragraphs": 12,
+      "wordCount": 1256,
+      "assigned": 19,
+      "editorialExpandedParagraphs": 4
     },
     {
       "number": 17,
       "title": "Cuộc hẹn trong phòng chờ",
-      "paragraphs": 8,
-      "wordCount": 676,
-      "assigned": 18
+      "paragraphs": 12,
+      "wordCount": 1249,
+      "assigned": 18,
+      "editorialExpandedParagraphs": 4
     },
     {
       "number": 18,
       "title": "Phiên điều trần bí mật",
-      "paragraphs": 8,
-      "wordCount": 620,
-      "assigned": 18
+      "paragraphs": 12,
+      "wordCount": 1219,
+      "assigned": 18,
+      "editorialExpandedParagraphs": 4
     },
     {
       "number": 19,
       "title": "Người gửi thư từ tương lai",
-      "paragraphs": 8,
-      "wordCount": 653,
-      "assigned": 18
+      "paragraphs": 12,
+      "wordCount": 1236,
+      "assigned": 18,
+      "editorialExpandedParagraphs": 4
     },
     {
       "number": 20,
       "title": "Khu cách ly A-12",
-      "paragraphs": 8,
-      "wordCount": 661,
-      "assigned": 18
+      "paragraphs": 12,
+      "wordCount": 1259,
+      "assigned": 18,
+      "editorialExpandedParagraphs": 4
     },
     {
       "number": 21,
       "title": "Chợ giao dịch nhân chứng",
-      "paragraphs": 8,
-      "wordCount": 642,
-      "assigned": 18
+      "paragraphs": 12,
+      "wordCount": 1219,
+      "assigned": 18,
+      "editorialExpandedParagraphs": 4
     },
     {
       "number": 22,
       "title": "Lá phiếu trong nhà giam",
-      "paragraphs": 8,
-      "wordCount": 691,
-      "assigned": 18
+      "paragraphs": 12,
+      "wordCount": 1277,
+      "assigned": 18,
+      "editorialExpandedParagraphs": 4
     },
     {
       "number": 23,
       "title": "Dữ liệu của vụ thứ tám",
-      "paragraphs": 8,
-      "wordCount": 649,
-      "assigned": 18
+      "paragraphs": 12,
+      "wordCount": 1237,
+      "assigned": 18,
+      "editorialExpandedParagraphs": 4
     },
     {
       "number": 24,
       "title": "Ba lời khai đối lập",
-      "paragraphs": 8,
-      "wordCount": 659,
-      "assigned": 19
+      "paragraphs": 12,
+      "wordCount": 1232,
+      "assigned": 19,
+      "editorialExpandedParagraphs": 4
     },
     {
       "number": 25,
       "title": "Chìa khóa mở tầng không",
-      "paragraphs": 8,
-      "wordCount": 657,
-      "assigned": 18
+      "paragraphs": 12,
+      "wordCount": 1255,
+      "assigned": 18,
+      "editorialExpandedParagraphs": 4
     },
     {
       "number": 26,
       "title": "Thẩm phán không có hồ sơ",
-      "paragraphs": 8,
-      "wordCount": 688,
-      "assigned": 18
+      "paragraphs": 12,
+      "wordCount": 1302,
+      "assigned": 18,
+      "editorialExpandedParagraphs": 4
     },
     {
       "number": 27,
       "title": "Lời khai đồng thuận",
-      "paragraphs": 8,
-      "wordCount": 672,
-      "assigned": 18
+      "paragraphs": 12,
+      "wordCount": 1266,
+      "assigned": 18,
+      "editorialExpandedParagraphs": 4
     },
     {
       "number": 28,
       "title": "Bản ghi hai giọng nói",
-      "paragraphs": 8,
-      "wordCount": 624,
-      "assigned": 18
+      "paragraphs": 12,
+      "wordCount": 1195,
+      "assigned": 18,
+      "editorialExpandedParagraphs": 4
     },
     {
       "number": 29,
       "title": "Phòng phát sóng sự thật",
-      "paragraphs": 8,
-      "wordCount": 659,
-      "assigned": 18
+      "paragraphs": 12,
+      "wordCount": 1238,
+      "assigned": 18,
+      "editorialExpandedParagraphs": 4
     },
     {
       "number": 30,
       "title": "Điều khoản đổi mạng",
-      "paragraphs": 8,
-      "wordCount": 671,
-      "assigned": 18
+      "paragraphs": 12,
+      "wordCount": 1281,
+      "assigned": 18,
+      "editorialExpandedParagraphs": 4
     },
     {
       "number": 31,
       "title": "Mười hai chiếc ghế trống",
-      "paragraphs": 8,
-      "wordCount": 652,
-      "assigned": 18
+      "paragraphs": 12,
+      "wordCount": 1214,
+      "assigned": 18,
+      "editorialExpandedParagraphs": 4
     },
     {
       "number": 32,
       "title": "Bản án đầu tiên dành cho cô",
-      "paragraphs": 8,
-      "wordCount": 667,
-      "assigned": 19
+      "paragraphs": 12,
+      "wordCount": 1241,
+      "assigned": 19,
+      "editorialExpandedParagraphs": 4
     },
     {
       "number": 33,
       "title": "Lỗi khẩn cấp 00:00",
-      "paragraphs": 8,
-      "wordCount": 671,
-      "assigned": 18
+      "paragraphs": 12,
+      "wordCount": 1281,
+      "assigned": 18,
+      "editorialExpandedParagraphs": 4
     },
     {
       "number": 34,
       "title": "Người chưa từng sinh ra",
-      "paragraphs": 8,
-      "wordCount": 660,
-      "assigned": 18
+      "paragraphs": 12,
+      "wordCount": 1253,
+      "assigned": 18,
+      "editorialExpandedParagraphs": 4
     },
     {
       "number": 35,
       "title": "Bữa tối trước ngày chết",
-      "paragraphs": 8,
-      "wordCount": 676,
-      "assigned": 18
+      "paragraphs": 12,
+      "wordCount": 1269,
+      "assigned": 18,
+      "editorialExpandedParagraphs": 4
     },
     {
       "number": 36,
       "title": "Nhà máy làm chứng cứ",
-      "paragraphs": 8,
-      "wordCount": 656,
-      "assigned": 18
+      "paragraphs": 12,
+      "wordCount": 1271,
+      "assigned": 18,
+      "editorialExpandedParagraphs": 4
     },
     {
       "number": 37,
       "title": "Kẻ được tha biến mất",
-      "paragraphs": 8,
-      "wordCount": 659,
-      "assigned": 18
+      "paragraphs": 12,
+      "wordCount": 1249,
+      "assigned": 18,
+      "editorialExpandedParagraphs": 4
     },
     {
       "number": 38,
       "title": "Hệ thống không có nạn nhân",
-      "paragraphs": 8,
-      "wordCount": 645,
-      "assigned": 18
+      "paragraphs": 12,
+      "wordCount": 1237,
+      "assigned": 18,
+      "editorialExpandedParagraphs": 4
     },
     {
       "number": 39,
       "title": "Phiên tòa của người mất tích",
-      "paragraphs": 8,
-      "wordCount": 691,
-      "assigned": 18
+      "paragraphs": 12,
+      "wordCount": 1282,
+      "assigned": 18,
+      "editorialExpandedParagraphs": 4
     },
     {
       "number": 40,
       "title": "Nữ luật sư đốt hồ sơ",
-      "paragraphs": 8,
-      "wordCount": 702,
-      "assigned": 19
+      "paragraphs": 12,
+      "wordCount": 1299,
+      "assigned": 19,
+      "editorialExpandedParagraphs": 4
     },
     {
       "number": 41,
       "title": "Đi tìm bản án gốc",
-      "paragraphs": 8,
-      "wordCount": 674,
-      "assigned": 18
+      "paragraphs": 12,
+      "wordCount": 1257,
+      "assigned": 18,
+      "editorialExpandedParagraphs": 4
     },
     {
       "number": 42,
       "title": "Cuộc gặp bên kia kính",
-      "paragraphs": 8,
-      "wordCount": 666,
-      "assigned": 18
+      "paragraphs": 12,
+      "wordCount": 1285,
+      "assigned": 18,
+      "editorialExpandedParagraphs": 4
     },
     {
       "number": 43,
       "title": "Đứa trẻ chứng kiến",
-      "paragraphs": 8,
-      "wordCount": 668,
-      "assigned": 18
+      "paragraphs": 12,
+      "wordCount": 1253,
+      "assigned": 18,
+      "editorialExpandedParagraphs": 4
     },
     {
       "number": 44,
       "title": "Quá khứ của Kaito",
-      "paragraphs": 8,
-      "wordCount": 717,
-      "assigned": 18
+      "paragraphs": 12,
+      "wordCount": 1330,
+      "assigned": 18,
+      "editorialExpandedParagraphs": 4
     },
     {
       "number": 45,
       "title": "Kho lưu trữ cảm xúc",
-      "paragraphs": 8,
-      "wordCount": 670,
-      "assigned": 18
+      "paragraphs": 12,
+      "wordCount": 1262,
+      "assigned": 18,
+      "editorialExpandedParagraphs": 4
     },
     {
       "number": 46,
       "title": "Lời thú tội của người điều tra",
-      "paragraphs": 8,
-      "wordCount": 681,
-      "assigned": 18
+      "paragraphs": 12,
+      "wordCount": 1264,
+      "assigned": 18,
+      "editorialExpandedParagraphs": 4
     },
     {
       "number": 47,
       "title": "Một lựa chọn của Haru",
-      "paragraphs": 8,
-      "wordCount": 683,
-      "assigned": 18
+      "paragraphs": 12,
+      "wordCount": 1267,
+      "assigned": 18,
+      "editorialExpandedParagraphs": 4
     },
     {
       "number": 48,
       "title": "Bằng chứng không thể sao chép",
-      "paragraphs": 8,
-      "wordCount": 688,
-      "assigned": 19
+      "paragraphs": 12,
+      "wordCount": 1273,
+      "assigned": 19,
+      "editorialExpandedParagraphs": 4
     },
     {
       "number": 49,
       "title": "Tòa án không có thẩm phán",
-      "paragraphs": 8,
-      "wordCount": 691,
-      "assigned": 18
+      "paragraphs": 12,
+      "wordCount": 1293,
+      "assigned": 18,
+      "editorialExpandedParagraphs": 4
     },
     {
       "number": 50,
       "title": "Quyền sống của người chưa chết",
-      "paragraphs": 8,
-      "wordCount": 644,
-      "assigned": 18
+      "paragraphs": 12,
+      "wordCount": 1224,
+      "assigned": 18,
+      "editorialExpandedParagraphs": 4
     },
     {
       "number": 51,
       "title": "Những người không muốn được cứu",
-      "paragraphs": 8,
-      "wordCount": 708,
-      "assigned": 18
+      "paragraphs": 12,
+      "wordCount": 1322,
+      "assigned": 18,
+      "editorialExpandedParagraphs": 4
     },
     {
       "number": 52,
       "title": "Thành phố chờ phán quyết",
-      "paragraphs": 8,
-      "wordCount": 692,
-      "assigned": 18
+      "paragraphs": 12,
+      "wordCount": 1311,
+      "assigned": 18,
+      "editorialExpandedParagraphs": 4
     },
     {
       "number": 53,
       "title": "Giao ước không dự đoán",
-      "paragraphs": 8,
-      "wordCount": 690,
-      "assigned": 18
+      "paragraphs": 12,
+      "wordCount": 1296,
+      "assigned": 18,
+      "editorialExpandedParagraphs": 4
     },
     {
       "number": 54,
       "title": "Ngọn lửa trong buồng máy",
-      "paragraphs": 8,
-      "wordCount": 696,
-      "assigned": 18
+      "paragraphs": 12,
+      "wordCount": 1314,
+      "assigned": 18,
+      "editorialExpandedParagraphs": 4
     },
     {
       "number": 55,
       "title": "Trước phiên xử cuối",
-      "paragraphs": 8,
-      "wordCount": 673,
-      "assigned": 18
+      "paragraphs": 12,
+      "wordCount": 1260,
+      "assigned": 18,
+      "editorialExpandedParagraphs": 4
     },
     {
       "number": 56,
       "title": "Đêm mọi đồng hồ đứng yên",
-      "paragraphs": 8,
-      "wordCount": 621,
-      "assigned": 19
+      "paragraphs": 12,
+      "wordCount": 1227,
+      "assigned": 19,
+      "editorialExpandedParagraphs": 4
     },
     {
       "number": 57,
       "title": "Mười hai người đứng trước tòa",
-      "paragraphs": 8,
-      "wordCount": 626,
-      "assigned": 18
+      "paragraphs": 12,
+      "wordCount": 1229,
+      "assigned": 18,
+      "editorialExpandedParagraphs": 4
     },
     {
       "number": 58,
       "title": "Không một người thắng",
-      "paragraphs": 8,
-      "wordCount": 697,
-      "assigned": 18
+      "paragraphs": 12,
+      "wordCount": 1342,
+      "assigned": 18,
+      "editorialExpandedParagraphs": 4
     },
     {
       "number": 59,
       "title": "Chọn người bị kết án",
-      "paragraphs": 8,
-      "wordCount": 670,
-      "assigned": 18
+      "paragraphs": 12,
+      "wordCount": 1290,
+      "assigned": 18,
+      "editorialExpandedParagraphs": 4
     },
     {
       "number": 60,
       "title": "Tên thật của dự án",
-      "paragraphs": 8,
-      "wordCount": 698,
-      "assigned": 18
+      "paragraphs": 12,
+      "wordCount": 1294,
+      "assigned": 18,
+      "editorialExpandedParagraphs": 4
     },
     {
       "number": 61,
       "title": "Lời tuyên bố số không",
-      "paragraphs": 8,
-      "wordCount": 711,
-      "assigned": 18
+      "paragraphs": 12,
+      "wordCount": 1315,
+      "assigned": 18,
+      "editorialExpandedParagraphs": 4
     },
     {
       "number": 62,
       "title": "Những ngày mai không có bản đồ",
-      "paragraphs": 8,
-      "wordCount": 664,
-      "assigned": 18
+      "paragraphs": 12,
+      "wordCount": 1243,
+      "assigned": 18,
+      "editorialExpandedParagraphs": 4
     },
     {
       "number": 63,
       "title": "Quyền không biết trước",
-      "paragraphs": 8,
-      "wordCount": 693,
-      "assigned": 18
+      "paragraphs": 12,
+      "wordCount": 1298,
+      "assigned": 18,
+      "editorialExpandedParagraphs": 4
     },
     {
       "number": 64,
       "title": "Khi đồng hồ chỉ 00:01",
-      "paragraphs": 8,
-      "wordCount": 656,
-      "assigned": 19
+      "paragraphs": 12,
+      "wordCount": 1249,
+      "assigned": 19,
+      "editorialExpandedParagraphs": 4
     }
   ],
   "perTerm": [
@@ -6261,5 +6325,8 @@
   ],
   "notCovered": [],
   "errors": [],
-  "editorialStatus": "First complete literary draft; grammar, reading/meaning, idiomatic Vietnamese equivalents and original PDF row-by-row comparison not manually proofread"
+  "editorialStatus": "Expanded manuscript integrated and computer-validated; final literary line edit, source Japanese reading/meaning and PDF row-by-row review not yet completed",
+  "paragraphCount": 768,
+  "chaptersWithFullProse": 64,
+  "notes": "64 original 8-paragraph chapters retained; four plot-specific added scenes per chapter interwoven with original plot. 1,160 original N2 markers unchanged. Manual PDF/semantic proofreading still pending."
 }
