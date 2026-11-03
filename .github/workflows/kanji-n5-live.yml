@@ -32,7 +32,13 @@ jobs:
             done
             test "$ok" = "1" || exit 1
           done
-          curl -fsSL "$BASE/kanji-n5.html" | grep -q "kanji-n5.js"
-          curl -fsSL "$BASE/books.js" | grep -q "kanji-n5.html"
-          curl -fsSL "$BASE/kanji-n5.js?v=20261103-storyhd1" | grep -q "story-hd"
+          # Avoid curl | grep -q: grep closes its pipe early and curl exits 23.
+          curl -fsSL -o /tmp/kanji-html "$BASE/kanji-n5.html"
+          curl -fsSL -o /tmp/kanji-data "$BASE/kanji-n5-data.js?v=20261103-storyhd1"
+          curl -fsSL -o /tmp/kanji-js "$BASE/kanji-n5.js?v=20261103-storyhd1"
+          curl -fsSL -o /tmp/kanji-books "$BASE/books.js"
+          grep -Fq 'kanji-n5.js?v=20261103-storyhd1' /tmp/kanji-html
+          grep -Fq '"art":"story-hd"' /tmp/kanji-data
+          grep -Fq "chapters[0].art" /tmp/kanji-js
+          grep -Fq 'kanji-n5.html' /tmp/kanji-books
           echo "PUBLIC KANJI N5 ORIGINAL CHAPTER ART VERIFIED"
