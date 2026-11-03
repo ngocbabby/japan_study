@@ -1,0 +1,1319 @@
+{
+  "source": {
+    "file": "KANJI N5.pdf",
+    "name": "TMY JLPT Kanji N5",
+    "pages": 32,
+    "realms": 6,
+    "lessons": 25,
+    "rows": 135,
+    "unique_kanji": 123,
+    "repeats": 12
+  },
+  "chapters": [
+    {
+      "id": 1,
+      "realm": 1,
+      "lesson": 1,
+      "entry_count": 4,
+      "entries": [
+        {
+          "realm": 1,
+          "lesson": 1,
+          "no": 1,
+          "kanji": "大",
+          "hanviet": "ĐẠI",
+          "pdf_page": 4
+        },
+        {
+          "realm": 1,
+          "lesson": 1,
+          "no": 2,
+          "kanji": "小",
+          "hanviet": "TIỂU",
+          "pdf_page": 4
+        },
+        {
+          "realm": 1,
+          "lesson": 1,
+          "no": 3,
+          "kanji": "新",
+          "hanviet": "TÂN",
+          "pdf_page": 4
+        },
+        {
+          "realm": 1,
+          "lesson": 1,
+          "no": 4,
+          "kanji": "古",
+          "hanviet": "CỔ",
+          "pdf_page": 4
+        }
+      ],
+      "preview": false
+    },
+    {
+      "id": 2,
+      "realm": 1,
+      "lesson": 2,
+      "entry_count": 4,
+      "entries": [
+        {
+          "realm": 1,
+          "lesson": 2,
+          "no": 1,
+          "kanji": "高",
+          "hanviet": "CAO",
+          "pdf_page": 4
+        },
+        {
+          "realm": 1,
+          "lesson": 2,
+          "no": 2,
+          "kanji": "安",
+          "hanviet": "AN",
+          "pdf_page": 5
+        },
+        {
+          "realm": 1,
+          "lesson": 2,
+          "no": 3,
+          "kanji": "有",
+          "hanviet": "HỮU",
+          "pdf_page": 5
+        },
+        {
+          "realm": 1,
+          "lesson": 2,
+          "no": 4,
+          "kanji": "静",
+          "hanviet": "TĨNH",
+          "pdf_page": 5
+        }
+      ],
+      "preview": false
+    },
+    {
+      "id": 3,
+      "realm": 1,
+      "lesson": 3,
+      "entry_count": 6,
+      "entries": [
+        {
+          "realm": 1,
+          "lesson": 3,
+          "no": 1,
+          "kanji": "長",
+          "hanviet": "TRƯỜNG",
+          "pdf_page": 5
+        },
+        {
+          "realm": 1,
+          "lesson": 3,
+          "no": 2,
+          "kanji": "短",
+          "hanviet": "ĐOẢN",
+          "pdf_page": 5
+        },
+        {
+          "realm": 1,
+          "lesson": 3,
+          "no": 3,
+          "kanji": "白",
+          "hanviet": "BẠCH",
+          "pdf_page": 6
+        },
+        {
+          "realm": 1,
+          "lesson": 3,
+          "no": 4,
+          "kanji": "黒",
+          "hanviet": "HẮC",
+          "pdf_page": 6
+        },
+        {
+          "realm": 1,
+          "lesson": 3,
+          "no": 5,
+          "kanji": "赤",
+          "hanviet": "XÍCH",
+          "pdf_page": 6
+        },
+        {
+          "realm": 1,
+          "lesson": 3,
+          "no": 6,
+          "kanji": "青",
+          "hanviet": "THANH",
+          "pdf_page": 6
+        }
+      ],
+      "preview": false
+    },
+    {
+      "id": 4,
+      "realm": 2,
+      "lesson": 1,
+      "entry_count": 9,
+      "entries": [
+        {
+          "realm": 2,
+          "lesson": 1,
+          "no": 1,
+          "kanji": "行",
+          "hanviet": "HÀNH",
+          "pdf_page": 7
+        },
+        {
+          "realm": 2,
+          "lesson": 1,
+          "no": 2,
+          "kanji": "来",
+          "hanviet": "LAI",
+          "pdf_page": 7
+        },
+        {
+          "realm": 2,
+          "lesson": 1,
+          "no": 3,
+          "kanji": "帰",
+          "hanviet": "QUY",
+          "pdf_page": 7
+        },
+        {
+          "realm": 2,
+          "lesson": 1,
+          "no": 4,
+          "kanji": "食",
+          "hanviet": "THỰC",
+          "pdf_page": 7
+        },
+        {
+          "realm": 2,
+          "lesson": 1,
+          "no": 5,
+          "kanji": "飲",
+          "hanviet": "ẨM",
+          "pdf_page": 7
+        },
+        {
+          "realm": 2,
+          "lesson": 1,
+          "no": 6,
+          "kanji": "見",
+          "hanviet": "KIẾN",
+          "pdf_page": 8
+        },
+        {
+          "realm": 2,
+          "lesson": 1,
+          "no": 7,
+          "kanji": "聞",
+          "hanviet": "VĂN",
+          "pdf_page": 8
+        },
+        {
+          "realm": 2,
+          "lesson": 1,
+          "no": 8,
+          "kanji": "書",
+          "hanviet": "THƯ",
+          "pdf_page": 8
+        },
+        {
+          "realm": 2,
+          "lesson": 1,
+          "no": 9,
+          "kanji": "読",
+          "hanviet": "ĐỘC",
+          "pdf_page": 8
+        }
+      ],
+      "preview": false
+    },
+    {
+      "id": 5,
+      "realm": 2,
+      "lesson": 2,
+      "entry_count": 5,
+      "entries": [
+        {
+          "realm": 2,
+          "lesson": 2,
+          "no": 1,
+          "kanji": "言",
+          "hanviet": "NGÔN",
+          "pdf_page": 8
+        },
+        {
+          "realm": 2,
+          "lesson": 2,
+          "no": 2,
+          "kanji": "話",
+          "hanviet": "THOẠI",
+          "pdf_page": 9
+        },
+        {
+          "realm": 2,
+          "lesson": 2,
+          "no": 3,
+          "kanji": "語",
+          "hanviet": "NGỮ",
+          "pdf_page": 9
+        },
+        {
+          "realm": 2,
+          "lesson": 2,
+          "no": 4,
+          "kanji": "英",
+          "hanviet": "ANH",
+          "pdf_page": 9
+        },
+        {
+          "realm": 2,
+          "lesson": 2,
+          "no": 5,
+          "kanji": "作",
+          "hanviet": "TÁC",
+          "pdf_page": 9
+        }
+      ],
+      "preview": false
+    },
+    {
+      "id": 6,
+      "realm": 2,
+      "lesson": 3,
+      "entry_count": 5,
+      "entries": [
+        {
+          "realm": 2,
+          "lesson": 3,
+          "no": 1,
+          "kanji": "学",
+          "hanviet": "HỌC",
+          "pdf_page": 9
+        },
+        {
+          "realm": 2,
+          "lesson": 3,
+          "no": 2,
+          "kanji": "校",
+          "hanviet": "HIỆU",
+          "pdf_page": 10
+        },
+        {
+          "realm": 2,
+          "lesson": 3,
+          "no": 3,
+          "kanji": "先",
+          "hanviet": "TIÊN",
+          "pdf_page": 10
+        },
+        {
+          "realm": 2,
+          "lesson": 3,
+          "no": 4,
+          "kanji": "生",
+          "hanviet": "SINH",
+          "pdf_page": 10
+        },
+        {
+          "realm": 2,
+          "lesson": 3,
+          "no": 5,
+          "kanji": "教",
+          "hanviet": "GIÁO",
+          "pdf_page": 10
+        }
+      ],
+      "preview": false
+    },
+    {
+      "id": 7,
+      "realm": 2,
+      "lesson": 4,
+      "entry_count": 5,
+      "entries": [
+        {
+          "realm": 2,
+          "lesson": 4,
+          "no": 1,
+          "kanji": "入",
+          "hanviet": "NHẬP",
+          "pdf_page": 10
+        },
+        {
+          "realm": 2,
+          "lesson": 4,
+          "no": 2,
+          "kanji": "出",
+          "hanviet": "XUẤT",
+          "pdf_page": 11
+        },
+        {
+          "realm": 2,
+          "lesson": 4,
+          "no": 3,
+          "kanji": "立",
+          "hanviet": "LẬP",
+          "pdf_page": 11
+        },
+        {
+          "realm": 2,
+          "lesson": 4,
+          "no": 4,
+          "kanji": "名",
+          "hanviet": "DANH",
+          "pdf_page": 11
+        },
+        {
+          "realm": 2,
+          "lesson": 4,
+          "no": 5,
+          "kanji": "手",
+          "hanviet": "THỦ",
+          "pdf_page": 11
+        }
+      ],
+      "preview": false
+    },
+    {
+      "id": 8,
+      "realm": 2,
+      "lesson": 5,
+      "entry_count": 5,
+      "entries": [
+        {
+          "realm": 2,
+          "lesson": 5,
+          "no": 1,
+          "kanji": "山",
+          "hanviet": "SƠN",
+          "pdf_page": 12
+        },
+        {
+          "realm": 2,
+          "lesson": 5,
+          "no": 2,
+          "kanji": "川",
+          "hanviet": "XUYÊN",
+          "pdf_page": 12
+        },
+        {
+          "realm": 2,
+          "lesson": 5,
+          "no": 3,
+          "kanji": "海",
+          "hanviet": "HẢI",
+          "pdf_page": 12
+        },
+        {
+          "realm": 2,
+          "lesson": 5,
+          "no": 4,
+          "kanji": "店",
+          "hanviet": "ĐIẾM",
+          "pdf_page": 12
+        },
+        {
+          "realm": 2,
+          "lesson": 5,
+          "no": 5,
+          "kanji": "買",
+          "hanviet": "MÃI",
+          "pdf_page": 12
+        }
+      ],
+      "preview": false
+    },
+    {
+      "id": 9,
+      "realm": 2,
+      "lesson": 6,
+      "entry_count": 6,
+      "entries": [
+        {
+          "realm": 2,
+          "lesson": 6,
+          "no": 1,
+          "kanji": "雨",
+          "hanviet": "VŨ",
+          "pdf_page": 12
+        },
+        {
+          "realm": 2,
+          "lesson": 6,
+          "no": 2,
+          "kanji": "天",
+          "hanviet": "THIÊN",
+          "pdf_page": 13
+        },
+        {
+          "realm": 2,
+          "lesson": 6,
+          "no": 3,
+          "kanji": "気",
+          "hanviet": "KHÍ",
+          "pdf_page": 13
+        },
+        {
+          "realm": 2,
+          "lesson": 6,
+          "no": 4,
+          "kanji": "道",
+          "hanviet": "ĐẠO",
+          "pdf_page": 13
+        },
+        {
+          "realm": 2,
+          "lesson": 6,
+          "no": 5,
+          "kanji": "右",
+          "hanviet": "HỮU",
+          "pdf_page": 13
+        },
+        {
+          "realm": 2,
+          "lesson": 6,
+          "no": 6,
+          "kanji": "左",
+          "hanviet": "TẢ",
+          "pdf_page": 13
+        }
+      ],
+      "preview": false
+    },
+    {
+      "id": 10,
+      "realm": 2,
+      "lesson": 7,
+      "entry_count": 7,
+      "entries": [
+        {
+          "realm": 2,
+          "lesson": 7,
+          "no": 1,
+          "kanji": "目",
+          "hanviet": "MỤC",
+          "pdf_page": 14
+        },
+        {
+          "realm": 2,
+          "lesson": 7,
+          "no": 2,
+          "kanji": "耳",
+          "hanviet": "NHĨ",
+          "pdf_page": 14
+        },
+        {
+          "realm": 2,
+          "lesson": 7,
+          "no": 3,
+          "kanji": "口",
+          "hanviet": "KHẨU",
+          "pdf_page": 14
+        },
+        {
+          "realm": 2,
+          "lesson": 7,
+          "no": 4,
+          "kanji": "足",
+          "hanviet": "TÚC",
+          "pdf_page": 14
+        },
+        {
+          "realm": 2,
+          "lesson": 7,
+          "no": 5,
+          "kanji": "心",
+          "hanviet": "TÂM",
+          "pdf_page": 14
+        },
+        {
+          "realm": 2,
+          "lesson": 7,
+          "no": 6,
+          "kanji": "話",
+          "hanviet": "THOẠI",
+          "pdf_page": 15
+        },
+        {
+          "realm": 2,
+          "lesson": 7,
+          "no": 7,
+          "kanji": "読",
+          "hanviet": "ĐỘC",
+          "pdf_page": 15
+        }
+      ],
+      "preview": false
+    },
+    {
+      "id": 11,
+      "realm": 2,
+      "lesson": 8,
+      "entry_count": 5,
+      "entries": [
+        {
+          "realm": 2,
+          "lesson": 8,
+          "no": 1,
+          "kanji": "男",
+          "hanviet": "NAM",
+          "pdf_page": 15
+        },
+        {
+          "realm": 2,
+          "lesson": 8,
+          "no": 2,
+          "kanji": "女",
+          "hanviet": "NỮ",
+          "pdf_page": 15
+        },
+        {
+          "realm": 2,
+          "lesson": 8,
+          "no": 3,
+          "kanji": "子",
+          "hanviet": "TỬ",
+          "pdf_page": 15
+        },
+        {
+          "realm": 2,
+          "lesson": 8,
+          "no": 4,
+          "kanji": "門",
+          "hanviet": "MÔN",
+          "pdf_page": 16
+        },
+        {
+          "realm": 2,
+          "lesson": 8,
+          "no": 5,
+          "kanji": "早",
+          "hanviet": "TẢO",
+          "pdf_page": 16
+        }
+      ],
+      "preview": false
+    },
+    {
+      "id": 12,
+      "realm": 3,
+      "lesson": 1,
+      "entry_count": 4,
+      "entries": [
+        {
+          "realm": 3,
+          "lesson": 1,
+          "no": 1,
+          "kanji": "中",
+          "hanviet": "TRUNG",
+          "pdf_page": 16
+        },
+        {
+          "realm": 3,
+          "lesson": 1,
+          "no": 2,
+          "kanji": "外",
+          "hanviet": "NGOẠI",
+          "pdf_page": 16
+        },
+        {
+          "realm": 3,
+          "lesson": 1,
+          "no": 3,
+          "kanji": "上",
+          "hanviet": "THƯỢNG",
+          "pdf_page": 16
+        },
+        {
+          "realm": 3,
+          "lesson": 1,
+          "no": 4,
+          "kanji": "下",
+          "hanviet": "HẠ",
+          "pdf_page": 17
+        }
+      ],
+      "preview": false
+    },
+    {
+      "id": 13,
+      "realm": 3,
+      "lesson": 2,
+      "entry_count": 5,
+      "entries": [
+        {
+          "realm": 3,
+          "lesson": 2,
+          "no": 1,
+          "kanji": "駅",
+          "hanviet": "DỊCH",
+          "pdf_page": 17
+        },
+        {
+          "realm": 3,
+          "lesson": 2,
+          "no": 2,
+          "kanji": "電",
+          "hanviet": "ĐIỆN",
+          "pdf_page": 17
+        },
+        {
+          "realm": 3,
+          "lesson": 2,
+          "no": 3,
+          "kanji": "車",
+          "hanviet": "XA",
+          "pdf_page": 17
+        },
+        {
+          "realm": 3,
+          "lesson": 2,
+          "no": 4,
+          "kanji": "自",
+          "hanviet": "TỰ",
+          "pdf_page": 17
+        },
+        {
+          "realm": 3,
+          "lesson": 2,
+          "no": 5,
+          "kanji": "転",
+          "hanviet": "CHUYỂN",
+          "pdf_page": 18
+        }
+      ],
+      "preview": false
+    },
+    {
+      "id": 14,
+      "realm": 3,
+      "lesson": 3,
+      "entry_count": 7,
+      "entries": [
+        {
+          "realm": 3,
+          "lesson": 3,
+          "no": 1,
+          "kanji": "父",
+          "hanviet": "PHỤ",
+          "pdf_page": 18
+        },
+        {
+          "realm": 3,
+          "lesson": 3,
+          "no": 2,
+          "kanji": "母",
+          "hanviet": "MẪU",
+          "pdf_page": 18
+        },
+        {
+          "realm": 3,
+          "lesson": 3,
+          "no": 3,
+          "kanji": "兄",
+          "hanviet": "HUYNH",
+          "pdf_page": 18
+        },
+        {
+          "realm": 3,
+          "lesson": 3,
+          "no": 4,
+          "kanji": "姉",
+          "hanviet": "TỶ",
+          "pdf_page": 18
+        },
+        {
+          "realm": 3,
+          "lesson": 3,
+          "no": 5,
+          "kanji": "弟",
+          "hanviet": "ĐỆ",
+          "pdf_page": 19
+        },
+        {
+          "realm": 3,
+          "lesson": 3,
+          "no": 6,
+          "kanji": "妹",
+          "hanviet": "MUỘI",
+          "pdf_page": 19
+        },
+        {
+          "realm": 3,
+          "lesson": 3,
+          "no": 7,
+          "kanji": "友",
+          "hanviet": "HỮU",
+          "pdf_page": 19
+        }
+      ],
+      "preview": false
+    },
+    {
+      "id": 15,
+      "realm": 3,
+      "lesson": 4,
+      "entry_count": 7,
+      "entries": [
+        {
+          "realm": 3,
+          "lesson": 4,
+          "no": 1,
+          "kanji": "時",
+          "hanviet": "THỜI",
+          "pdf_page": 19
+        },
+        {
+          "realm": 3,
+          "lesson": 4,
+          "no": 2,
+          "kanji": "間",
+          "hanviet": "GIAN",
+          "pdf_page": 20
+        },
+        {
+          "realm": 3,
+          "lesson": 4,
+          "no": 3,
+          "kanji": "午",
+          "hanviet": "NGỌ",
+          "pdf_page": 20
+        },
+        {
+          "realm": 3,
+          "lesson": 4,
+          "no": 4,
+          "kanji": "前",
+          "hanviet": "TIỀN",
+          "pdf_page": 20
+        },
+        {
+          "realm": 3,
+          "lesson": 4,
+          "no": 5,
+          "kanji": "後",
+          "hanviet": "HẬU",
+          "pdf_page": 20
+        },
+        {
+          "realm": 3,
+          "lesson": 4,
+          "no": 6,
+          "kanji": "分",
+          "hanviet": "PHÂN",
+          "pdf_page": 20
+        },
+        {
+          "realm": 3,
+          "lesson": 4,
+          "no": 7,
+          "kanji": "半",
+          "hanviet": "BÁN",
+          "pdf_page": 21
+        }
+      ],
+      "preview": false
+    },
+    {
+      "id": 16,
+      "realm": 3,
+      "lesson": 5,
+      "entry_count": 6,
+      "entries": [
+        {
+          "realm": 3,
+          "lesson": 5,
+          "no": 1,
+          "kanji": "日",
+          "hanviet": "NHẬT",
+          "pdf_page": 21
+        },
+        {
+          "realm": 3,
+          "lesson": 5,
+          "no": 2,
+          "kanji": "月",
+          "hanviet": "NGUYỆT",
+          "pdf_page": 21
+        },
+        {
+          "realm": 3,
+          "lesson": 5,
+          "no": 3,
+          "kanji": "年",
+          "hanviet": "NIÊN",
+          "pdf_page": 21
+        },
+        {
+          "realm": 3,
+          "lesson": 5,
+          "no": 4,
+          "kanji": "週",
+          "hanviet": "CHU",
+          "pdf_page": 21
+        },
+        {
+          "realm": 3,
+          "lesson": 5,
+          "no": 5,
+          "kanji": "毎",
+          "hanviet": "MỖI",
+          "pdf_page": 22
+        },
+        {
+          "realm": 3,
+          "lesson": 5,
+          "no": 6,
+          "kanji": "今",
+          "hanviet": "KIM",
+          "pdf_page": 22
+        }
+      ],
+      "preview": false
+    },
+    {
+      "id": 17,
+      "realm": 4,
+      "lesson": 1,
+      "entry_count": 6,
+      "entries": [
+        {
+          "realm": 4,
+          "lesson": 1,
+          "no": 1,
+          "kanji": "何",
+          "hanviet": "HÀ",
+          "pdf_page": 22
+        },
+        {
+          "realm": 4,
+          "lesson": 1,
+          "no": 2,
+          "kanji": "万",
+          "hanviet": "VẠN",
+          "pdf_page": 23
+        },
+        {
+          "realm": 4,
+          "lesson": 1,
+          "no": 3,
+          "kanji": "千",
+          "hanviet": "THIÊN",
+          "pdf_page": 23
+        },
+        {
+          "realm": 4,
+          "lesson": 1,
+          "no": 4,
+          "kanji": "百",
+          "hanviet": "BÁCH",
+          "pdf_page": 23
+        },
+        {
+          "realm": 4,
+          "lesson": 1,
+          "no": 5,
+          "kanji": "駅",
+          "hanviet": "DỊCH",
+          "pdf_page": 23
+        },
+        {
+          "realm": 4,
+          "lesson": 1,
+          "no": 6,
+          "kanji": "電",
+          "hanviet": "ĐIỆN",
+          "pdf_page": 23
+        }
+      ],
+      "preview": false
+    },
+    {
+      "id": 18,
+      "realm": 4,
+      "lesson": 2,
+      "entry_count": 10,
+      "entries": [
+        {
+          "realm": 4,
+          "lesson": 2,
+          "no": 1,
+          "kanji": "一",
+          "hanviet": "NHẤT",
+          "pdf_page": 24
+        },
+        {
+          "realm": 4,
+          "lesson": 2,
+          "no": 2,
+          "kanji": "二",
+          "hanviet": "NHỊ",
+          "pdf_page": 24
+        },
+        {
+          "realm": 4,
+          "lesson": 2,
+          "no": 3,
+          "kanji": "三",
+          "hanviet": "TAM",
+          "pdf_page": 24
+        },
+        {
+          "realm": 4,
+          "lesson": 2,
+          "no": 4,
+          "kanji": "四",
+          "hanviet": "TỨ",
+          "pdf_page": 24
+        },
+        {
+          "realm": 4,
+          "lesson": 2,
+          "no": 5,
+          "kanji": "五",
+          "hanviet": "NGŨ",
+          "pdf_page": 25
+        },
+        {
+          "realm": 4,
+          "lesson": 2,
+          "no": 6,
+          "kanji": "六",
+          "hanviet": "LỤC",
+          "pdf_page": 25
+        },
+        {
+          "realm": 4,
+          "lesson": 2,
+          "no": 7,
+          "kanji": "七",
+          "hanviet": "THẤT",
+          "pdf_page": 25
+        },
+        {
+          "realm": 4,
+          "lesson": 2,
+          "no": 8,
+          "kanji": "八",
+          "hanviet": "BÁT",
+          "pdf_page": 25
+        },
+        {
+          "realm": 4,
+          "lesson": 2,
+          "no": 9,
+          "kanji": "九",
+          "hanviet": "CỬU",
+          "pdf_page": 25
+        },
+        {
+          "realm": 4,
+          "lesson": 2,
+          "no": 10,
+          "kanji": "十",
+          "hanviet": "THẬP",
+          "pdf_page": 26
+        }
+      ],
+      "preview": false
+    },
+    {
+      "id": 19,
+      "realm": 5,
+      "lesson": 1,
+      "entry_count": 4,
+      "entries": [
+        {
+          "realm": 5,
+          "lesson": 1,
+          "no": 1,
+          "kanji": "金",
+          "hanviet": "KIM",
+          "pdf_page": 26
+        },
+        {
+          "realm": 5,
+          "lesson": 1,
+          "no": 2,
+          "kanji": "花",
+          "hanviet": "HOA",
+          "pdf_page": 26
+        },
+        {
+          "realm": 5,
+          "lesson": 1,
+          "no": 3,
+          "kanji": "円",
+          "hanviet": "VIÊN",
+          "pdf_page": 26
+        },
+        {
+          "realm": 5,
+          "lesson": 1,
+          "no": 4,
+          "kanji": "毎",
+          "hanviet": "MỖI",
+          "pdf_page": 27
+        }
+      ],
+      "preview": false
+    },
+    {
+      "id": 20,
+      "realm": 5,
+      "lesson": 2,
+      "entry_count": 4,
+      "entries": [
+        {
+          "realm": 5,
+          "lesson": 2,
+          "no": 1,
+          "kanji": "魚",
+          "hanviet": "NGƯ",
+          "pdf_page": 27
+        },
+        {
+          "realm": 5,
+          "lesson": 2,
+          "no": 2,
+          "kanji": "牛",
+          "hanviet": "NGƯU",
+          "pdf_page": 27
+        },
+        {
+          "realm": 5,
+          "lesson": 2,
+          "no": 3,
+          "kanji": "肉",
+          "hanviet": "NHỤC",
+          "pdf_page": 27
+        },
+        {
+          "realm": 5,
+          "lesson": 2,
+          "no": 4,
+          "kanji": "少",
+          "hanviet": "THIỂU",
+          "pdf_page": 28
+        }
+      ],
+      "preview": false
+    },
+    {
+      "id": 21,
+      "realm": 5,
+      "lesson": 3,
+      "entry_count": 5,
+      "entries": [
+        {
+          "realm": 5,
+          "lesson": 3,
+          "no": 1,
+          "kanji": "空",
+          "hanviet": "KHÔNG",
+          "pdf_page": 28
+        },
+        {
+          "realm": 5,
+          "lesson": 3,
+          "no": 2,
+          "kanji": "気",
+          "hanviet": "KHÍ",
+          "pdf_page": 28
+        },
+        {
+          "realm": 5,
+          "lesson": 3,
+          "no": 3,
+          "kanji": "安",
+          "hanviet": "AN",
+          "pdf_page": 28
+        },
+        {
+          "realm": 5,
+          "lesson": 3,
+          "no": 4,
+          "kanji": "多",
+          "hanviet": "ĐA",
+          "pdf_page": 28
+        },
+        {
+          "realm": 5,
+          "lesson": 3,
+          "no": 5,
+          "kanji": "力",
+          "hanviet": "LỰC",
+          "pdf_page": 29
+        }
+      ],
+      "preview": false
+    },
+    {
+      "id": 22,
+      "realm": 5,
+      "lesson": 4,
+      "entry_count": 4,
+      "entries": [
+        {
+          "realm": 5,
+          "lesson": 4,
+          "no": 1,
+          "kanji": "体",
+          "hanviet": "THỂ",
+          "pdf_page": 29
+        },
+        {
+          "realm": 5,
+          "lesson": 4,
+          "no": 2,
+          "kanji": "足",
+          "hanviet": "TÚC",
+          "pdf_page": 29
+        },
+        {
+          "realm": 5,
+          "lesson": 4,
+          "no": 3,
+          "kanji": "着",
+          "hanviet": "TRƯỚC",
+          "pdf_page": 29
+        },
+        {
+          "realm": 5,
+          "lesson": 4,
+          "no": 4,
+          "kanji": "会",
+          "hanviet": "HỘI",
+          "pdf_page": 29
+        }
+      ],
+      "preview": false
+    },
+    {
+      "id": 23,
+      "realm": 6,
+      "lesson": 1,
+      "entry_count": 4,
+      "entries": [
+        {
+          "realm": 6,
+          "lesson": 1,
+          "no": 1,
+          "kanji": "音",
+          "hanviet": "ÂM",
+          "pdf_page": 30
+        },
+        {
+          "realm": 6,
+          "lesson": 1,
+          "no": 2,
+          "kanji": "楽",
+          "hanviet": "LẠC/ NHẠC",
+          "pdf_page": 30
+        },
+        {
+          "realm": 6,
+          "lesson": 1,
+          "no": 3,
+          "kanji": "週",
+          "hanviet": "CHU",
+          "pdf_page": 30
+        },
+        {
+          "realm": 6,
+          "lesson": 1,
+          "no": 4,
+          "kanji": "語",
+          "hanviet": "NGỮ",
+          "pdf_page": 30
+        }
+      ],
+      "preview": false
+    },
+    {
+      "id": 24,
+      "realm": 6,
+      "lesson": 2,
+      "entry_count": 4,
+      "entries": [
+        {
+          "realm": 6,
+          "lesson": 2,
+          "no": 1,
+          "kanji": "思",
+          "hanviet": "TƯ",
+          "pdf_page": 31
+        },
+        {
+          "realm": 6,
+          "lesson": 2,
+          "no": 2,
+          "kanji": "社",
+          "hanviet": "XÃ",
+          "pdf_page": 31
+        },
+        {
+          "realm": 6,
+          "lesson": 2,
+          "no": 3,
+          "kanji": "長",
+          "hanviet": "TRƯỜNG",
+          "pdf_page": 31
+        },
+        {
+          "realm": 6,
+          "lesson": 2,
+          "no": 4,
+          "kanji": "高",
+          "hanviet": "CAO",
+          "pdf_page": 31
+        }
+      ],
+      "preview": false
+    },
+    {
+      "id": 25,
+      "realm": 6,
+      "lesson": 3,
+      "entry_count": 4,
+      "entries": [
+        {
+          "realm": 6,
+          "lesson": 3,
+          "no": 1,
+          "kanji": "東",
+          "hanviet": "ĐÔNG",
+          "pdf_page": 31
+        },
+        {
+          "realm": 6,
+          "lesson": 3,
+          "no": 2,
+          "kanji": "西",
+          "hanviet": "TÂY",
+          "pdf_page": 32
+        },
+        {
+          "realm": 6,
+          "lesson": 3,
+          "no": 3,
+          "kanji": "南",
+          "hanviet": "NAM",
+          "pdf_page": 32
+        },
+        {
+          "realm": 6,
+          "lesson": 3,
+          "no": 4,
+          "kanji": "北",
+          "hanviet": "BẮC",
+          "pdf_page": 32
+        }
+      ],
+      "preview": false
+    }
+  ]
+}
