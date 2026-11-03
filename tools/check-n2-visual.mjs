@@ -30,6 +30,7 @@ try{
   assert.equal(await page.locator(".n2-page h1").textContent(),"Chữ ký của người chưa từng lớn");
   assert.ok((await page.locator(".n2-scene").count())>=8,"chapter one short");
   assert.ok((await page.locator(".vi-main").count())>=8,"Vietnamese should be the primary reading language");
+  assert.equal(await page.locator(".n2-para-vocab").count(),0,"unmatched vocabulary should not interrupt Vietnamese paragraphs");
   assert.equal(await page.locator(".n2-scene .jp").count(),0,"Japanese prose must not appear first by default");
   assert.equal(await page.locator('[data-reading-lang="vi"]').getAttribute("aria-pressed"),"true","Vietnamese button not selected");
   assert.ok((await page.locator(".n2-word").count())>=1,"Vietnamese text has no Japanese linked vocabulary");
@@ -43,6 +44,18 @@ try{
   const reader=await page.locator(".n2-page").evaluate(el=>{const box=el.getBoundingClientRect();return {width:box.width,overflow:document.documentElement.scrollWidth-innerWidth}});
   assert.ok(reader.overflow<3,"horizontal overflow in reader");
   await page.screenshot({path:path.join(dir,"n2-"+size.label+"-chapter1.png"),fullPage:true});
+
+  await page.locator(".n2-head [data-mode='home']").click();
+  await page.locator('.n2-part-card[data-chapter="33"]').click();
+  assert.ok((await page.locator(".vi-main").count())>0,"chapter 33 must show Vietnamese prose");
+  assert.equal(await page.locator(".n2-para-vocab").count(),0,"no leftover vocabulary boxes in chapter 33");
+  for(const id of [592,593,594,595,596,597,598]){
+    assert.ok((await page.locator('.vi-main [data-word="'+id+'"]').count())===1,"word #"+id+" not linked in chapter 33 Vietnamese context");
+  }
+  assert.equal(await page.locator('.vi-main [data-word="592"] rt').textContent(),"べん","transport convenience reading");
+  assert.equal(await page.locator('.vi-main [data-word="593"] rt').textContent(),"びん","flight reading");
+  assert.ok((await page.locator("#n2-chapter-vocab").count())===1,"chapter glossary missing");
+  await page.screenshot({path:path.join(dir,"n2-"+size.label+"-chapter33.png"),fullPage:true});
   await page.locator(".n2-head [data-mode='index']").click();
   await page.locator("#n2-index-query").fill("1160");
   assert.equal(await page.locator(".n2-vocabitem").count(),1,"index search by number");
