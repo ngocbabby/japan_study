@@ -15,7 +15,7 @@ const STORAGE='japan_study_zero_verdict_v1';
 let saved={};try{saved=JSON.parse(localStorage.getItem(STORAGE)||'{}')}catch{}
 const state={view:'home',chapter:Math.min(drafted.length,Math.max(1,Number(saved.chapter)||1)),font:Math.min(25,Math.max(16,Number(saved.font)||19)),furigana:saved.furigana!==false,menu:false,search:'',filter:'all',page:0,leaf:Math.min(3,Math.max(0,Number(saved.leaf)||0)),flow:saved.flow===true,learned:new Set(Array.isArray(saved.learned)?saved.learned.filter(id=>Number.isInteger(id)&&id>=1&&id<=1160):[]),modal:null,progress:new Set(Array.isArray(saved.progress)?saved.progress:[])};
 function store(){try{localStorage.setItem(STORAGE,JSON.stringify({chapter:state.chapter,font:state.font,furigana:state.furigana,leaf:state.leaf,flow:state.flow,learned:[...state.learned],progress:[...state.progress]}))}catch{}}
-const cover='books/n2/vocab/zero-cover-cinematic.webp';
+const cover='books/n2/vocab/zero-cover-cinematic-hq.webp';
 const publishedCount=drafted.length;
 const storyCount=usedMap.size;
 function renderWords(raw){const re=/⟦(\d+)\|([^⟧]+)⟧/g;let html='',at=0,m;
