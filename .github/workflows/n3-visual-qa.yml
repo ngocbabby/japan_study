@@ -1,0 +1,35 @@
+name: N3 Visual Book QA
+on:
+  push:
+    paths:
+      - "n3-book.html"
+      - "n3-book.css"
+      - "n3-book.js"
+      - "books/n3/vocab/**"
+      - "tools/check-n3-visual.mjs"
+      - ".github/workflows/n3-visual-qa.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  book-render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install Chromium browser for visual QA
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Check desktop and mobile book rendering
+        run: node tools/check-n3-visual.mjs
+      - name: Archive visual previews
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: n3-visual-qa
+          path: n3-visual-qa/*.png
+          if-no-files-found: warn
