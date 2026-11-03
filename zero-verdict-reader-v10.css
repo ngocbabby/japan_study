@@ -74,7 +74,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible{o
 .zero-heading-flourish{display:flex;justify-content:center;align-items:center;gap:18px;margin:0 auto 10px;font:16px Georgia,serif;color:#a66c5c}
 .zero-heading-flourish span{color:#81223b}
 .zero-book-heading>p{font:italic 500 13px/1.7 var(--serif);color:#885f54;margin:5px auto 0;max-width:740px}
-.zero-chapter-illustration{position:relative;z-index:3;margin:0 clamp(21px,4vw,49px) 18px;border:6px solid #f1debf;outline:2px solid #ba8a62;box-shadow:0 0 0 7px #9e684656,0 6px 19px #6b41388a;overflow:hidden;border-radius:4px;background:#1a1321}
+.zero-chapter-illustration{position:relative;z-index:3;margin:0 clamp(21px,4vw,49px) 18px;border:6px solid #f1debf;outline:2px solid #ba8a62;box-shadow:0 0 0 7px #9e684656,0 6px 19px #6b41388a;overflow:hidden;border-radius:4px;background-color:#1a1321;background-size:cover;background-position:center center;background-repeat:no-repeat}
 .zero-chapter-illustration:after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(0deg,#130c16a6,transparent 34%),linear-gradient(90deg,#19091733,transparent 70%);z-index:1}
 .zero-chapter-illustration img{display:block;width:100%;height:clamp(185px,20vw,300px);object-fit:cover;object-position:center 45%;filter:saturate(1.06) contrast(1.04)}
 .zero-chapter-illustration figcaption{position:absolute;z-index:2;inset:auto 13px 13px;display:flex;justify-content:space-between;align-items:end;gap:8px;color:#fae2c0;text-shadow:0 2px 7px #000;font:700 11px/1.4 var(--bodyfont);letter-spacing:.07em}
