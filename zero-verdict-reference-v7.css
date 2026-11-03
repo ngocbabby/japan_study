@@ -134,7 +134,7 @@ body:after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opac
 .zero-page-corners{z-index:4}
 .zero-page-corners i{border-color:#b97c46!important;filter:drop-shadow(0 0 2px #b87d5699)}
 .zero-leaf{
- min-height:750px;padding:23px clamp(23px,3vw,49px) 23px;
+ min-height:675px;padding:23px clamp(23px,3vw,49px) 23px;
  background:
  radial-gradient(ellipse at 0 0,#ad6d4a18,transparent 40%),
  radial-gradient(ellipse at 100% 100%,#b579512b,transparent 31%),
@@ -395,4 +395,36 @@ body:after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opac
  .zero-paper{margin:0!important;border:0!important;box-shadow:none!important}
  .zero-leaf{display:block!important;border:none!important;break-after:page;min-height:0}
  .zero-header-lily,.zero-investigation-card{display:none!important}
+}
+
+/* True folio: one complete narrative paragraph per decorated page. */
+.zero-leaf{isolation:isolate}
+.zero-leaf:after{
+ content:"⚖";position:absolute;right:29px;bottom:43px;z-index:3;
+ display:grid;place-items:center;width:53px;height:53px;border-radius:47% 52% 49% 48%;
+ background:radial-gradient(circle at 28% 24%,#c54b55,#9a1435 57%,#590a28 98%);
+ border:3px double #e4a879;outline:2px solid #7e1e36;
+ box-shadow:inset 0 0 0 5px #a82039,inset 0 0 0 7px #ce6b64,2px 5px 12px #5e1a2c7b;
+ color:#ffd29a;font:700 23px/1 Georgia,serif;transform:rotate(-13deg);
+ pointer-events:none;opacity:.94;
+}
+.zero-leaf-art.hero .zero-scenery-vignette{position:absolute;inset:0;pointer-events:none}
+.zero-leaf-art.hero .zero-scenery-vignette:before{
+ content:"";position:absolute;left:12px;top:-40px;width:22px;height:88px;
+ background:linear-gradient(90deg,#60091d,#cc3650,#79102a);
+ transform:rotate(16deg);box-shadow:2px 1px 4px #0006;
+ clip-path:polygon(0 0,100% 0,100% 100%,48% 83%,0 100%);
+ opacity:.94;
+}
+.zero-leaf-top{font-size:9px}
+.zero-investigation-photo{
+ background-position:62% center;background-size:auto 125%;
+}
+.zero-dossier-terms button:first-child:after{color:#ffd9ad}
+.zero-pagination .zero-page-dots{gap:6px}
+.zero-page-dots button{width:10px;height:10px}
+@media(max-width:710px){
+ .zero-leaf{min-height:560px}
+ .zero-leaf:after{right:15px;bottom:34px;width:38px;height:38px;font-size:17px}
+ .zero-leaf-art.hero .zero-scenery-vignette:before{width:14px;height:67px;top:-21px}
 }
