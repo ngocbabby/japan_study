@@ -1,0 +1,31 @@
+name: N3 Book Integrity
+on:
+  push:
+    paths:
+      - "n3-book.*"
+      - "n3-story-*.js"
+      - "tools/check-n3.mjs"
+      - ".github/workflows/n3-book-check.yml"
+  workflow_dispatch:
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Verify JavaScript syntax
+        run: |
+          node --check n3-book.js
+          node --check n3-story-data.js
+          node --check n3-story-part1-end.js
+          node --check n3-story-part2.js
+          node --check n3-story-part3.js
+          node --check n3-story-part4.js
+          node --check n3-story-part5.js
+      - name: Install reader test dependency
+        run: npm install --no-save --ignore-scripts jsdom@26
+      - name: Simulate N3 reader interactions
+        run: node tools/check-n3.mjs
