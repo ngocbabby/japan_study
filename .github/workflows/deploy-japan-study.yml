@@ -3,6 +3,7 @@ on:
   push:
     branches: ["main"]
     paths:
+      - "zero-verdict*"
       - "seven-seas*"
       - "books/n2/vocab/hai-dang-bay-vung-bien-cam.webp"
       - "n2-novel*"
