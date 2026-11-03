@@ -2,6 +2,7 @@ name: Kanji N5 Public Preview Smoke Test
 on:
   push:
     paths:
+      - "kanji-n5-full*"
       - "kanji-n5.html"
       - "kanji-n5.css"
       - "kanji-n5.js"
@@ -22,7 +23,7 @@ jobs:
       - name: Verify rendered public assets
         run: |
           BASE="https://ngocbabby.github.io/japan_study"
-          for file in kanji-n5.html kanji-n5.css kanji-n5.js kanji-n5-data.js books/n5/kanji/art/cover.webp books/n5/kanji/art/gate.webp books/n5/kanji/art/story-hd.webp books.js; do
+          for file in kanji-n5.html kanji-n5.css kanji-n5-full.css kanji-n5-full.js kanji-n5-full-data.js kanji-n5-data.js books/n5/kanji/art/cover.webp books/n5/kanji/art/gate.webp books/n5/kanji/art/story-hd.webp books.js; do
             ok=0
             for attempt in 1 2 3 4 5 6 7 8; do
               status="$(curl -sSL --max-time 25 -o /tmp/kanji-file -w "%{http_code}" "$BASE/$file")"
@@ -34,11 +35,11 @@ jobs:
           done
           # Avoid curl | grep -q: grep closes its pipe early and curl exits 23.
           curl -fsSL -o /tmp/kanji-html "$BASE/kanji-n5.html"
-          curl -fsSL -o /tmp/kanji-data "$BASE/kanji-n5-data.js?v=20261103-storyhd1"
-          curl -fsSL -o /tmp/kanji-js "$BASE/kanji-n5.js?v=20261103-storyhd1"
+          curl -fsSL -o /tmp/kanji-data "$BASE/kanji-n5-full-data.js?v=20261103-25chapters"
+          curl -fsSL -o /tmp/kanji-js "$BASE/kanji-n5-full.js?v=20261103-25chapters"
           curl -fsSL -o /tmp/kanji-books "$BASE/books.js"
-          grep -Fq 'kanji-n5.js?v=20261103-storyhd1' /tmp/kanji-html
-          grep -Fq '"art":"story-hd"' /tmp/kanji-data
-          grep -Fq "chapters[0].art" /tmp/kanji-js
+          grep -Fq 'kanji-n5-full.js?v=20261103-25chapters' /tmp/kanji-html
+          grep -Fq '"uniqueKanji":123' /tmp/kanji-data
+          grep -Fq "chapterList" /tmp/kanji-js
           grep -Fq 'kanji-n5.html' /tmp/kanji-books
-          echo "PUBLIC KANJI N5 ORIGINAL CHAPTER ART VERIFIED"
+          echo "PUBLIC KANJI N5 25 CHAPTER READER VERIFIED"
