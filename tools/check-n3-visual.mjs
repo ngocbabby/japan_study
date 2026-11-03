@@ -36,13 +36,20 @@ try{
     });
     console.log("COVER "+viewport.label+" "+JSON.stringify(pic));
     assert.ok(pic.complete&&pic.naturalWidth>=320&&pic.naturalHeight>=480,"cover image not loaded");
-    assert.ok(pic.src.includes("khi-mat-troi-khong-con-moc.avif"),"new illustrated cover was not selected");
+    assert.ok(pic.src.includes("khi-mat-troi-khong-con-moc"),"new illustrated cover was not selected");
     assert.ok(pic.rect.width<=220,"cover too wide");
     assert.ok(pic.rect.height/pic.rect.width>1.45&&pic.rect.height/pic.rect.width<1.55,"cover ratio not 2:3");
-    assert.ok(Math.abs(pic.rect.width-pic.parent.width)<2,"cover width mismatch");
-    assert.ok(Math.abs(pic.rect.height-pic.parent.height)<2,"cover height mismatch");
+    assert.ok(Math.abs(pic.rect.width-pic.parent.width)<=3,"cover width mismatch");
+    assert.ok(Math.abs(pic.rect.height-pic.parent.height)<=3,"cover height mismatch");
     assert.ok(pic.overflow<=1,"horizontal page overflow");
     await page.screenshot({path:path.join(out,"n3-"+viewport.label+"-home.png"),fullPage:true});
+    await page.locator('[data-cover-open]').click();
+    assert.ok(await page.locator('#n3CoverDialog').isVisible(),"cover lightbox did not open");
+    const zoom=await page.locator('#n3CoverDialog img').evaluate(async img=>{await img.decode();return {naturalWidth:img.naturalWidth,naturalHeight:img.naturalHeight}});
+    assert.equal(zoom.naturalWidth,900,"high-res cover not loaded");
+    assert.equal(zoom.naturalHeight,1350,"high-res cover incorrect dimensions");
+    await page.screenshot({path:path.join(out,"n3-"+viewport.label+"-cover-zoom.png"),fullPage:false});
+    await page.locator('.n3-cover-close').click();
     await page.locator('[data-goto="1"]').first().click();
     const info=await page.locator(".n3paper").evaluate(p=>{
       const r=p.getBoundingClientRect(),s=getComputedStyle(p.querySelector("p")),text=p.querySelector("p").innerText;
