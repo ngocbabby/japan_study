@@ -65,3 +65,523 @@ main{max-width:860px;margin:25px auto 60px;background:var(--paper);box-shadow:0 
  .word{break-inside:avoid}
  body{--font-size:10.3pt}
 }
+
+
+/* ==========================================================================
+   N4 INTERIOR REDESIGN · 2026-11-03
+   HỒ SƠ GA CUỐI — xanh đêm / vàng đồng / giấy ngà.
+   Chỉ làm mới ruột sách. Các selector .cover-* phía trên được giữ nguyên.
+   Thiết kế tương thích n4-book.js hiện tại, không thay cấu trúc nội dung.
+   ========================================================================== */
+:root {
+  --ink:#182d35;
+  --muted:#77766e;
+  --gold:#af834e;
+  --gold-light:#e3cfa8;
+  --red:#8c4b42;
+  --paper:#fcf8ef;
+  --line:#e5d9c7;
+  --font-size:17px;
+  --book-navy:#132c38;
+  --book-ivory:#fcf8ef;
+  --book-deep:#152d38;
+  --book-copper:#a67b4b;
+  --book-hairline:#dbccb5;
+}
+html {scroll-padding-top:90px}
+body {
+  background:#e8e1d7;
+  background-image:
+    radial-gradient(circle at 14% 9%,rgba(255,255,255,.76),transparent 40%),
+    repeating-linear-gradient(90deg,transparent 0,transparent 3px,rgba(82,63,41,.015) 4px),
+    linear-gradient(125deg,#e6dfd4,#eee9e0 50%,#ded6c8);
+  color:#26333a;
+  -webkit-font-smoothing:antialiased;
+}
+main {
+  max-width:850px;
+  margin:28px auto 72px;
+  background:var(--book-ivory);
+  background-image:linear-gradient(90deg,rgba(99,68,29,.018),transparent 11%,transparent 89%,rgba(99,68,29,.018));
+  box-shadow:0 23px 80px rgba(46,35,22,.16),0 5px 18px rgba(50,38,21,.07);
+  border:1px solid #d7c7ad;
+  overflow:clip;
+}
+.topbar {
+  background:#0e2734;
+  border-bottom:1px solid rgba(220,189,123,.38);
+  box-shadow:0 4px 20px rgba(4,21,31,.21);
+}
+.topbar .back {color:#f0d6a6}
+.topbar .title strong {letter-spacing:.11em}
+.toolbar button {background:#233f4a;border-color:#5d7274;color:#fff1d3;transition:background .15s,border-color .15s}
+.toolbar button:hover {background:#365b66;border-color:#e7cc8d}
+.toolbar button:focus-visible,.toc-drawer button:focus-visible,.toc-link:focus-visible {outline:3px solid #d9b46b;outline-offset:3px}
+.book-intro,.toc-page,.epilogue,.reference,.chapter {
+  position:relative;
+  background:transparent;
+}
+.book-intro,.toc-page,.epilogue {
+  padding:74px 70px 81px;
+  line-height:1.83;
+}
+.book-intro::before,.toc-page::before,.epilogue::before {
+  content:"";
+  position:absolute;
+  left:70px;right:70px;top:42px;
+  height:1px;
+  background:linear-gradient(90deg,transparent,#b08d56 16%,#d6c5a6 52%,#b08d56 84%,transparent);
+}
+.book-intro::after,.toc-page::after,.epilogue::after {
+  content:"✦";
+  position:absolute;
+  left:50%;transform:translateX(-50%);
+  top:31px;
+  padding:0 11px;
+  background:var(--book-ivory);
+  color:#b19063;
+  font-size:14px;
+}
+.book-kicker {
+  font:800 11px/1.6 system-ui,"Noto Sans JP",sans-serif;
+  text-transform:uppercase;
+  letter-spacing:.22em;
+  color:#a17a49;
+}
+.book-intro h2,.toc-page h2,.epilogue h2 {
+  font-family:"Noto Serif",Georgia,serif;
+  font-weight:700;
+  font-size:clamp(26px,4.3vw,36px);
+  letter-spacing:-.026em;
+  line-height:1.31;
+  color:#133540;
+  margin:13px 0 27px;
+  text-wrap:balance;
+}
+.book-intro p,.epilogue p {
+  font-family:"Noto Serif",Georgia,serif;
+  font-size:var(--font-size);
+  line-height:1.93;
+  color:#34373a;
+  letter-spacing:.007em;
+  margin:0 0 21px;
+  text-align:justify;
+  hyphens:auto;
+  orphans:3;widows:3;
+}
+.book-intro p:first-of-type {
+  font-size:calc(var(--font-size) + 1px);
+  color:#5c4c3f;
+  font-style:italic;
+  border-left:3px solid #c19b68;
+  padding:4px 0 4px 17px;
+  margin-bottom:28px;
+  text-align:left;
+}
+.toc-page {
+  border-top:1px solid #e0d1b5;
+}
+.toc-page h2 {margin-bottom:31px}
+.toc-part {
+  position:relative;
+  margin:31px 0 11px;
+  padding:0 0 12px;
+  border-bottom:1px solid #c8ac7c;
+  color:#24404a;
+  font-family:"Noto Serif",Georgia,serif;
+  font-size:16px;
+  font-weight:700;
+  line-height:1.55;
+  break-after:avoid;
+}
+.toc-part::before {
+  content:"◆";
+  margin-right:10px;
+  color:#b68b53;
+  font-size:11px;
+}
+.toc-link {
+  display:flex;
+  gap:16px;
+  align-items:baseline;
+  padding:10px 4px;
+  border-bottom:1px dotted #ded0b9;
+  color:#30404a;
+  font-family:"Noto Serif",Georgia,serif;
+  font-size:14px;
+  line-height:1.52;
+  text-decoration:none;
+  transition:background .14s,color .14s;
+  break-inside:avoid;
+}
+.toc-link:hover {background:rgba(210,179,116,.12);color:#895a36}
+.toc-num {
+  font:800 11px/1.4 system-ui,sans-serif;
+  color:#977449;
+  min-width:31px;
+  letter-spacing:.07em;
+  flex:none;
+}
+.chapter {
+  padding:73px 69px 77px;
+  border-top:1px solid var(--book-hairline);
+}
+.chapter::before {
+  content:"◆ ─── ✧ ─── ◆";
+  display:block;
+  font-family:Georgia,serif;
+  color:#b89965;
+  font-size:13px;
+  letter-spacing:.32em;
+  text-align:center;
+  margin:-8px 0 32px;
+}
+.chapter-kicker {
+  display:block;
+  color:#9b764a;
+  font:800 10px/1.85 system-ui,"Noto Sans JP",sans-serif;
+  letter-spacing:.15em;
+  text-transform:uppercase;
+  margin:0 0 13px;
+}
+.chapter h2 {
+  color:#143540;
+  font-family:"Noto Serif",Georgia,serif;
+  font-size:clamp(27px,4.1vw,36px);
+  line-height:1.31;
+  letter-spacing:-.034em;
+  text-wrap:balance;
+  margin:0 0 30px;
+  font-weight:700;
+}
+.chapter .lead {
+  display:block;
+  margin:0 0 31px;
+  padding:16px 20px 15px;
+  border:0;
+  border-left:3px solid #b99261;
+  background:linear-gradient(90deg,rgba(221,205,170,.29),rgba(255,255,255,.05));
+  color:#5b4b3d;
+  font-family:"Noto Serif",Georgia,serif;
+  font-style:italic;
+  font-size:calc(var(--font-size) + 1px);
+  line-height:1.83;
+  text-align:left;
+  orphans:3;widows:3;
+}
+.chapter p {
+  color:#32383a;
+  font-family:"Noto Serif",Georgia,serif;
+  font-size:var(--font-size);
+  line-height:1.94;
+  letter-spacing:.006em;
+  margin:0 0 21px;
+  text-align:justify;
+  text-justify:inter-word;
+  orphans:3;widows:3;
+  overflow-wrap:break-word;
+}
+.chapter .scene-intro {
+  color:#5c5448;
+  font-style:italic;
+  line-height:1.86;
+  margin-top:30px;
+  margin-bottom:12px;
+  padding:0 0 0 15px;
+  border-left:1px solid #c6aa7e;
+}
+.chapter .scene-clue {
+  position:relative;
+  padding:1px 0 7px;
+  margin-bottom:28px;
+}
+.chapter .scene-clue::before {
+  content:"✦";
+  color:#b18a55;
+  font-size:11px;
+  float:none;
+  margin-right:8px;
+}
+.chapter .closing {
+  border:0;
+  border-top:1px solid #d8c7a9;
+  border-bottom:1px solid #d8c7a9;
+  background:linear-gradient(90deg,transparent,rgba(234,221,195,.3),transparent);
+  color:#6c4743;
+  font-style:italic;
+  padding:17px 15px;
+  margin:31px 0 21px;
+  line-height:1.78;
+  text-align:center;
+}
+.word {white-space:normal;break-inside:avoid}
+.jp {
+  color:#0d6270;
+  font-family:"Noto Sans JP",Meiryo,sans-serif;
+  font-size:.96em;
+  font-weight:700;
+  letter-spacing:0;
+  text-decoration:underline;
+  text-decoration-color:#c5af8c;
+  text-decoration-thickness:1px;
+  text-underline-offset:3px;
+}
+.reading {
+  color:#657b7e;
+  font:500 .83em/1.2 "Noto Sans JP",Meiryo,sans-serif;
+}
+.meaning {
+  color:#82633e;
+  font-style:italic;
+  font-size:.94em;
+}
+.vocab-index {
+  color:#9e947e;
+  font:700 .56em/1 system-ui,sans-serif;
+  vertical-align:super;
+  white-space:nowrap;
+  margin-left:2px;
+  letter-spacing:0;
+}
+.word:hover .jp {color:#12596c;text-decoration-color:#a16c36;text-decoration-thickness:2px}
+.part-divider {
+  position:relative;
+  isolation:isolate;
+  min-height:690px;
+  padding:92px 70px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:21px;
+  text-align:center;
+  overflow:hidden;
+  color:#f8dfad;
+  border:0;
+  background:
+    radial-gradient(circle at 50% 25%,rgba(214,168,93,.21),transparent 27%),
+    radial-gradient(ellipse at 80% 90%,rgba(67,108,111,.3),transparent 40%),
+    linear-gradient(145deg,#071d2d 5%,#193747 62%,#112b3b);
+}
+.part-divider::before {
+  content:"";
+  position:absolute;
+  z-index:-1;
+  inset:24px;
+  border:1px solid rgba(216,177,103,.55);
+  box-shadow:inset 0 0 0 8px rgba(7,23,30,.2),0 0 0 1px rgba(247,206,136,.09);
+}
+.part-divider::after {
+  content:"✧  ──────────  ◆  ──────────  ✧";
+  display:block;
+  color:#cba66d;
+  font-size:15px;
+  letter-spacing:.14em;
+  margin-top:7px;
+}
+.part-divider small {
+  font:800 11px/1.5 system-ui,sans-serif;
+  letter-spacing:.38em;
+  color:#d8b679;
+  margin-bottom:12px;
+}
+.part-divider h2 {
+  font-family:"Noto Serif",Georgia,serif;
+  color:#f8e1b3;
+  font-size:clamp(33px,5vw,48px);
+  font-weight:700;
+  letter-spacing:-.034em;
+  line-height:1.35;
+  max-width:660px;
+  text-wrap:balance;
+  margin:0;
+  text-shadow:0 3px 20px rgba(3,12,24,.65);
+}
+.part-divider p {
+  margin:0;
+  color:#d2d7d2;
+  font-size:16px;
+  font-style:italic;
+  line-height:1.8;
+  max-width:520px;
+}
+.page-ending {
+  margin-top:32px;
+  font:700 10px/1.6 system-ui,sans-serif;
+  letter-spacing:.18em;
+  color:#a58960;
+  text-align:center;
+}
+.chapter-map {
+  margin-top:26px;
+  padding:17px 19px;
+  background:#f3ece0;
+  border:1px solid #e1d1b6;
+  border-left:3px solid #b58d54;
+  border-radius:2px 10px 10px 2px;
+  color:#766956;
+  font:400 12px/1.8 system-ui,sans-serif;
+  break-inside:avoid;
+}
+.chapter-map b {
+  color:#695238;
+  letter-spacing:.02em;
+}
+.reference {
+  border-top:1px solid var(--book-hairline);
+  padding:55px 70px 75px;
+}
+.reference h2 {
+  font:700 25px/1.5 "Noto Serif",Georgia,serif;
+  color:#183947;
+  margin:0 0 20px;
+}
+.reference p {
+  font:400 13px/1.9 "Noto Serif",Georgia,serif;
+  color:#665b4e;
+  margin:0 0 14px;
+}
+.toc-drawer {
+  color:#1c323b;
+  background:linear-gradient(125deg,#fffbf2,#f6ecdb);
+  border-left:2px solid #b69a68;
+  box-shadow:-14px 0 60px rgba(5,17,25,.38);
+  padding:25px 22px 35px;
+}
+.toc-drawer[hidden] {display:none}
+.toc-top {margin-bottom:22px;gap:15px}
+.toc-top strong {font-family:"Noto Serif",Georgia,serif;font-size:15px;line-height:1.55}
+.toc-top button {background:#fffaf1;border-color:#dac89e;color:#37515a}
+.toc-drawer .toc-link {
+  font-family:system-ui,sans-serif;
+  font-size:13px;
+  padding:12px 2px;
+  line-height:1.55;
+}
+@media(max-width:900px) {
+  main {margin:0 auto 40px}
+  .chapter {padding:55px 48px 59px}
+  .book-intro,.toc-page,.epilogue {padding:60px 48px 65px}
+  .book-intro::before,.toc-page::before,.epilogue::before {left:48px;right:48px}
+  .reference {padding:48px}
+}
+@media(max-width:750px) {
+  html {scroll-padding-top:115px}
+  main {width:100%;margin:0;border:0;border-radius:0;box-shadow:none}
+  .topbar {
+    height:auto;
+    min-height:73px;
+    display:grid;
+    grid-template-columns:auto minmax(0,1fr);
+    gap:8px 12px;
+    align-items:center;
+    padding:10px 12px 9px;
+  }
+  .topbar .back {font-size:12px}
+  .topbar .title strong {font-size:13px}
+  .topbar .title small {font-size:10px}
+  .toolbar {grid-column:1/-1;justify-content:flex-end;gap:7px}
+  .toolbar button {font-size:11px;padding:8px 9px;border-radius:9px}
+  .book-intro,.toc-page,.epilogue {padding:58px 25px 55px}
+  .book-intro::before,.toc-page::before,.epilogue::before {left:25px;right:25px;top:28px}
+  .book-intro::after,.toc-page::after,.epilogue::after {top:17px}
+  .book-intro h2,.toc-page h2,.epilogue h2 {font-size:28px}
+  .chapter {padding:43px 23px 57px}
+  .chapter::before {margin:0 0 27px}
+  .chapter h2 {font-size:28px;line-height:1.35;margin-bottom:22px}
+  .chapter p {line-height:1.91;margin-bottom:19px;text-align:left}
+  .chapter .lead {padding:12px 15px;margin-bottom:25px}
+  .chapter .scene-intro {margin-top:24px}
+  .part-divider {min-height:75dvh;padding:67px 32px}
+  .part-divider::before {inset:17px}
+  .part-divider h2 {font-size:35px}
+  .part-divider p {font-size:15px}
+  .reference {padding:40px 24px 58px}
+  .toc-link {font-size:13px}
+  .toc-part {font-size:15px}
+  .chapter-map {padding:13px}
+}
+@media(max-width:380px) {
+  .toolbar button {font-size:10px;padding:7px}
+  .chapter {padding:38px 17px 45px}
+  .book-intro,.toc-page,.epilogue {padding-left:18px;padding-right:18px}
+  .book-intro::before,.toc-page::before,.epilogue::before {left:18px;right:18px}
+  .chapter h2 {font-size:25px}
+  .part-divider h2 {font-size:30px}
+}
+@media(prefers-reduced-motion:reduce) {
+  *,*::before,*::after {scroll-behavior:auto!important;transition:none!important}
+}
+@media print {
+  @page {size:A5;margin:18mm 16mm 19mm 17mm}
+  html,body {margin:0;padding:0;background:white!important}
+  body {print-color-adjust:exact;-webkit-print-color-adjust:exact}
+  main {
+    width:auto;max-width:none;margin:0;padding:0;border:0;
+    background:#fffdf8;box-shadow:none;overflow:visible;
+  }
+  .topbar,.no-print,.toc-drawer {display:none!important}
+  /* Original cover remains unchanged, including its full-bleed rules above. */
+  .book-intro,.toc-page,.epilogue {break-before:page;padding:6mm 0 0}
+  .book-intro::before,.toc-page::before,.epilogue::before {left:0;right:0;top:0}
+  .book-intro::after,.toc-page::after,.epilogue::after {top:-4mm;background:#fffdf8}
+  .book-intro h2,.toc-page h2,.epilogue h2 {font-size:22pt;line-height:1.27;margin:5mm 0 7mm}
+  .book-intro p,.epilogue p {font-size:10.1pt;line-height:1.62;margin:0 0 10pt}
+  .toc-part {font-size:11pt;margin:6mm 0 2mm;break-after:avoid}
+  .toc-link {font-size:9.5pt;padding:4pt 0;break-inside:avoid}
+  .toc-num {font-size:8pt}
+  .part-divider {
+    break-before:page;break-after:page;
+    height:210mm;min-height:210mm;max-height:210mm;
+    margin:-18mm -16mm -19mm -17mm;
+    padding:36mm 18mm;box-sizing:border-box;
+    page-break-inside:avoid;
+  }
+  .part-divider::before {inset:9mm}
+  .part-divider h2 {font-size:27pt;line-height:1.28}
+  .part-divider p {font-size:11pt}
+  .chapter {
+    break-before:page;
+    border:0;
+    padding:0 0 4mm;
+    background:transparent;
+  }
+  .chapter::before {margin:0 0 4mm;font-size:10pt}
+  .chapter-kicker {font-size:7.2pt;letter-spacing:.12em;margin-bottom:3mm}
+  .chapter h2 {font-size:21pt;line-height:1.24;margin:0 0 5mm}
+  .chapter .lead {
+    font-size:10.3pt;line-height:1.61;
+    padding:3mm 3.5mm;margin:0 0 5mm;
+    break-inside:avoid;
+  }
+  .chapter p {
+    font-size:10pt;line-height:1.65;
+    margin:0 0 10pt;text-align:justify;
+    orphans:3;widows:3;
+  }
+  .chapter .scene-intro {margin:12pt 0 7pt;padding-left:3mm}
+  .chapter .scene-clue {margin:0 0 11pt;padding:0}
+  .chapter .closing {
+    font-size:10pt;
+    line-height:1.57;
+    margin:14pt 0 8pt;
+    padding:9pt 4pt;
+    break-inside:avoid;
+  }
+  .chapter-map {
+    margin:12pt 0 0;
+    padding:8pt;
+    font-size:7.8pt;line-height:1.5;
+    background:#f5f1e9;
+    break-inside:avoid;
+  }
+  .page-ending {font-size:7pt;margin-top:10pt}
+  .jp {font-size:10pt}
+  .reading {font-size:8.8pt}
+  .meaning {font-size:9.6pt}
+  .vocab-index {font-size:6.5pt}
+  .reference {break-before:page;padding:0;border:0}
+  .reference h2 {font-size:17pt}
+  .reference p {font-size:9pt;line-height:1.65}
+  .word {break-inside:avoid}
+}
