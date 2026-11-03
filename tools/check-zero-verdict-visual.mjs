@@ -32,9 +32,9 @@ try{
   assert.ok((await page.locator('.zero-paragraphs p').count())>=8);
   assert.ok((await page.locator('.zero-jp').count())>=18,'inline N2 not present');
   assert.equal(await page.locator('.zero-para-vocab').count(),0,'stray vocab chips found');
-  assert.equal(await page.locator('.zero-leaf').count(),4,'each chapter should have four illustrated leaves');
+  assert.equal(await page.locator('.zero-leaf').count(),8,'each chapter should have eight illustrated leaves');
   assert.equal(await page.locator('.zero-leaf.is-current').count(),1,'only one leaf should be active by default');
-  assert.equal(await page.locator('.zero-paragraphs p:visible').count(),2,'exactly two paragraphs on current leaf');
+  assert.equal(await page.locator('.zero-paragraphs p:visible').count(),1,'one complete paragraph per page');
   assert.ok((await page.locator('.zero-leaf-art.hero').evaluate(el=>getComputedStyle(el).backgroundImage)).includes('zero-courtroom-interior.webp'),'chapter painting not loaded');
   assert.ok(await page.locator('.zero-dossier-terms button').first().isVisible() || device.name==='mobile','casefile sidebar is missing');
   if(device.name!=='mobile'){assert.ok(await page.locator('.zero-jacket-image img').isVisible(),'full-size jacket column missing on desktop');const j=await page.locator('.zero-jacket-image img').evaluate(async img=>{await img.decode();return [img.naturalWidth,img.naturalHeight]});assert.ok(j[0]>=540&&j[1]>=864,'sidebar art failed to load')}
@@ -60,11 +60,11 @@ try{
   await page.locator('.zero-dict-close').click();
   await page.locator('[data-action="nextLeaf"]').click();
   assert.equal(await page.locator('.zero-leaf.is-current').getAttribute('data-leaf-index'),'1','page turning did not advance');
-  assert.equal(await page.locator('.zero-paragraphs p:visible').count(),2);
+  assert.equal(await page.locator('.zero-paragraphs p:visible').count(),1);
   await page.locator('[data-action="flow"]').click();
   assert.equal(await page.locator('.zero-paragraphs p:visible').count(),8,'continuous-reading toggle failed');
   await page.locator('[data-action="flow"]').click();
-  assert.equal(await page.locator('.zero-paragraphs p:visible').count(),2,'page mode did not restore');
+  assert.equal(await page.locator('.zero-paragraphs p:visible').count(),1,'page mode did not restore');
   assert.ok((await page.evaluate('document.documentElement.scrollWidth-innerWidth'))<3,'chapter has horizontal overflow');
 
   await page.screenshot({path:path.join(out,device.name+'-chapter1.png'),fullPage:true});
@@ -74,8 +74,8 @@ try{
   assert.ok((await page.locator('.zero-paragraphs p').count())>=8);
   assert.ok((await page.locator('.zero-jp').count())>=19,'ending vocabulary coverage');
   assert.ok((await page.locator('.zero-paragraphs').first().innerText()).includes('Hai năm sau'),'full epilogue missing');
-  await page.locator('[data-leaf="3"]').click();
-  assert.equal(await page.locator('.zero-leaf.is-current').getAttribute('data-leaf-index'),'3');
+  await page.locator('[data-leaf="7"]').click();
+  assert.equal(await page.locator('.zero-leaf.is-current').getAttribute('data-leaf-index'),'7');
   assert.ok(await page.locator('[data-action="nextLeaf"]').isDisabled(),'last page should be the true end');
 
   await page.screenshot({path:path.join(out,device.name+'-chapter64.png'),fullPage:true});
