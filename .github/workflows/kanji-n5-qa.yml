@@ -1,0 +1,43 @@
+name: Kanji N5 Magic Book QA
+on:
+  push:
+    paths:
+      - "kanji-n5.html"
+      - "kanji-n5.css"
+      - "kanji-n5.js"
+      - "kanji-n5-data.js"
+      - "books/n5/kanji/**"
+      - "tools/test-kanji-n5.mjs"
+      - ".github/workflows/kanji-n5-qa.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  browser-check:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install browser test environment
+        run: |
+          npm install --no-save --ignore-scripts playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Verify JavaScript syntax
+        run: |
+          node --check kanji-n5-data.js
+          node --check kanji-n5.js
+      - name: Start static preview server and test
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 > /tmp/kanji-n5-server.log 2>&1 &
+          sleep 2
+          node tools/test-kanji-n5.mjs
+      - name: Preserve desktop and phone screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: kanji-n5-visual-preview
+          path: kanji-n5-visual-qa/*.png
+          if-no-files-found: warn
