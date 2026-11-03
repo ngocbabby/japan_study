@@ -604,3 +604,42 @@ button:focus-visible,a:focus-visible{outline:3px solid #ffda93;outline-offset:3p
  .zero-leaf-art.hero{height:145px}
  .zero-cover,.zero-jacket-image img{aspect-ratio:185/295}
 }
+
+/* Case-file photography and wax stamping, layered *only* over chapter illustrations. */
+.zero-leaf-art.hero{overflow:visible}
+.zero-pinned-evidence{
+ position:absolute;right:23px;top:-19px;z-index:4;width:clamp(90px,10vw,132px);
+ height:clamp(108px,11vw,155px);padding:7px 7px 20px;
+ transform:rotate(7deg);
+ background:linear-gradient(147deg,#fff9eb,#dac4a4);
+ border:1px solid #b38969;box-shadow:7px 10px 15px #080814ae;
+}
+.zero-pinned-evidence img{display:block;width:100%;height:100%;object-fit:cover;filter:grayscale(.75) contrast(1.15) sepia(.16)}
+.zero-pinned-evidence span{position:absolute;bottom:3px;left:0;right:0;text-align:center;
+ font:800 8px/1.5 var(--zero-ui);letter-spacing:.11em;color:#77544d}
+.zero-pinned-evidence:before{
+ content:"";position:absolute;z-index:5;width:19px;height:34px;left:45%;top:-21px;
+ border:3px solid #e1c29b;border-bottom:none;border-radius:10px 10px 0 0;
+ transform:rotate(11deg);box-shadow:1px -1px 2px #0008
+}
+.zero-hero-stamp{
+ position:absolute;z-index:5;right:clamp(130px,11vw,165px);bottom:14px;
+ transform:rotate(-8deg);font:900 14px/1.1 Georgia,serif;letter-spacing:.09em;
+ border:3px double #9f3246;color:#b74658;background:#f8e5cde0;
+ text-shadow:0 1px #fff3df;padding:7px 9px;box-shadow:0 2px 9px #08071490;
+}
+.zero-hero{background:
+ linear-gradient(105deg,#0a0717f7,#1b0f1dc9 55%,#100c1cf1),
+ url('books/n2/vocab/zero-courtroom-interior.webp') center/cover no-repeat;
+}
+@media(max-width:960px){
+ .zero-pinned-evidence{right:17px;top:-12px;width:90px;height:107px;padding:5px 5px 15px}
+ .zero-pinned-evidence span{font-size:6px}
+ .zero-hero-stamp{right:112px;font-size:10px;padding:5px}
+}
+@media(max-width:710px){
+ .zero-pinned-evidence{display:none}
+ .zero-hero-stamp{right:9px;bottom:9px;font-size:9px;padding:4px;border-width:2px}
+ .zero-hero{background:linear-gradient(120deg,#150d1eeb,#361b29ef),url('books/n2/vocab/zero-courthouse-rain.webp') center/cover}
+}
+@media print{.zero-pinned-evidence,.zero-hero-stamp{display:none!important}}
