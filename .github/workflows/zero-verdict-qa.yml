@@ -5,6 +5,9 @@ on:
     paths:
       - "zero-verdict*"
       - "books/n2/vocab/ban-an-so-khong.svg"
+      - "books/n2/vocab/ban-an-so-khong-deluxe.svg"
+      - "books/n2/vocab/zero-scene-*.svg"
+      - "zero-verdict-deluxe.css"
       - "tools/check-zero-verdict*"
       - ".github/workflows/zero-verdict-qa.yml"
   workflow_dispatch:
