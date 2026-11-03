@@ -15,7 +15,7 @@ const STORAGE='japan_study_zero_verdict_v1';
 let saved={};try{saved=JSON.parse(localStorage.getItem(STORAGE)||'{}')}catch{}
 const state={view:'home',chapter:Math.min(drafted.length,Math.max(1,Number(saved.chapter)||1)),font:Math.min(25,Math.max(16,Number(saved.font)||19)),furigana:saved.furigana!==false,menu:false,search:'',filter:'all',page:0,leaf:Math.min(3,Math.max(0,Number(saved.leaf)||0)),flow:saved.flow===true,learned:new Set(Array.isArray(saved.learned)?saved.learned.filter(id=>Number.isInteger(id)&&id>=1&&id<=1160):[]),modal:null,progress:new Set(Array.isArray(saved.progress)?saved.progress:[])};
 function store(){try{localStorage.setItem(STORAGE,JSON.stringify({chapter:state.chapter,font:state.font,furigana:state.furigana,leaf:state.leaf,flow:state.flow,learned:[...state.learned],progress:[...state.progress]}))}catch{}}
-const cover='books/n2/vocab/zero-cover-cinematic-hq.webp';
+const cover='books/n2/vocab/zero-cover-crisp.webp';
 const publishedCount=drafted.length;
 const storyCount=usedMap.size;
 function renderWords(raw){const re=/⟦(\d+)\|([^⟧]+)⟧/g;let html='',at=0,m;
@@ -31,12 +31,12 @@ function home(){return '<section class="zero-hero"><div class="zero-cover-wrap">
 function world(){return '<section class="zero-info"><div class="zero-kicker">HỒ SƠ VỤ ÁN · KHÔNG TIẾT LỘ KẾT THÚC</div><h2>Bảy quy tắc của thành phố Hạ Lam</h2><p>Đây là bối cảnh và quy tắc pháp lý hư cấu của truyện, không phải lời giải thích luật hiện hành. Dự báo xác suất không phải bản án, và mọi biện pháp can thiệp cần người chịu trách nhiệm.</p><div class="zero-world">'+meta.world.map((v,i)=>'<div class="zero-world-item"><span>0'+(i+1)+'</span><div><h3>'+esc(v.name)+'</h3><p>'+esc(v.law)+'</p></div></div>').join('')+'</div><button class="zero-secondary" data-view="home">Về bìa sách</button></section>'}
 function chapter(){const ch=chapters.get(state.chapter);if(!ch)return home();
 const ids=chapterTerms.get(ch.number)||[],partNo=plan.chapters[ch.number-1].part,part=meta.parts[partNo-1],leafCount=Math.ceil(ch.paragraphs.length/2),leaf=Math.min(leafCount-1,Math.max(0,state.leaf));
-state.leaf=leaf;const scene='books/n2/vocab/'+([1,3,4,6,8].includes(partNo)?'zero-courtroom-interior.webp':'zero-courthouse-rain.webp');
+state.leaf=leaf;const scene='books/n2/vocab/zero-gallery-'+partNo+'.webp';
 const leaves=[];for(let i=0;i<leafCount;i++){const first=i*2,items=ch.paragraphs.slice(first,first+2);leaves.push(
 '<section class="zero-leaf'+(state.flow||i===leaf?' is-current':'')+'" data-leaf-index="'+i+'">'+
 '<div class="zero-leaf-top"><span>HỒ SƠ SỐ '+String(ch.number).padStart(2,'0')+'</span><span>'+esc(part.title)+' · '+(i+1)+' / '+leafCount+'</span></div>'+
 '<div class="zero-leaf-art scene-part-'+partNo+(i===0?' hero':'')+'" style="--case-scene:url(&quot;'+scene+'&quot;)"><div class="zero-scenery-vignette" aria-hidden="true"></div>'+
-(i===0?'<div class="zero-pinned-evidence" aria-hidden="true"><img src="books/n2/vocab/'+(partNo%2?'zero-courthouse-rain.webp':'zero-courtroom-interior.webp')+'" alt=""><span>CONFIDENTIAL</span></div><span class="zero-hero-stamp" aria-hidden="true">CASE 00</span>':'')+
+(i===0?'<div class="zero-pinned-evidence" aria-hidden="true"><img src="books/n2/vocab/'+('zero-gallery-'+partNo+'.webp')+'" alt=""><span>CONFIDENTIAL</span></div><span class="zero-hero-stamp" aria-hidden="true">CASE 00</span>':'')+
 '<div class="zero-leaf-art-copy"><span class="zero-ink-label">CASE FILE · '+String(ch.number).padStart(2,'0')+'</span>'+
 (i===0?'<span class="zero-roman-part">PHẦN '+esc(part.roman)+'</span>':'<span class="zero-roman-part">CHƯƠNG '+String(ch.number).padStart(2,'0')+' · TRANG '+String(i+1).padStart(2,'0')+'</span>')+'</div></div>'+
 (i===0?'<div class="zero-chapter-heading"><div class="zero-ornament">✦ <span>◆</span> ✦</div><span class="zero-chapter-seal">CHƯƠNG '+String(ch.number).padStart(2,'0')+'</span><h2>'+esc(ch.title)+'</h2><div class="zero-tagline">'+esc(ch.tagline||part.summary)+'</div></div>':
