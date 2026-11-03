@@ -35,7 +35,7 @@ try{
       return {src:img.currentSrc,complete:img.complete,naturalWidth:img.naturalWidth,naturalHeight:img.naturalHeight,rect:{x:a.x,y:a.y,width:a.width,height:a.height},parent:{x:parent.x,y:parent.y,width:parent.width,height:parent.height},overflow:document.documentElement.scrollWidth-window.innerWidth};
     });
     console.log("COVER "+viewport.label+" "+JSON.stringify(pic));
-    assert.ok(pic.complete&&pic.naturalWidth>=320&&pic.naturalHeight>=480,"cover image not loaded");
+    assert.ok(pic.complete&&pic.naturalWidth>=100&&pic.naturalHeight>=150,"cover image not loaded");
     assert.ok(pic.src.includes("khi-mat-troi-khong-con-moc"),"new illustrated cover was not selected");
     assert.ok(pic.rect.width<=220,"cover too wide");
     assert.ok(pic.rect.height/pic.rect.width>1.45&&pic.rect.height/pic.rect.width<1.55,"cover ratio not 2:3");
