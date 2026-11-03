@@ -50,3 +50,128 @@ body:before{content:"";position:fixed;z-index:-2;inset:0;background:radial-gradi
 
 /* The sixth phone tab keeps spaced review reachable without finishing the quiz. */
 @media(max-width:900px){.mobile-nav button{flex:1;min-width:0}}
+
+/* ───────────────────────────────────────────────
+  LỤC GIỚI — VISUAL FIDELITY PASS
+  Existing concept artwork shown in portrait portals at its native
+  effective detail, rather than stretching tiny horizontal fragments.
+  Decorative effects remain CSS; no new illustration is generated.
+─────────────────────────────────────────────── */
+.realm-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:17px}
+.realm-card{
+  --realm-shine:#e0a973;
+  position:relative;
+  display:grid;
+  grid-template-columns:minmax(0,43%) minmax(0,57%);
+  align-items:stretch;
+  min-height:225px;
+  background:radial-gradient(circle at 8% 12%,#48345c7a,transparent 56%),
+    linear-gradient(145deg,#202240,#0d1933 68%,#141329);
+  border:1px solid #ceaa73;
+  border-radius:17px;
+  padding:7px;
+  box-shadow:0 15px 33px #05091fb2,inset 0 0 0 2px #050d20;
+  overflow:hidden;
+  isolation:isolate;
+  transition:transform .24s ease,box-shadow .24s ease,border-color .24s ease;
+}
+.realm-card:nth-child(2){--realm-shine:#75dafa}
+.realm-card:nth-child(3){--realm-shine:#cf9eff}
+.realm-card:nth-child(4){--realm-shine:#ffc777}
+.realm-card:nth-child(5){--realm-shine:#f6a8cf}
+.realm-card:nth-child(6){--realm-shine:#90baff}
+.realm-card:before{
+  content:"";position:absolute;inset:4px;border:1px solid #d1a77164;
+  border-radius:12px;pointer-events:none;z-index:4;
+}
+.realm-card:not(:disabled):hover{
+  transform:translateY(-4px);border-color:#ffe5a4;
+  box-shadow:0 18px 43px #030916d9,0 0 23px color-mix(in srgb,var(--realm-shine),transparent 74%);
+}
+.realm-card.locked{filter:none}
+.realm-card.locked:after{
+  content:"CHƯA MỞ";top:12px;right:12px;z-index:5;
+  background:#0d1737d9;color:#f9d8a1;
+  padding:5px 8px;border:1px solid #b79a79;
+}
+.realm-art{
+  position:relative;display:block;min-width:0;overflow:hidden;
+  aspect-ratio:150/178;
+  border-radius:12px 8px 8px 12px;
+  border:1px solid color-mix(in srgb,var(--realm-shine),#1f2440 27%);
+  box-shadow:inset 0 0 15px #080b2388,0 0 13px color-mix(in srgb,var(--realm-shine),transparent 84%);
+}
+.realm-art img{
+  display:block;width:100%;height:100%;object-fit:cover;
+  object-position:center 43%;filter:none;
+  image-rendering:auto;
+}
+.realm-art:after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(180deg,#ffffff0d,transparent 50%,#04091c64),
+   linear-gradient(90deg,transparent 80%,#030a23a0);
+}
+.realm-card .realm-overlay{display:none}
+.realm-content{
+  min-width:0;position:relative;display:flex;flex-direction:column;
+  justify-content:center;align-items:flex-start;gap:5px;
+  padding:16px 9px 15px 15px;
+  margin:0;z-index:2;
+}
+.realm-number{
+  padding:4px 9px;background:#1f2446;
+  color:var(--realm-shine);font-size:10px;
+  border:1px solid color-mix(in srgb,var(--realm-shine),#33294a 20%);
+  box-shadow:0 0 13px color-mix(in srgb,var(--realm-shine),transparent 85%);
+}
+.realm-card h3{
+  margin:5px 0 2px;font-size:clamp(14px,1.28vw,18px);
+  color:#ffe2ab;line-height:1.37;letter-spacing:0;
+}
+.realm-card .realm-sub{
+  display:block;font-size:clamp(11px,.82vw,12px);
+  line-height:1.54;color:#e8ddec;
+}
+.realm-card .realm-count{
+  display:block;margin-top:5px;
+  font-size:10.5px;line-height:1.5;color:#e6cda8;
+}
+.realm-action{
+  display:inline-block;margin-top:6px;color:var(--realm-shine);
+  font-size:11px;font-weight:750;line-height:1.4;
+}
+/* Sharper text and more luxurious illustrated-book framing. */
+.hero{border-color:#c5a06f;background:
+  radial-gradient(ellipse at 70% 16%,#743b9066,transparent 54%),
+  radial-gradient(circle at 20% 80%,#57427f4a,transparent 51%),
+  linear-gradient(135deg,#090f27,#1a254b 55%,#101e3c)}
+.hero:before{border-color:#f0c77d80}
+.hero-cover img{object-fit:contain;image-rendering:auto}
+.section-head h2{color:#fff0c3;text-shadow:0 2px 17px #cfad5a33}
+.story-spread{border:2px solid #e1b477;box-shadow:0 23px 55px #040416bd,0 0 0 4px #a8754b35}
+.story-text{background:radial-gradient(ellipse at top right,#fffaeb,#f8e9ce 61%,#e9c9a0)}
+.story-text p{font-size:15px;line-height:1.9;letter-spacing:0}
+.codex-paper{border:2px solid #dfad6f;box-shadow:0 21px 47px #000b,0 0 0 3px #d9b07920}
+/* Do not crush 6 illustrated portals into tiny 2-up cards on phones. */
+@media(max-width:1200px){
+ .realm-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
+ .realm-card{min-height:236px;grid-template-columns:minmax(0,42%) minmax(0,58%)}
+ .realm-content{padding:14px 13px}
+ .realm-card h3{font-size:17px}
+}
+@media(max-width:650px){
+ .realm-grid{grid-template-columns:minmax(0,1fr);gap:13px}
+ .realm-card{grid-template-columns:minmax(115px,39%) minmax(0,61%);min-height:196px}
+ .realm-art{aspect-ratio:150/178}
+ .realm-content{padding:14px 16px}
+ .realm-card h3{font-size:17px}
+ .realm-card .realm-sub{font-size:11.5px}
+ .realm-card .realm-count,.realm-action{font-size:11px}
+ .story-text p{font-size:14px}
+}
+@media(max-width:375px){
+ .realm-grid{grid-template-columns:1fr}
+ .realm-card{grid-template-columns:minmax(110px,40%) minmax(0,60%)}
+ .realm-card h3{font-size:15px}
+ .realm-content{padding:11px 10px}
+}
