@@ -47,3 +47,17 @@ button{font:inherit;cursor:pointer}button:disabled{opacity:.35;cursor:default}a{
 .n3mobile{display:none}
 @media(max-width:820px){.n3frame{grid-template-columns:1fr}.n3nav{display:none;position:static;max-height:340px}.n3nav.open{display:block}.n3mobile{display:inline-block!important}.n3hero{grid-template-columns:155px 1fr}}
 @media(max-width:540px){.n3top{padding:10px;gap:7px}.n3top h1{font-size:12px}.n3top small{font-size:10px}.n3top a,.n3top button{padding:7px;font-size:11px}.n3frame{padding:14px 10px}.n3hero{padding:13px;grid-template-columns:105px 1fr;gap:12px}.n3hero h2{font-size:21px}.n3hero p{font-size:12px}.n3panel{padding:15px}.n3toc,.n3words{grid-template-columns:1fr}.n3paper{padding:22px 16px}.n3paper p{line-height:1.79}.n3paper h2{font-size:27px}}
+
+/* Source-verification interface: only approved words may count as learned. */
+.n3audit-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:20px 0}
+.n3audit-stats>div{background:#223d4d;border:1px solid #587080;border-radius:10px;padding:13px;text-align:center}
+.n3audit-stats b{display:block;font-size:clamp(16px,2vw,23px);color:#f6d2a1;font-variant-numeric:tabular-nums}
+.n3audit-stats small{display:block;color:#b4c9cc;font-size:11px;margin-top:5px}
+.n3audit-label{display:block;color:#dcc69c;font-size:13px;margin:18px 0 12px}
+.n3audit-label input{display:block;width:100%;max-width:260px;border-radius:9px;border:1px solid #7d8891;background:#0e2433;padding:11px;color:#fff;margin-top:7px;font-size:15px}
+.n3audit-rows{display:grid;gap:7px}
+.n3audit-row{background:#0f2635;border:1px solid #395466;border-radius:10px;padding:11px;display:grid;grid-template-columns:48px minmax(0,1fr);gap:6px 11px;align-items:baseline}
+.n3audit-row b{color:#efc68b}.n3audit-row span{color:#ebede9;font-size:13px;overflow-wrap:anywhere;line-height:1.6}
+.n3audit-row small{grid-column:2;color:#a7c3c7;line-height:1.4;font-size:11px}
+#n3audit-count{font-size:12px;color:#dbca9e;align-self:center}
+@media(max-width:540px){.n3audit-stats{gap:5px}.n3audit-stats>div{padding:8px 5px}.n3audit-stats small{font-size:10px}.n3audit-row{grid-template-columns:35px minmax(0,1fr)}}
