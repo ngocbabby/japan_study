@@ -26,7 +26,7 @@ try{
   assert.ok(cover.loaded,"cover failed to load");assert.ok(Math.abs(cover.height/cover.width-1.5)<.05,"cover distorted");assert.ok(cover.overflow<3,"horizontal overflow on home");
   console.log("HOME",size.label,JSON.stringify(cover));
   await page.screenshot({path:path.join(dir,"n2-"+size.label+"-home.png"),fullPage:true});
-  await page.locator('.n2-hero [data-chapter="1"]').click();
+  await page.locator('.n2-hero [data-chapter="1"]').first().click();
   assert.equal(await page.locator(".n2-page h1").textContent(),"Chữ ký của người chưa từng lớn");
   assert.ok((await page.locator(".n2-scene").count())>=8,"chapter one short");
   assert.ok((await page.locator(".n2-word").count())>=18,"chapter one lacks vocabulary");
