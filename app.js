@@ -51,6 +51,7 @@ function setNav(page){
 function render(){
   backBtn.classList.toggle('hidden',state.page==='home');
   if(state.page==='home') return renderHome();
+  if(state.page==='books' && typeof renderBooks==='function') return renderBooks();
   if(state.page==='roadmap') return renderRoadmap();
   if(state.page==='foundation') return renderFoundation();
   if(state.page==='n2') return renderN2();
@@ -72,7 +73,7 @@ function renderHome(){
           <strong>Học đúng thứ cần học, đúng lúc.</strong>
           <p>Lộ trình sẽ dùng lịch rảnh để ưu tiên bài cho buổi học kế tiếp mà không nhồi quá mức.</p>
         </div>
-        <div class="hero-stat"><b>5</b><span>khu vực học</span></div>
+        <div class="hero-stat"><b>6</b><span>khu vực học</span></div>
       </div>
     </section>
 
@@ -125,6 +126,15 @@ function renderHome(){
         </div>
         <div class="module-meta"><span>Chuẩn bị trước lớp</span><span class="chev">›</span></div>
       </button>
+      <button class="module-card wide" data-open="books" type="button">
+        <div>
+          <div class="module-icon">📚</div>
+          <h3>Sách</h3>
+          <p>Tủ sách N5 → N1, chia Từ vựng / Kanji / Ngữ pháp. Đọc “Thành phố không được quên” ở N5 ngay trên web.</p>
+        </div>
+        <div class="module-meta"><span>5 cấp độ · 15 ngăn sách</span><span class="chev">›</span></div>
+      </button>
+
     </section>
 
     <div class="notice">
@@ -365,6 +375,10 @@ function bindOpeners(){
 }
 
 backBtn.addEventListener('click',()=>{
+  if(state.page==='books'){
+    if(typeof booksGoBack==='function' && booksGoBack())return;
+    go('home');return;
+  }
   if(state.page==='foundation' && typeof foundationUI!=='undefined' && foundationUI.view!=='root'){
     if(foundationUI.view==='study'){ exitFoundationStudy(); return; }
     if(foundationUI.view==='lesson-detail'){
