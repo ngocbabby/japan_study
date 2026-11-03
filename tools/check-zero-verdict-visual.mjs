@@ -32,16 +32,35 @@ try{
   assert.ok((await page.locator('.zero-paragraphs p').count())>=8);
   assert.ok((await page.locator('.zero-jp').count())>=18,'inline N2 not present');
   assert.equal(await page.locator('.zero-para-vocab').count(),0,'stray vocab chips found');
+  assert.equal(await page.locator('.zero-leaf').count(),4,'each chapter should have four illustrated leaves');
+  assert.equal(await page.locator('.zero-leaf.is-current').count(),1,'only one leaf should be active by default');
+  assert.equal(await page.locator('.zero-paragraphs p:visible').count(),2,'exactly two paragraphs on current leaf');
+  assert.ok((await page.locator('.zero-leaf-art.hero').evaluate(el=>getComputedStyle(el).backgroundImage)).includes('zero-scene-1.svg'),'chapter painting not loaded');
+  assert.ok(await page.locator('.zero-dossier-terms button').first().isVisible() || device.name==='mobile','casefile sidebar is missing');
+
   await page.locator('.zero-jp').first().click();
   assert.ok(await page.locator('.zero-dictionary').isVisible(),'Japanese glossary modal missing');
   assert.equal(await page.locator('.zero-dictionary h2').innerText(),'人生');
   await page.locator('.zero-dict-close').click();
+  await page.locator('[data-action="nextLeaf"]').click();
+  assert.equal(await page.locator('.zero-leaf.is-current').getAttribute('data-leaf-index'),'1','page turning did not advance');
+  assert.equal(await page.locator('.zero-paragraphs p:visible').count(),2);
+  await page.locator('[data-action="flow"]').click();
+  assert.equal(await page.locator('.zero-paragraphs p:visible').count(),8,'continuous-reading toggle failed');
+  await page.locator('[data-action="flow"]').click();
+  assert.equal(await page.locator('.zero-paragraphs p:visible').count(),2,'page mode did not restore');
+  assert.ok((await page.evaluate('document.documentElement.scrollWidth-innerWidth'))<3,'chapter has horizontal overflow');
+
   await page.screenshot({path:path.join(out,device.name+'-chapter1.png'),fullPage:true});
   await page.goto(url+'?qa=final#chapter-64',{waitUntil:'load'});
   assert.equal(await page.locator('.zero-paper h2').innerText(),'Khi đồng hồ chỉ 00:01');
   assert.ok((await page.locator('.zero-paragraphs p').count())>=8);
   assert.ok((await page.locator('.zero-jp').count())>=19,'ending vocabulary coverage');
-  assert.ok((await page.locator('.zero-paragraphs').innerText()).includes('Hai năm sau'),'full epilogue missing');
+  assert.ok((await page.locator('.zero-paragraphs').first().innerText()).includes('Hai năm sau'),'full epilogue missing');
+  await page.locator('[data-leaf="3"]').click();
+  assert.equal(await page.locator('.zero-leaf.is-current').getAttribute('data-leaf-index'),'3');
+  assert.ok(await page.locator('[data-action="nextLeaf"]').isDisabled(),'last page should be the true end');
+
   await page.screenshot({path:path.join(out,device.name+'-chapter64.png'),fullPage:true});
   await page.goto(url+'?qa=index#vocab',{waitUntil:'load'});
   assert.equal(await page.locator('.zero-vocab-row').count(),30);
@@ -57,5 +76,5 @@ try{
   console.log(device.name,'PASS',JSON.stringify(cover));
   await page.close();
  }
- console.log('PASS: Zero Verdict N2 64 chapters desktop/mobile reader with interactive lookup');
+ console.log('PASS: Zero Verdict N2 deluxe 64-chapter illustrated four-page reader, mobile and desktop, with live dictionary');
 }finally{if(browser)await browser.close();await new Promise(resolve=>server.close(resolve))}
