@@ -101,10 +101,10 @@ function stationSvg(){
  '<rect x="7" y="7" width="686" height="396" fill="none" stroke="#b99259" stroke-width="2"/></svg>';
 }
 function cover(){
- return '<section class="cover-page"><div class="cover-ornament">TIỂU THUYẾT TRINH THÁM GHI NHỚ · JLPT N4</div>'+
- '<div class="cover-hero"><h1>HỒ SƠ<br>GA CUỐI</h1><div class="cover-paper">MỘT VỤ ÁN QUA 623 TỪ VỰNG N4</div>'+stationSvg()+
- '<div class="cover-sub">“Đừng tin giờ đến ghi trên bảng.”</div></div>'+
- '<div class="cover-footer">7 PHẦN · 34 CHƯƠNG · 623 MỤC TỪ · MỘT SỰ THẬT BỊ XÓA</div></section>';
+  // Use the approved illustrated cover artwork rather than the old placeholder SVG.
+  return '<section class="cover-page cover-page--approved" aria-label="Bìa tiểu thuyết Hồ Sơ Ga Cuối">'+
+    '<img class="cover-art" src="books/n4/vocab/ho-so-ga-cuoi-n4-cover.avif" width="600" height="900" alt="Hồ Sơ Ga Cuối — cô gái cầm hồ sơ giữa sân ga Kyoto mưa đêm, đoàn tàu và đồng hồ, bìa minh họa màu xanh đêm và vàng đồng" decoding="async" fetchpriority="high">'+
+    '</section>';
 }
 function intro(){
  return '<section class="book-intro"><div class="book-kicker">LỜI MỞ HỒ SƠ</div><h2>Một tiếng còi lúc 23:17</h2>'+
