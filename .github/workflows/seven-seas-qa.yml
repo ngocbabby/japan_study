@@ -22,7 +22,7 @@ jobs:
       - name: Syntax-check novel files
         run: |
           node --check seven-seas-plan.js
-          node --check seven-seas-part1.js
+          for n in 1 2 3 4 5 6 7 8; do node --check "seven-seas-part${n}.js"; done
           node --check seven-seas-book.js
           node --check books.js
       - name: Ensure full source assignment and real story coverage
