@@ -73,7 +73,7 @@ function booksShelf(){
   let h='<section class="books-panel books-intro"><span class="books-pill">THƯ VIỆN NHẬT NGỮ</span><h2 class="books-heading">📚 Sách của tui</h2><p class="books-caption">Một tủ sách cho mọi cấp JLPT. Chọn cấp độ để mở Từ vựng, Kanji hoặc Ngữ pháp.</p></section>';
   h+='<section><h2 class="books-heading">Chọn trình độ</h2><p class="books-caption">N5 → N1 · Mỗi cấp có đủ ba ngăn sách.</p></section><div class="books-grid">';
   booksLevels.forEach(function(level){
-    const ready=level==="N5" || level==="N4";
+    const ready=level==="N5" || level==="N4" || level==="N3";
     h+='<button type="button" class="books-level" data-books-level="'+level+'"><span class="books-level-head"><strong>'+level+'</strong><span class="count">'+(ready?'1 cuốn sách':'Chưa có sách')+'</span></span><span>Từ vựng · Kanji · Ngữ pháp <small style="float:right">›</small></span></button>';
   });
   h+='</div>';
@@ -83,7 +83,7 @@ function booksLevel(){
  let h='<section class="books-panel books-intro"><span class="books-pill">TỦ SÁCH '+booksUI.level+'</span><h2 class="books-heading">'+booksUI.level+' · Chọn ngăn sách</h2><p class="books-caption">Đây là khu vực đọc sách, độc lập với phần học Mất gốc và N2 đang sử dụng.</p></section>';
  h+='<section class="books-categories">';
  booksTypes.forEach(function(t){
-   let count=(booksUI.level==="N5"||booksUI.level==="N4")&&t.key==="vocab"?'1 cuốn đã thêm':'Chưa có sách';
+   let count=(booksUI.level==="N5"||booksUI.level==="N4"||booksUI.level==="N3")&&t.key==="vocab"?'1 cuốn đã thêm':'Chưa có sách';
    h+='<button type="button" class="books-category" data-books-cat="'+t.key+'"><span class="symbol">'+t.icon+'</span><span><strong>'+booksEsc(t.name)+'</strong><p>'+booksEsc(t.desc)+' · '+count+'</p></span><span class="chev">›</span></button>';
  });
  return h+'</section>';
@@ -110,6 +110,14 @@ function booksCategory(){
        '<a class="books-secondary" href="books/n4/vocab/ho-so-ga-cuoi-n4.pdf" target="_blank" rel="noopener noreferrer">Mở PDF N4 ↗</a></div>'+
        '<p class="books-pdf-hint" style="margin-top:10px">Đọc truyện trực tiếp trên website hoặc mở bản PDF khổ sách. Giữ nguyên 623 mục và 34 ngày từ tệp N4.</p>'+
        '</div></article>';
+  }else if(booksUI.level==="N3" && booksUI.category==="vocab"){
+    h+='<article class="books-panel books-book-card">'+
+       '<img class="books-cover-art" src="books/n3/vocab/cover.svg" width="707" height="1024" alt="Bìa Khi mặt trời không còn mọc, thành phố AURORA, mặt trời nhân tạo" loading="lazy">'+
+       '<div><h3>Khi mặt trời không còn mọc</h3>'+
+       '<p>朝が来ない街 · Kanna và bí ẩn thành phố AURORA, sci-fi sinh tồn tâm lý.</p>'+
+       '<div class="books-stat-line"><span>5 phần · 40 chương dự kiến</span><span>Đọc trực tiếp trên website</span></div>'+
+       '<div class="books-row-actions"><a class="books-primary" href="n3-book.html">📖 Đọc tiểu thuyết N3</a></div>'+
+       '<p class="books-pdf-hint" style="margin-top:10px">Đang cập nhật nội dung; từ vựng được kiểm tra theo tài liệu Mimikara N3.</p></div></article>';
   }else{
     h+='<div class="books-panel books-empty"><div class="symbol">📖</div><strong>Ngăn này đang trống</strong><p>Đã tạo sẵn '+booksUI.level+' / '+booksEsc(typ.name)+'. Khi có tài liệu, sách sẽ xuất hiện tại đây.</p></div>';
   }
