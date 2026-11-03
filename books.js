@@ -96,9 +96,9 @@ function booksCategory(){
        '<img class="books-cover-art kanji-n5-book-thumb" src="books/n5/kanji/art/cover.webp" width="650" height="1108" loading="lazy" decoding="async" alt="Bìa Mật Điển Lục Giới: Yuna bên ma pháp thư và vương quốc ánh sao">'+
        '<div><h3>Mật Điển Lục Giới — 六界の秘典</h3>'+
        '<p>Sách thần bí tương tác: Yuna đi qua sáu thế giới, mở phong ấn Kanji bằng truyện, giải mã, câu đố và ôn tập cách quãng.</p>'+
-       '<div class="books-stat-line"><span>6 thế giới</span><span>25 bài theo PDF</span><span>123 Kanji khác nhau</span><span>Chương 1: 4 chữ đã làm</span></div>'+
+       '<div class="books-stat-line"><span>6 thế giới</span><span>25 bài theo PDF</span><span>123 Kanji khác nhau</span><span>25/25 chương đã mở</span></div>'+
        '<div class="books-row-actions"><a class="books-primary" href="kanji-n5.html" target="_blank" rel="noopener noreferrer">✦ Mở Mật Điển Lục Giới ↗</a></div>'+
-       '<p class="books-pdf-hint" style="margin-top:10px">Bản mẫu nghệ thuật có thể chơi: chương 1 (大・小・新・古) đã có truyện, cách đọc, vẽ thử và 7 thử thách. Các chương 2–25 vẫn đang được biên soạn, chưa tính đã học.</p></div></article>';
+       '<p class="books-pdf-hint" style="margin-top:10px">Đã có truyện liền mạch 25 chương, 135 lượt chữ / 123 Kanji không trùng theo PDF. Mỗi chương có giải mã, ví dụ, luyện viết và thử thách. Tranh hiện dùng chung theo 6 thế giới, chưa có tranh riêng cho tất cả chương.</p></div></article>';
   }else if(booksUI.level==="N5" && booksUI.category==="vocab"){
     h+='<article class="books-panel books-book-card">'+booksCover()+
        '<div><h3>Thành phố không được quên</h3>'+
