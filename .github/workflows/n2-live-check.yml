@@ -1,0 +1,21 @@
+name: N2 Public Website Smoke Test
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "n2-novel*"
+      - "books.js"
+      - "books/n2/vocab/**"
+      - "tools/check-n2-live.sh"
+      - ".github/workflows/n2-live-check.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  check-site:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check public website files
+        run: bash tools/check-n2-live.sh
