@@ -122,7 +122,7 @@ function booksCategory(){
        '<img class="books-cover-art" style="width:120px;height:180px;max-width:100%;object-fit:contain;border-radius:8px" src="books/n2/vocab/hai-dang-bay-vung-bien-cam.webp" width="450" height="675" alt="Bìa Hải đăng của bảy vùng biển cấm, truyện phiêu lưu kỳ ảo N2" loading="lazy" decoding="async">'+
        '<div><h3>Hải đăng của bảy vùng biển cấm</h3>'+
        '<p>七つの禁海の灯台 · Hoa tiêu Selene bị vu oan, buộc phải lên đường cùng hoàng tử Leon để tìm ra bí mật của bảy hải đăng.</p>'+
-       '<div class="books-stat-line"><span>Tập I–III · 24/64 chương có văn bản</span><span>387/1.160 mục N2 trong truyện Việt</span><span>40 chương còn dự kiến</span></div>'+
+       '<div class="books-stat-line"><span>Tập I–V · 40/64 chương có văn bản</span><span>677/1.160 mục N2 trong truyện Việt</span><span>24 chương còn dự kiến</span></div>'+
        '<div class="books-row-actions"><a class="books-primary" href="seven-seas-book.html">📖 Đọc tiểu thuyết Hải đăng</a></div>'+
        '<p class="books-pdf-hint" style="margin-top:10px">Truyện tiếng Việt là chính, từ Nhật được lồng vào câu và nhấn để tra. Đã lên cốt truyện 64 chương, chưa coi các chương dự kiến là đã viết.</p></div></article>';
   }else if(booksUI.level==="N3" && booksUI.category==="vocab"){
