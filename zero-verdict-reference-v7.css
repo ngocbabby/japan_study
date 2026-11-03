@@ -1,0 +1,398 @@
+/* Japan Study — BẢN ÁN SỐ KHÔNG / REFERENCE EDITION v7
+   Art direction: match approved red-and-gold occult casefile mockup.
+   This sheet sits LAST, above the existing reader logic. No text is rasterized. */
+:root{--z7-red:#8b1830;--z7-burgundy:#3b1022;--z7-gold:#e5b772;--z7-ink:#3c1420;--z7-cream:#faedd4}
+html,body{background-color:#09070e}
+body{
+ background:
+ radial-gradient(ellipse at 83% 0%,#5f16274a 0%,transparent 31%),
+ radial-gradient(ellipse at 16% 95%,#56152450,transparent 45%),
+ radial-gradient(ellipse at 67% 58%,#30112154,transparent 49%),
+ repeating-linear-gradient(130deg,transparent 0 39px,#f7b88b06 40px 41px,transparent 42px 87px),
+ #09080d;
+ color:#ffe7ca;
+}
+body:after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.35;background:radial-gradient(#b14458 1px,transparent 2px) 12px 14px/190px 174px}
+.zero-top{
+ grid-template-columns:170px 1fr 148px;
+ padding:7px max(19px,calc((100vw - 1680px)/2));
+ min-height:62px;background:linear-gradient(98deg,#100a13 0%,#1c0b19 53%,#0b080f 100%);
+ border-bottom:1px solid #a97354a6;
+ box-shadow:0 4px 24px #09030bbf;
+}
+.zero-top>a{background:#25101c;border-radius:5px;padding:9px 13px;color:#ffdcaa;font-size:11px}
+.zero-brand-lockup{z-index:2;position:relative}
+.zero-top strong{font-size:clamp(13px,1.3vw,18px);letter-spacing:.16em;color:#f4d19b}
+.zero-top small{font-size:9px;letter-spacing:.075em;color:#c9a38b}
+.zero-header-lily{
+ position:absolute;z-index:1;left:57%;top:0;height:70px;width:min(33vw,320px);
+ background:url('books/n2/vocab/zero-red-lily.svg') center top/contain no-repeat;
+ opacity:.88;pointer-events:none;filter:drop-shadow(0 3px 7px #2a0614);
+}
+.zero-breadcrumb{max-width:1730px;padding:10px 22px 5px;color:#c2988f}
+.zero-layout.is-reading{
+ max-width:1760px;
+ grid-template-columns:minmax(165px,202px) minmax(155px,185px) minmax(0,1fr) minmax(210px,254px);
+ gap:13px;padding:15px 18px 75px;
+ align-items:start;
+}
+.zero-layout.is-reading .zero-jacket-column,
+.zero-layout.is-reading .zero-sidebar,
+.zero-layout.is-reading .zero-dossier{min-width:0}
+.zero-jacket-column{top:84px;align-self:start}
+.zero-jacket-frame{
+ background:radial-gradient(ellipse at 50% 0,#4b1930 0%,#190d18 57%,#100914 100%);
+ border:2px solid #bb8d5d;border-radius:8px;padding:8px 9px 14px;
+ box-shadow:0 0 0 4px #100b12,0 0 0 5px #a777515e,0 15px 40px #000a;
+}
+.zero-jacket-frame:before{inset:5px;border:1px solid #ddba817d}
+.zero-jacket-image{border:2px solid #d2a568;background:#140b14;box-shadow:0 3px 16px #050205d9}
+.zero-jacket-image img{width:100%;aspect-ratio:185/295;object-fit:cover}
+.zero-jacket-info h2{font:700 clamp(16px,1.35vw,22px)/1.4 'Noto Serif',Georgia,serif;color:#f9d9a7;text-shadow:0 2px 8px #0007}
+.zero-jacket-genre{font-size:9px;letter-spacing:.06em;color:#e8ad83}
+.zero-jacket-facts{border-top:1px solid #9e674a7b;border-bottom:1px solid #9e674a7b}
+.zero-jacket-facts span{font-size:11px;line-height:1.55}
+.zero-jacket-frame blockquote{font:italic 600 12px/1.75 'Noto Serif',serif;color:#f6cfad;text-align:center}
+.zero-jacket-first{border-radius:23px;background:linear-gradient(120deg,#f4d393,#d39855);color:#2a1420;border:1px solid #ffe4a4;box-shadow:0 5px 12px #0007}
+.zero-layout.is-reading .zero-sidebar{padding:0;top:84px;max-height:calc(100dvh - 96px)}
+.zero-layout.is-reading .zero-spine-card{display:none}
+.zero-sidebar nav{
+ border:2px solid #bd8d5c;padding:7px 7px 12px;
+ background:linear-gradient(160deg,#2b0e20,#100b16);
+ box-shadow:inset 0 0 0 4px #21101c,inset 0 0 0 5px #9d65457c,0 7px 22px #0008;
+ border-radius:7px;
+}
+.zero-sidebar nav h2{
+ color:#fad8a1;padding:14px 9px;
+ text-align:center;letter-spacing:.12em;font-size:10px;
+ border-bottom:1px solid #ae744e7d;margin-bottom:7px;
+}
+.zero-toc-group{border-bottom:1px solid #c093654b}
+.zero-toc-group:last-child{border-bottom:0}
+.zero-toc-group summary{
+ display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:6px;align-items:center;
+ padding:10px 7px;color:#edbf83;cursor:pointer;
+ font:700 10px/1.4 var(--zero-ui);list-style:none;
+ background:linear-gradient(90deg,#39152b,#231020);
+}
+.zero-toc-group summary::-webkit-details-marker{display:none}
+.zero-toc-group summary:focus-visible{outline:2px solid #f9c48a}
+.zero-toc-group summary:after{content:"⌄";display:inline;font-size:13px;grid-column:3;grid-row:1}
+.zero-toc-group:not([open]) summary:after{content:"›"}
+.zero-toc-group summary small{display:none}
+.zero-toc-roman{color:#f3d6a0;font:700 16px Georgia,serif}
+.zero-toc-group-chapters{padding:5px 1px 9px}
+.zero-toc-ch{padding:6px 7px;border-radius:3px;font:500 10px/1.55 var(--zero-ui);color:#ead7cc;border-left:2px solid transparent}
+.zero-toc-ch strong{flex:0 0 22px;font-family:Georgia,serif;font-size:12px;color:#cf9460}
+.zero-toc-ch.selected{background:linear-gradient(100deg,#8b1b38,#4d1930);border:1px solid #c99670;border-left:3px solid #e8b780;color:#fff1d3;box-shadow:0 2px 10px #0703087a}
+.zero-toc-ch:hover:not(:disabled){background:#5b1932}
+.zero-side-links{gap:6px;margin:12px 1px}
+.zero-side-links button{font-size:11px;padding:8px;border-radius:4px}
+.zero-layout.is-reading .zero-main{max-width:none;min-width:0}
+.zero-reader-head{
+ display:flex;align-items:center;justify-content:space-between;
+ gap:10px;margin:0 0 9px;padding:4px 9px 7px;
+ background:linear-gradient(90deg,#260c1c,#140b15);
+ border:1px solid #aa7657;border-radius:5px;
+ min-height:41px;color:#e5c18e;
+}
+.zero-reader-eyebrow{font-size:10px;letter-spacing:.07em}
+.zero-reader-tools{display:flex;gap:5px}
+.zero-reader-tools button{
+ min-width:36px;padding:5px 7px;border:1px solid #b58860;
+ background:linear-gradient(#452438,#230e21);color:#f9dcb2;
+ font-size:10px;border-radius:4px;
+}
+.zero-reader-tools button[aria-pressed="true"]{background:linear-gradient(#7c2846,#4a182c)}
+/* A real layered old book, not a flat white article card */
+.zero-paper{
+ position:relative;max-width:none;margin:0 5px 15px;border-radius:21px 18px 15px 24px;
+ background:#e9c9a2;
+ border:4px ridge #cc9962;
+ box-shadow:
+  0 0 0 2px #f1d3a4,
+  0 0 0 5px #301423,
+  0 0 0 7px #c39560,
+  0 9px 0 -3px #b78959,
+  0 14px 0 -3px #7b4c3b,
+  0 19px 0 -3px #382124,
+  0 25px 44px #000d;
+ overflow:visible;isolation:isolate;
+}
+.zero-paper:before{
+ content:"";position:absolute;z-index:3;pointer-events:none;
+ inset:8px;border:1px solid #9d684685;border-radius:13px 12px 13px 16px;
+ box-shadow:inset 0 0 0 4px #fffae04d,inset 0 0 17px #8b4b3c45;
+}
+.zero-paper:after{
+ content:"";position:absolute;z-index:0;pointer-events:none;inset:0;
+ border-radius:16px;
+ background:radial-gradient(ellipse at 0 0,#934d3b38,transparent 30%),radial-gradient(ellipse at 100% 100%,#7c3e2c49,transparent 27%),
+ linear-gradient(90deg,#a46e4c20,transparent 8%,transparent 93%,#94533224);
+ mix-blend-mode:multiply;
+}
+.zero-page-corners{z-index:4}
+.zero-page-corners i{border-color:#b97c46!important;filter:drop-shadow(0 0 2px #b87d5699)}
+.zero-leaf{
+ min-height:750px;padding:23px clamp(23px,3vw,49px) 23px;
+ background:
+ radial-gradient(ellipse at 0 0,#ad6d4a18,transparent 40%),
+ radial-gradient(ellipse at 100% 100%,#b579512b,transparent 31%),
+ url('books/n2/vocab/zero-paper-aged.webp') center center/cover,
+ linear-gradient(130deg,#fef7e8,#f2ddbc 75%,#ebc99f);
+ border-left:11px solid #eac59c;border-right:11px solid #ddaf7f;
+ border-radius:16px 12px 12px 17px;
+ box-shadow:inset 12px 0 19px -9px #6a392f57,inset -12px 0 19px -9px #8c543b4b;
+}
+.zero-flow .zero-leaf{border-bottom:5px double #bd956e}
+.zero-leaf-top{
+ padding:3px 6px 10px;border-bottom:1px solid #ac7b54a8;
+ color:#875b48;font:800 9px/1.5 var(--zero-ui);letter-spacing:.08em;
+}
+.zero-leaf-top span:first-child:before{content:"✦";margin-right:6px;color:#9e2f4b}
+.zero-leaf-art{
+ height:155px;margin:15px 0 16px;border-radius:3px;
+ border:3px solid #7f4039;outline:2px solid #d9ad77;
+ box-shadow:0 0 0 5px #f7dfb7,0 6px 15px #5c281e4f;
+ background-image:linear-gradient(90deg,#240a18b0 0%,#290f1c10 68%),var(--case-scene);
+ background-size:cover;background-position:center;
+ overflow:hidden;isolation:isolate;
+}
+.zero-leaf-art.hero{height:clamp(142px,13vw,205px);margin-bottom:21px}
+.zero-leaf-art:before{inset:6px;border:1px solid #ffdb8e6e}
+.zero-leaf-art:after{background:linear-gradient(90deg,#21081798,transparent 54%);z-index:1}
+.zero-leaf-art-copy{z-index:2;left:18px;bottom:15px}
+.zero-ink-label{font-size:9px}
+.zero-roman-part{font-size:18px}
+.zero-pinned-evidence{
+ position:absolute;right:-8px;top:-11px;transform:rotate(9deg);
+ width:94px;height:112px;z-index:3;border:6px solid #f3e0bc;
+ box-shadow:0 5px 16px #000a;
+}
+.zero-pinned-evidence img{object-fit:cover;width:100%;height:100%}
+.zero-pinned-evidence span{font-size:8px;bottom:-4px}
+.zero-hero-stamp{right:0;bottom:3px;z-index:4;border:2px solid #8e243f;background:#f2e2c4;color:#8f1e35;transform:rotate(-8deg);font:900 11px Georgia,serif}
+.zero-leaf[data-leaf-index="0"] .zero-leaf-art.scene-part-1{
+ background-image:url('books/n2/vocab/zero-reference-court.webp');
+ background-size:cover;background-position:center center;
+ border-color:#874c33;
+}
+.zero-leaf[data-leaf-index="0"] .zero-leaf-art.scene-part-1 .zero-pinned-evidence,
+.zero-leaf[data-leaf-index="0"] .zero-leaf-art.scene-part-1 .zero-hero-stamp,
+.zero-leaf[data-leaf-index="0"] .zero-leaf-art.scene-part-1 .zero-leaf-art-copy{display:none}
+.zero-chapter-heading{
+ max-width:780px;margin:0 auto 17px;padding:2px 0 0;
+ text-align:center;
+}
+.zero-ornament{font-size:13px;color:#b58962}
+.zero-ornament span{color:#902e49}
+.zero-chapter-seal{font-size:10px;color:#8c1935;letter-spacing:.16em}
+.zero-chapter-heading h2{
+ font:800 clamp(26px,2.55vw,40px)/1.35 'Noto Serif',Georgia,serif;
+ color:#551727;margin:8px auto 10px;max-width:780px;overflow-wrap:break-word;
+ letter-spacing:-.02em;text-shadow:0 1px #fff9eaaa;
+}
+.zero-chapter-heading .zero-tagline{
+ font:italic 600 12px/1.65 'Noto Serif',serif;
+ color:#8e4945;border-bottom:1px solid #bd8e68;
+ margin:0 auto;padding-bottom:14px;max-width:610px;
+}
+.zero-page-reprise{
+ font:700 17px/1.5 'Noto Serif',Georgia,serif;color:#8e2843;
+ margin:7px auto 23px;border-bottom:1px solid #b78a66;
+}
+.zero-page-reprise span{color:#b78162}
+.zero-paragraphs{max-width:750px;margin:0 auto}
+.zero-paragraphs p{
+ font:400 var(--zero-reading,19px)/1.85 'Noto Serif',Georgia,serif;
+ color:#37221d;margin:0 0 1.2em;
+ letter-spacing:0;text-align:left;overflow-wrap:break-word;
+ text-shadow:0 .3px #fff8e781;
+}
+.zero-paragraphs p:first-child::first-letter{
+ float:left;font:700 3.1em/.86 'Cormorant Garamond',Georgia,serif;
+ color:#8f1f38;padding:5px 8px 0 0;
+ text-shadow:1px 2px #d2ad85;
+}
+.zero-jp{
+ border:0!important;border-bottom:1.5px solid #c8914a!important;
+ background:linear-gradient(180deg,#ffeaa1,#ebc65d)!important;
+ border-radius:4px;box-shadow:inset 0 1px #fffad0,0 1px 2px #94652a44;
+ color:#552034;font:.83em/1.7 'Noto Sans JP',sans-serif!important;
+ padding:1px 5px;
+}
+.zero-jp:hover{background:#f7b77b!important}
+.zero-jp rt{font-size:8px;color:#843d42}
+.zero-page-break{margin:15px auto 11px;color:#b06463}
+.zero-leaf-footer{font-size:8px;border-top:1px solid #b7845c;padding-top:9px}
+.zero-leaf-footer strong{color:#8c2e46;border:1px solid #bb7e5e}
+.zero-pagination{
+ position:relative;z-index:5;min-height:75px;gap:13px;
+ padding:10px clamp(19px,3.2vw,47px) 19px;
+ background:linear-gradient(180deg,#f4dec0,#f6e8d3 64%,#e1bb94);
+ border-top:1px solid #c99868;
+ border-radius:0 0 15px 19px;
+}
+.zero-pagination:after{
+ content:"";position:absolute;pointer-events:none;bottom:6px;left:27%;right:27%;
+ height:13px;background:radial-gradient(ellipse,#8b4f3d3d,transparent 69%);
+}
+.zero-pagination button:not(.zero-page-dots button){
+ border-radius:6px;font-weight:750;
+ background:linear-gradient(#f3e2cc,#e1bf98);border:1px solid #be956d;color:#633447;
+}
+.zero-pagination>button:last-child:not(:disabled){
+ background:linear-gradient(#9e2b47,#5c0b28)!important;border:1px solid #c88c5e!important;
+ color:#ffe2ac!important;box-shadow:0 4px 13px #54203173;
+}
+.zero-pagination-center{color:#8d604d;font-size:9px}
+.zero-page-dots button.active{background:#8d1736;box-shadow:0 0 0 3px #e4b785}
+.zero-next{margin:27px auto 12px;max-width:100%}
+.zero-next button{border:1px solid #aa774c;background:#331322;color:#f3d4a1}
+.zero-glossary{border:1px solid #a36a55!important;border-radius:7px}
+/* Red velvet sidebar, grouped witnesses and waxed private records */
+.zero-layout.is-reading .zero-dossier{
+ top:82px;max-height:calc(100dvh - 95px);
+ padding:0 2px 18px;gap:13px;
+ scrollbar-color:#aa704f #1b0d16;
+}
+.zero-layout.is-reading .zero-dossier-card{
+ padding:13px 12px 16px;border:2px solid #bd8b61;
+ border-radius:8px;
+ background:linear-gradient(160deg,#351123 0,#190c18 80%);
+ box-shadow:inset 0 0 0 5px #21101a,inset 0 0 0 6px #96664b6e,0 8px 22px #0008;
+}
+.zero-dossier-heading{padding-bottom:9px;margin-bottom:9px}
+.zero-dossier-heading>span{font-size:22px}
+.zero-dossier-heading strong{font-size:12px}
+.zero-dossier-intro{font-size:10px;line-height:1.6}
+.zero-dossier-terms{gap:4px;max-height:262px}
+.zero-dossier-terms button{
+ border:0;border-bottom:1px solid #9b5c52a2;border-radius:3px;
+ background:#1e111e;grid-template-columns:minmax(0,1fr) auto;position:relative;
+ min-height:46px;padding:7px 10px 7px;
+}
+.zero-dossier-terms button:first-child{background:linear-gradient(110deg,#9a1e3b,#5b1730)}
+.zero-dossier-terms button:hover{background:#7c1b38}
+.zero-dossier-terms button strong{font-size:17px}
+.zero-dossier-terms button span{font-size:10px;color:#efd5c8}
+.zero-dossier-terms button:after{content:"›";position:absolute;right:4px;top:12px;color:#dfad74;font-size:18px}
+.zero-dossier-foot{font-size:9px}
+.zero-investigation-card{order:2}
+.zero-dossier-progress{order:3}
+.zero-dossier>.zero-dossier-card:first-child{order:1}
+.zero-investigation-title{display:flex;justify-content:space-between;gap:6px;align-items:center;color:#f9d8a1;border-bottom:1px solid #b88765a3;font:800 10px var(--zero-ui);padding:0 4px 12px}
+.zero-investigation-title b{font:700 10px Georgia,serif;color:#df916f}
+.zero-investigation-paper{
+ position:relative;min-height:224px;display:flex;gap:8px;
+ padding:19px 8px 17px;margin:14px 3px 11px;
+ color:#542d2b;
+ background:
+ linear-gradient(164deg,#fef1d3c9,#e5bb8a),
+ repeating-linear-gradient(0deg,#8a513d10 0 1px,transparent 1px 12px);
+ border:1px solid #cc9e6d;
+ box-shadow:5px 5px 0 #c79b72,7px 9px 12px #0008;
+ transform:rotate(-1.2deg);
+}
+.zero-investigation-paper:before{content:"";position:absolute;inset:6px;border:1px solid #aa78584f;pointer-events:none}
+.zero-investigation-clip{position:absolute;z-index:4;top:-23px;left:45%;width:20px;height:44px;border:4px solid #ba854e;border-radius:12px;transform:rotate(14deg);box-shadow:2px 2px 4px #0008}
+.zero-investigation-photo{
+ width:41%;min-height:135px;flex:none;
+ background:linear-gradient(30deg,#210f1c25,transparent),url('books/n2/vocab/zero-courthouse-rain.webp') 75% center/auto 100% no-repeat;
+ border:7px solid #f7e7cf;border-bottom-width:19px;
+ box-shadow:2px 3px 8px #3f1b2b77;
+ transform:rotate(-5deg);
+}
+.zero-investigation-details{flex:1;min-width:0;padding:6px 0}
+.zero-investigation-details p{margin:0 0 9px;padding:0 0 6px;border-bottom:1px dashed #bc997c;font:600 10px/1.5 var(--zero-ui);color:#382021}
+.zero-investigation-details strong{color:#672034}
+.zero-investigation-stamp{
+ position:absolute;z-index:2;right:3px;top:3px;
+ transform:rotate(13deg);border:3px double #9a3045;
+ color:#a33044;background:#f5e2c8d9;
+ padding:5px 7px;font:900 10px/.9 Georgia,serif;text-align:center;
+}
+.zero-investigation-caption{text-align:center;font:italic 600 11px/1.6 var(--zero-serif);color:#edb88f}
+.zero-dossier-progress .zero-progress-ring{
+ margin:13px auto;width:119px;height:119px;
+ background:conic-gradient(#eeb976 var(--completed),#6e3345 var(--completed));
+ border-color:#dfaa71;
+}
+.zero-dossier-progress .zero-progress-ring>div{width:87px;height:87px}
+.zero-dossier-progress .zero-progress-ring b{font-size:24px}
+/* The title page gets brighter archival card in the same design language. */
+.zero-hero{
+ background:linear-gradient(90deg,#120c18df,#281020d6),url('books/n2/vocab/zero-gallery-1.webp') center/cover;
+ border:2px solid #b77b58;border-radius:10px;
+ box-shadow:0 0 0 4px #20101a,0 0 0 6px #835037,0 20px 46px #000a;
+}
+.zero-cover-ribbon{background:#81273e}
+.zero-hero h2{font-family:'Noto Serif',Georgia,serif}
+/* The approved mockup depicts a desktop book; on mobile protect actual reading. */
+@media(max-width:1480px){
+ .zero-layout.is-reading{grid-template-columns:170px 172px minmax(0,1fr) 224px;gap:11px;padding:13px 13px 60px}
+ .zero-jacket-info h2{font-size:16px}
+ .zero-paper{margin:0 1px 13px}
+ .zero-paragraphs p{line-height:1.8}
+ .zero-leaf{padding-left:25px;padding-right:25px}
+}
+@media(max-width:1240px){
+ .zero-layout.is-reading{grid-template-columns:170px minmax(0,1fr) 215px;gap:12px}
+ .zero-jacket-column{display:none!important}
+ .zero-layout.is-reading .zero-sidebar{display:block;grid-column:1}
+ .zero-layout.is-reading .zero-main{grid-column:2}
+ .zero-layout.is-reading .zero-dossier{position:sticky;grid-column:3;grid-template-columns:1fr;max-height:calc(100dvh - 95px);overflow:auto}
+}
+@media(max-width:980px){
+ .zero-layout.is-reading{grid-template-columns:170px minmax(0,1fr)}
+ .zero-layout.is-reading .zero-dossier{position:static;grid-column:2;display:grid;grid-template-columns:1fr 1fr;max-height:none;overflow:visible;margin-top:16px}
+ .zero-investigation-card{order:3}
+ .zero-dossier-progress{order:2}
+}
+@media(max-width:710px){
+ .zero-top{grid-template-columns:85px minmax(0,1fr) 74px;padding:8px 8px;min-height:64px}
+ .zero-top>a{font-size:9px;padding:8px}
+ .zero-header-lily{left:55%;width:145px;opacity:.3}
+ .zero-top strong{font-size:10px}
+ .zero-top small{font-size:7px}
+ .zero-menu{display:block;font-size:10px;padding:8px 5px}
+ .zero-layout.is-reading{display:block;padding:11px 9px 40px}
+ .zero-layout.is-reading .zero-sidebar{display:none;position:fixed;z-index:35;left:9px;top:66px;width:min(90vw,330px);max-height:calc(100dvh - 80px);padding:9px;background:#130a15;border:2px solid #b68655;box-shadow:0 20px 50px #000e}
+ .zero-layout.is-reading .zero-sidebar.open{display:block}
+ .zero-reader-head{display:flex;flex-direction:column;align-items:flex-start;gap:7px;padding:6px}
+ .zero-reader-tools{display:flex;width:100%;justify-content:flex-start;flex-wrap:wrap}
+ .zero-reader-tools button{font-size:10px;padding:7px 9px}
+ .zero-paper{margin:2px 3px 17px;border:3px ridge #c69568;border-radius:15px;box-shadow:0 0 0 3px #2d1321,0 0 0 4px #a46f4b,0 12px 24px #000a}
+ .zero-paper:before{inset:5px;border-radius:9px}
+ .zero-leaf{padding:17px 16px 17px;min-height:590px;border-left:5px solid #ecc59c;border-right:5px solid #d5a574}
+ .zero-leaf-top{font-size:8px}
+ .zero-leaf-art,.zero-leaf-art.hero{height:126px!important;margin:14px 0 21px;border-width:2px;outline-width:1px}
+ .zero-pinned-evidence{display:none!important}
+ .zero-hero-stamp{display:none}
+ .zero-roman-part{font-size:14px}
+ .zero-chapter-heading h2{font-size:clamp(22px,6vw,30px)}
+ .zero-chapter-heading .zero-tagline{font-size:10px}
+ .zero-paragraphs p{font-size:var(--zero-reading,19px);line-height:1.83;margin-bottom:1.3em}
+ .zero-jp{font-size:.76em!important;padding:0 3px}
+ .zero-pagination{grid-template-columns:1fr auto 1fr;gap:5px;padding:12px 9px 17px}
+ .zero-pagination button{font-size:10px;padding:8px 6px}
+ .zero-pagination-center{font-size:8px;min-width:77px}
+ .zero-layout.is-reading .zero-dossier{display:grid;grid-template-columns:1fr;max-height:none;margin-top:23px}
+ .zero-investigation-card{order:2}
+ .zero-dossier-progress{order:3}
+ .zero-investigation-photo{min-height:140px}
+ .zero-hero{grid-template-columns:103px minmax(0,1fr)}
+}
+@media(max-width:390px){
+ .zero-leaf{padding:14px 11px}
+ .zero-leaf-top{font-size:7px}
+ .zero-paragraphs p{line-height:1.74}
+ .zero-investigation-paper{gap:5px;padding:20px 7px}
+}
+@media print{
+ body{background:#fff!important}
+ .zero-layout.is-reading{display:block!important}
+ .zero-paper{margin:0!important;border:0!important;box-shadow:none!important}
+ .zero-leaf{display:block!important;border:none!important;break-after:page;min-height:0}
+ .zero-header-lily,.zero-investigation-card{display:none!important}
+}
