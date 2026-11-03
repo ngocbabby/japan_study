@@ -16,6 +16,7 @@ on:
       - "n3-story-*.js"
       - "n3-source-ledger.json"
       - "books/n3/vocab/**"
+      - "kanji-n5-full*"
       - "kanji-n5.html"
       - "kanji-n5.css"
       - "kanji-n5.js"
