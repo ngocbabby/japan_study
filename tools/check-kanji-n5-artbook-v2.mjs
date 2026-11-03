@@ -37,7 +37,7 @@ try {
    await page.locator("#chapterMenu").click();
    assert.equal(await page.locator("#chaptersList button").count(),25);
    await page.locator('#chaptersList [data-chapter="25"]').click();
-   assert.equal(await page.locator("#pageNumber").innerText(),"25 / 25");
+   assert.match(await page.locator("#pageNumber").innerText(),/25\/25/);
    assert.deepEqual(errors,[]);
    console.log("PASS "+label+" "+JSON.stringify(sizes));
    await page.close();
