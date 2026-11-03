@@ -585,3 +585,50 @@ main {
   .reference p {font-size:9pt;line-height:1.65}
   .word {break-inside:avoid}
 }
+
+/* APPROVED COVER ART · replace placeholder SVG: original illustrated artwork, no typographic overlays. */
+.cover-page.cover-page--approved{
+  display:block!important;
+  box-sizing:border-box;
+  width:100%;
+  height:auto;
+  min-height:0!important;
+  margin:0;
+  padding:0!important;
+  border:0!important;
+  outline:0!important;
+  background:#0b1d29!important;
+  aspect-ratio:2 / 3;
+  overflow:hidden;
+  line-height:0;
+}
+.cover-page--approved::before,
+.cover-page--approved::after{content:none!important;display:none!important}
+.cover-page--approved .cover-art{
+  display:block;
+  width:100%;
+  height:100%;
+  max-width:none;
+  object-fit:contain;
+  object-position:center center;
+  background:#0b1d29;
+}
+@media(max-width:750px){
+  .cover-page.cover-page--approved{height:auto;min-height:0!important;aspect-ratio:2/3}
+}
+@media print{
+  .cover-page.cover-page--approved{
+    width:148mm;
+    height:210mm!important;
+    min-height:210mm!important;
+    max-height:210mm;
+    aspect-ratio:auto;
+    margin:-18mm -16mm -19mm -17mm;
+    padding:0!important;
+    border:0!important;
+    outline:0!important;
+    break-after:page;
+    page-break-after:always;
+  }
+  .cover-page--approved .cover-art{width:100%;height:100%;object-fit:contain}
+}
