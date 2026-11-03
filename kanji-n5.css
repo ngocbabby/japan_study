@@ -47,3 +47,6 @@ body:before{content:"";position:fixed;z-index:-2;inset:0;background:radial-gradi
   opacity:.17;mix-blend-mode:multiply;filter:saturate(.7)
 }
 .glyph-mandala strong{filter:drop-shadow(0 2px 2px #fff1c5)}
+
+/* The sixth phone tab keeps spaced review reachable without finishing the quiz. */
+@media(max-width:900px){.mobile-nav button{flex:1;min-width:0}}
