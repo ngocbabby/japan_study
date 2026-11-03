@@ -4,6 +4,8 @@ on:
     branches: ["main"]
     paths:
       - "zero-verdict*"
+      - "books/n2/vocab/ban-an-so-khong-deluxe.svg"
+      - "books/n2/vocab/zero-scene-*.svg"
       - "seven-seas*"
       - "books/n2/vocab/hai-dang-bay-vung-bien-cam.webp"
       - "n2-novel*"
