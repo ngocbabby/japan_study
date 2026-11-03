@@ -55,3 +55,60 @@ button,input{font:inherit}button{cursor:pointer}button:disabled{opacity:.42;curs
 @media(max-width:780px){.n2-layout{grid-template-columns:minmax(0,1fr);padding:12px 10px;gap:12px}.n2-left{display:none;position:static;max-height:350px}.n2-left.open{display:block}.n2-side{grid-column:1;grid-row:auto;grid-template-columns:repeat(2,minmax(0,1fr))}.n2-head .n2-mobile{display:block}.n2-head{padding:10px}.n2-head .brand{font-size:13px}.n2-hero{grid-template-columns:145px minmax(0,1fr);gap:15px;padding:14px}.n2-hero h1{font-size:23px}.n2-hero p{font-size:12px}}
 @media(max-width:540px){.n2-head{gap:7px}.n2-head .brand{font-size:11px;white-space:normal}.n2-head a,.n2-head button{padding:8px;font-size:11px}.n2-hero{grid-template-columns:105px minmax(0,1fr);padding:11px;gap:11px}.n2-hero h1{font-size:19px}.n2-hero p{font-size:11px;line-height:1.55}.n2-jptitle{font-size:12px}.n2-actions{gap:5px}.n2-btn{padding:9px;font-size:11px}.n2-stat-grid{gap:5px}.n2-stat{padding:8px 3px}.n2-stat small{font-size:9px}.n2-parts,.n2-vocabgrid{grid-template-columns:1fr}.n2-page{padding:22px 17px}.n2-page h1{font-size:26px}.n2-scene .jp{line-height:1.98}.n2-side{grid-template-columns:1fr}.n2-dict{bottom:7px}}
 @media print{body{background:white}.n2-head,.n2-left,.n2-side,.n2-bottom-nav,.n2-status,.n2-dict,.n2-reading-tools{display:none!important}.n2-layout{display:block}.n2-page{box-shadow:none;border:0;max-width:none;padding:0}.n2-scene{break-inside:avoid}}
+
+/* Vietnamese-first N2 novel (matches N3 reading intent). */
+.n2-reading-langbar{
+  display:flex;gap:7px;align-items:center;flex-wrap:wrap;margin:0 0 15px;
+  border:1px solid #53687a;border-radius:12px;background:#172b3f;
+  padding:11px 13px;
+}
+.n2-reading-langbar>span{font-size:11px;letter-spacing:.055em;font-weight:700;color:#f5d4a2;margin-right:auto}
+.n2-reading-langbar button{
+  padding:9px 12px;border:1px solid #907953;background:#273e52;
+  border-radius:9px;color:#f5e6ca;font-size:12px;line-height:1.45;
+  cursor:pointer;font-weight:700;
+}
+.n2-reading-langbar button.active{
+  color:#172d3e;background:#efd09b;border-color:#e6c48c;
+  box-shadow:inset 0 0 0 1px #f7ddb4;
+}
+.n2-reading-langbar button:focus-visible{outline:2px solid #f5d4a2;outline-offset:3px}
+.n2-vietnamese-first .n2-scene{padding:0 0 2px;margin-bottom:24px}
+.n2-scene .vi-main{
+  color:#273b43;background:transparent;border:0;padding:0;margin:0;
+  font:400 var(--jp-font,18px)/1.93 "Noto Serif","Times New Roman",serif;
+  letter-spacing:0;text-align:left;overflow-wrap:break-word;
+}
+.n2-vi-term{white-space:normal}
+.n2-vi-term .n2-word{
+  font:700 .89em/1.6 "Noto Sans JP","Yu Gothic",Meiryo,sans-serif;
+  padding:2px 4px;margin:0 2px 0 3px;
+  vertical-align:baseline;display:inline-block;
+}
+.n2-vi-term .n2-word ruby{ruby-position:over}
+.n2-vi-term .n2-word rt{font-size:9px}
+.n2-para-vocab{
+  color:#6e685e;background:#f3e9d8;border-left:2px solid #d8b47e;
+  border-radius:0 8px 8px 0;padding:8px 10px;margin-top:9px;
+  display:flex;flex-wrap:wrap;gap:5px 6px;align-items:baseline;
+  font:400 11px/1.7 "Noto Sans JP",sans-serif;
+}
+.n2-para-vocab>span{color:#86744d;font:600 11px/1.5 "Noto Serif",serif;margin-right:2px}
+.n2-para-word{
+  font:500 12px/1.5 "Noto Sans JP",sans-serif;
+  color:#07586a;border:1px solid #b0d0cc;border-radius:6px;
+  background:#e7f1e8;padding:2px 5px;cursor:pointer;
+}
+.n2-para-word:hover,.n2-vi-term .n2-word:hover{background:#c7e7e2}
+.n2-language-hint{
+  background:#142c3c;border:1px solid #586e74;border-radius:9px;
+  padding:10px 11px;font-size:12px;line-height:1.7;
+}
+@media(max-width:540px){
+  .n2-reading-langbar{padding:9px;gap:6px}
+  .n2-reading-langbar>span{width:100%;margin:0}
+  .n2-reading-langbar button{flex:1;min-width:125px;padding:8px 6px;font-size:11px}
+  .n2-scene .vi-main{line-height:1.9}
+  .n2-vi-term .n2-word{font-size:14px}
+}
+@media print{.n2-reading-langbar{display:none}}
