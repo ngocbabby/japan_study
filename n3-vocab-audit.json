@@ -1,0 +1,30 @@
+{
+  "book": "KHI MẶT TRỜI KHÔNG CÒN MỌC / 朝が来ない街",
+  "source": "Tu-vung-N3-mimikara.pdf",
+  "sourcePages": 27,
+  "sourceNumberedItems": 880,
+  "verified": [
+    {
+      "from": 1,
+      "to": 69,
+      "count": 69,
+      "pages": "2–3"
+    }
+  ],
+  "pending": [
+    {
+      "from": 70,
+      "to": 880,
+      "count": 811
+    }
+  ],
+  "method": "Mục 1–69 đối chiếu trực tiếp từ hình scan; phần còn lại là bảng ảnh, OCR có lỗi kanji/kana/tiếng Việt nên không được tự coi là đã xác minh.",
+  "bookChapterCount": 40,
+  "bookVocabularyReferenceStatus": "67 ID từ vựng xuất hiện trong bản thảo 40 chương, đều thuộc 69 ID đã đối chiếu; chưa phủ đủ 880.",
+  "qualityChecks": [
+    "40 chương và 5 phần đã được ghi thành dữ liệu đọc trên website",
+    "Thứ tự chương 1–40 được kiểm tra",
+    "Không có mã từ tham chiếu ngoài danh sách đã xác minh"
+  ],
+  "nextStep": "Đối chiếu thủ công các mục 70–880 theo nguồn scan; chỉ thêm từ vào truyện khi đủ cách viết, cách đọc và nghĩa."
+}
