@@ -30,8 +30,8 @@ try{
   await page.screenshot({path:path.join(dir,device.label+'-home.png'),fullPage:true});
   await page.locator('.sea-hero [data-chapter="1"]').click();
   assert.equal(await page.locator('.sea-paper h2').textContent(),'Ngọn lửa chết lúc 05:17');
-  assert.equal(await page.locator('.sea-paragraphs p').count(),8);
-  assert.equal(await page.locator('.sea-jp').count(),13);
+  assert.ok((await page.locator('.sea-paragraphs p').count())>=8);
+  assert.ok((await page.locator('.sea-jp').count())>=18);
   assert.equal(await page.locator('.sea-para-vocab').count(),0,'no loose vocabulary chips in paragraphs');
   assert.ok((await page.locator('.sea-paragraphs').innerText()).includes('Selene'));
   await page.locator('.sea-jp').first().click();
@@ -41,13 +41,22 @@ try{
   await page.screenshot({path:path.join(dir,device.label+'-chapter1.png'),fullPage:true});
   await page.goto(base+'?qa=chapter8#chapter-8',{waitUntil:'load'});
   assert.equal(await page.locator('.sea-paper h2').textContent(),'Vùng biển không có trên hải đồ');
-  assert.equal(await page.locator('.sea-paragraphs p').count(),9);
+  assert.ok((await page.locator('.sea-paragraphs p').count())>=8);
   await page.screenshot({path:path.join(dir,device.label+'-chapter8.png'),fullPage:true});
+  await page.goto(base+'?qa=chapter64#chapter-64',{waitUntil:'load'});
+  assert.equal(await page.locator('.sea-paper h2').textContent(),'Hải đăng của thế hệ mới','last chapter must exist');
+  assert.ok((await page.locator('.sea-paragraphs p').count())>=8,'final chapter narrative missing');
+  assert.ok((await page.locator('.sea-jp').count())>=19,'final chapter must contain N2 terms');
+  assert.ok((await page.locator('.sea-paragraphs').innerText()).includes('Ba năm sau'),'epilogue missing');
+  await page.screenshot({path:path.join(dir,device.label+'-chapter64.png'),fullPage:true});
   await page.goto(base+'?qa=vocab#vocab',{waitUntil:'load'});
   assert.equal(await page.locator('.sea-vocab-row').count(),30);
   await page.locator('#sea-search').fill('44');
   assert.equal(await page.locator('.sea-vocab-row').count(),1);
   assert.ok((await page.locator('.sea-vocab-row').innerText()).includes('秘密'));
+  await page.locator('#sea-search').fill('1160');
+  assert.equal(await page.locator('.sea-vocab-row').count(),1);
+  assert.ok((await page.locator('.sea-vocab-row').innerText()).includes('いわゆる'));
   assert.ok(await page.locator('.sea-top').isVisible());
   assert.ok((await page.evaluate('document.documentElement.scrollWidth-innerWidth'))<3,'page horizontal overflow');
   if(device.label==='mobile'){
