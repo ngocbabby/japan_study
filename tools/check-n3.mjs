@@ -12,7 +12,7 @@ assert.equal(data.parts.length,5,"missing parts");
 assert.deepEqual(Array.from(data.chapters,c=>c.number),Array.from({length:40},(_,i)=>i+1),"chapter order");
 assert.equal(w.document.querySelectorAll(".n3chapter").length,40,"chapter nav");
 assert.ok(w.document.querySelector(".n3hero"),"home");
-assert.ok(w.document.body.textContent.includes("67 / 879"),"honest coverage summary");
+assert.ok(w.document.body.textContent.includes("69 / 879"),"honest coverage summary");
 w.document.querySelector('[data-goto="1"]').click();
 assert.ok(w.document.querySelector(".n3paper"),"chapter reading page");
 assert.equal(w.document.querySelector(".n3paper h2")?.textContent,"06:00 không đến");
