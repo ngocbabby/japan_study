@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="900" viewBox="0 0 600 900" role="img" aria-label="Bìa tiểu thuyết Bản án số không: chiếc cân công lý và chiếc đồng hồ chỉ số không">
+<defs>
+ <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stop-color="#071421"/><stop offset=".55" stop-color="#200d24"/><stop offset="1" stop-color="#401121"/></linearGradient>
+ <radialGradient id="glow"><stop offset="0" stop-color="#b94d4b" stop-opacity=".46"/><stop offset=".6" stop-color="#782d42" stop-opacity=".17"/><stop offset="1" stop-color="#170e1a" stop-opacity="0"/></radialGradient>
+ <linearGradient id="gold" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#fff4bc"/><stop offset=".5" stop-color="#cfad72"/><stop offset="1" stop-color="#755232"/></linearGradient>
+ <filter id="soft"><feGaussianBlur stdDeviation="11"/></filter>
+ <pattern id="stars" width="68" height="71" patternUnits="userSpaceOnUse"><circle cx="9" cy="17" r=".7" fill="#dcc293" opacity=".44"/><circle cx="46" cy="52" r=".5" fill="#dcc293" opacity=".3"/></pattern>
+</defs>
+<rect width="600" height="900" fill="url(#bg)"/>
+<rect width="600" height="900" fill="url(#stars)"/>
+<circle cx="300" cy="432" r="286" fill="url(#glow)"/>
+<rect x="24" y="24" width="552" height="852" rx="2" fill="none" stroke="#a77b5a" stroke-width="2"/>
+<rect x="36" y="36" width="528" height="828" fill="none" stroke="#987b70" stroke-width=".7" opacity=".72"/>
+<g opacity=".35" stroke="#e0b785" stroke-width="1">
+<path d="M70 45H180M420 45h110M70 850h115M415 850h115"/>
+<path d="M70 53v35M530 53v35M70 810v35M530 810v35"/>
+</g>
+<text x="300" y="82" text-anchor="middle" font-family="Georgia,serif" font-size="13" letter-spacing="5" fill="#e3bb87">THE ZERO VERDICT</text>
+<text x="300" y="111" text-anchor="middle" font-family="serif" font-size="14" letter-spacing="3" fill="#a88b8a">ゼロ番の判決</text>
+<g opacity=".84">
+<circle cx="300" cy="357" r="184" fill="none" stroke="#8b5c54" stroke-width="1"/>
+<circle cx="300" cy="357" r="170" fill="none" stroke="#d0a36d" stroke-width="2"/>
+<circle cx="300" cy="357" r="159" fill="none" stroke="#7d5763" stroke-width=".8" stroke-dasharray="1 11"/>
+<path d="M300 197V225 M300 489V517 M140 357H167 M433 357h27" stroke="#ce9e72" stroke-width="2"/>
+<path d="M300 357L300 236 M300 357L372 428" stroke="#b66b62" stroke-width="4" stroke-linecap="round"/>
+<circle cx="300" cy="357" r="12" fill="url(#gold)"/>
+<text x="300" y="412" text-anchor="middle" font-family="Georgia,serif" font-size="60" letter-spacing="2" fill="#f0d5aa">00:00</text>
+</g>
+<g fill="none" stroke="url(#gold)" stroke-width="5" stroke-linecap="round">
+<path d="M300 490V608 M205 526H395 M300 498L205 526 M300 498L395 526 M300 608l-52 22h104"/>
+</g>
+<g stroke="#dbad83" stroke-width="2" fill="none">
+<path d="M205 526L162 594L248 594Z M395 526L352 594L438 594Z" opacity=".82"/>
+<path d="M162 594Q205 622 248 594 M352 594Q395 565 438 594" stroke-width="3"/>
+</g>
+<g opacity=".75" fill="#c6b3a6">
+ <path d="M112 685q0-22 18-22t18 22v23h-36z M158 685q0-22 18-22t18 22v23h-36z M204 685q0-22 18-22t18 22v23h-36z M250 685q0-22 18-22t18 22v23h-36z M296 685q0-22 18-22t18 22v23h-36z M342 685q0-22 18-22t18 22v23h-36z"/>
+ <path d="M112 754q0-22 18-22t18 22v23h-36z M158 754q0-22 18-22t18 22v23h-36z M204 754q0-22 18-22t18 22v23h-36z M250 754q0-22 18-22t18 22v23h-36z M296 754q0-22 18-22t18 22v23h-36z M342 754q0-22 18-22t18 22v23h-36z"/>
+</g>
+<path d="M444 747q0-31 24-31t24 31v30h-48z" fill="#d56463"/>
+<path d="M91 720H511 M91 790H511" stroke="#b18a76" opacity=".6"/>
+<rect x="55" y="130" width="490" height="140" rx="7" fill="#0d111c" fill-opacity=".82"/>
+<text x="300" y="187" text-anchor="middle" font-family="Georgia,'Noto Serif',serif" font-weight="bold" font-size="64" letter-spacing="5" fill="url(#gold)">BẢN ÁN</text>
+<text x="300" y="247" text-anchor="middle" font-family="Georgia,'Noto Serif',serif" font-weight="bold" font-size="64" letter-spacing="3" fill="url(#gold)">SỐ KHÔNG</text>
+<text x="300" y="823" text-anchor="middle" font-family="Georgia,serif" font-size="15" fill="#e9c6a0" letter-spacing="1">MƯỜI HAI LỜI THÚ TỘI · MƯỜI HAI NGƯỜI CÒN SỐNG</text>
+<text x="300" y="847" text-anchor="middle" font-family="sans-serif" font-size="12" letter-spacing="3" fill="#ab9096">JAPAN STUDY · TIỂU THUYẾT TỪ VỰNG N2</text>
+</svg>
