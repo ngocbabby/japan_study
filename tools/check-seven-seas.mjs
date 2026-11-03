@@ -36,7 +36,7 @@ for(const [i,c] of chapters.entries()){
   assert.ok(/[.!?。？！]|[”]$/.test(stripped.slice(-8)),'paragraph ends abruptly at chapter '+c.number);
  }
  const need=plan.chapters[i].plannedIds.filter(id=>!used.has(id));
- assert.deepEqual(need,[],'missing chapter assigned vocab in chapter '+c.number);
+ assert.equal(need.length,0,'missing chapter assigned vocab in chapter '+c.number+': '+need.join(','));
  assert.ok(used.size>=18,'insufficient new N2 words in chapter '+c.number);
 }
 assert.equal(all.size,1160,'all 1160 source IDs must appear in Vietnamese prose');
