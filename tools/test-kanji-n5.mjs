@@ -18,6 +18,18 @@ assert.equal(context.window.JAPAN_KANJI_N5.characters.length,4);
 assert.equal(context.window.JAPAN_KANJI_N5.chapters.length,25);
 const browser=await chromium.launch({headless:true,args:["--no-sandbox"]});
 const logs=[];
+// Regression: the new book must be findable via Home / Sách / N5 / Kanji.
+const shelf=await browser.newPage({viewport:{width:1280,height:850}});
+shelf.on("pageerror",e=>logs.push("library: "+String(e)));
+await shelf.goto("http://127.0.0.1:4173/index.html",{waitUntil:"load",timeout:45000});
+await shelf.locator('[data-open="books"]').first().click();
+await shelf.locator('[data-books-level="N5"]').first().click();
+await shelf.locator('[data-books-cat="kanji"]').first().click();
+const card=shelf.locator(".books-book-card");
+assert.equal(await card.count(),1,"N5 Kanji book is missing from Sách");
+assert.equal(await card.locator('a[href="kanji-n5.html"]').count(),1,"Wrong demo link in bookshelf");
+await shelf.screenshot({path:path.join(output,"library-n5-kanji.png"),fullPage:true});
+await shelf.close();
 try {
  for(const [label,width,height] of [["desktop",1440,900],["mobile",390,844]]){
   const page=await browser.newPage({viewport:{width,height},deviceScaleFactor:1});
